@@ -30,8 +30,12 @@ class Mark extends ContextNode {
     if(spec["scale"]) {
       scale = this.context.getNode(Scale.className, spec["scale"]);
     } else {
-      scale = {apply: function(x){return x}};
+      scale = {apply: function(x){return x}, on: function(){}};
     }
+
+    this.addDependency(scale);
+    // HACKHACK we need real event handling
+    scale.on("change", $.proxy(this.dataSetChanged, this));
 
     if(typeof(spec["value"]) === "string") {
       this._properties[name] = function(dataItem){
@@ -44,7 +48,7 @@ class Mark extends ContextNode {
     }
   }
 
-  private parseProperties(properties: any) {
+  private parseProperties(properties: any): void {
     for(var key in properties) {
       this.parseProperty(key, properties[key]);
     }
@@ -54,14 +58,20 @@ class Mark extends ContextNode {
     super(spec["name"], context, Mark.className);
 
     this._properties = {};
-    this._source = context.getNode(DataSet.className, spec["source"]);
     this.parseProperties(spec["properties"]);
 
-    SymbolMark.render(null, this._properties, this._source);
+    this._source = context.getNode(DataSet.className, spec["source"]);
+    this.addDependency(this._source);
+    this._source.on("change", $.proxy(this.dataSetChanged, this));
+    this.dataSetChanged();
   }
 
-  public render() {
-    throw new Error("Render method on mark unimplemented.");
+  private dataSetChanged(): void {
+    this.render();
+  }
+
+  public render(): void {
+    SymbolMark.render(null, this._properties, this._source);
   }
 }
 

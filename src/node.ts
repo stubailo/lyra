@@ -10,6 +10,7 @@ class ContextNode {
     this._context = context;
     this._dispatch = _.clone(Backbone.Events);
     this._context.set(className + ":" + name, this);
+    this._dependencies = [];
   }
 
   public trigger(eventName: string) {
@@ -26,5 +27,9 @@ class ContextNode {
 
   public get context(): Context {
     return this._context;
+  }
+
+  public addDependency(node: ContextNode) {
+    this._dependencies.push(node);
   }
 }

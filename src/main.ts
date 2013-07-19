@@ -42,4 +42,8 @@ class Lyra {
       }
     }
   }
+
+  public get context(): Context {
+    return this._context;
+  }
 }

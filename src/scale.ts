@@ -45,7 +45,7 @@ class LinearScale extends Scale {
   }
 
   public apply(input) {
-    return this._scale.apply(input);
+    return this._scale(input);
   }
 
 }

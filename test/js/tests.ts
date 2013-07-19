@@ -25,7 +25,7 @@
   });
 
   describe("Property", function() {
-    var context = new Backbone.Model();
+    var context = new Context();
     it('Can be constructed', function() {
       var value = new Property(context)
     });

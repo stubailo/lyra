@@ -4,6 +4,7 @@
         this._context = context;
         this._dispatch = _.clone(Backbone.Events);
         this._context.set(className + ":" + name, this);
+        this._dependencies = [];
     }
     ContextNode.prototype.trigger = function (eventName) {
         this._dispatch.trigger(eventName);
@@ -28,6 +29,10 @@
         enumerable: true,
         configurable: true
     });
+
+    ContextNode.prototype.addDependency = function (node) {
+        this._dependencies.push(node);
+    };
     return ContextNode;
 })();
 var __extends = this.__extends || function (d, b) {
@@ -211,7 +216,7 @@ var LinearScale = (function (_super) {
         this._scale = d3.scale.linear().domain(spec["domain"]).range(spec["range"]);
     }
     LinearScale.prototype.apply = function (input) {
-        return this._scale.apply(input);
+        return this._scale(input);
     };
     return LinearScale;
 })(Scale);
@@ -221,10 +226,12 @@ var Mark = (function (_super) {
         _super.call(this, spec["name"], context, Mark.className);
 
         this._properties = {};
-        this._source = context.getNode(DataSet.className, spec["source"]);
         this.parseProperties(spec["properties"]);
 
-        SymbolMark.render(null, this._properties, this._source);
+        this._source = context.getNode(DataSet.className, spec["source"]);
+        this.addDependency(this._source);
+        this._source.on("change", $.proxy(this.dataSetChanged, this));
+        this.dataSetChanged();
     }
     Mark.parseAll = function (specList, context) {
         return _.map(specList, function (spec) {
@@ -254,8 +261,13 @@ var Mark = (function (_super) {
         } else {
             scale = { apply: function (x) {
                     return x;
+                }, on: function () {
                 } };
         }
+
+        this.addDependency(scale);
+
+        scale.on("change", $.proxy(this.dataSetChanged, this));
 
         if (typeof (spec["value"]) === "string") {
             this._properties[name] = function (dataItem) {
@@ -274,8 +286,12 @@ var Mark = (function (_super) {
         }
     };
 
+    Mark.prototype.dataSetChanged = function () {
+        this.render();
+    };
+
     Mark.prototype.render = function () {
-        throw new Error("Render method on mark unimplemented.");
+        SymbolMark.render(null, this._properties, this._source);
     };
     Mark.className = "Mark";
     return Mark;
@@ -313,6 +329,13 @@ var Lyra = (function () {
             }
         }
     }
+    Object.defineProperty(Lyra.prototype, "context", {
+        get: function () {
+            return this._context;
+        },
+        enumerable: true,
+        configurable: true
+    });
     return Lyra;
 })();
 (function () {
@@ -336,7 +359,7 @@ var Lyra = (function () {
     });
 
     describe("Property", function () {
-        var context = new Backbone.Model();
+        var context = new Context();
         it('Can be constructed', function () {
             var value = new Property(context);
         });
