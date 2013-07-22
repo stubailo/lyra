@@ -13,6 +13,25 @@ class ContextNode {
     this._dependencies = [];
   }
 
+  public static parseAll(specList: any[], context: Context, classType: any) : any[] {
+    return _.map(specList, function(spec) {
+      return ContextNode.parse(spec, context, classType);
+    });
+  }
+
+  public static parse(spec : any, context: Context, classType: any) : any {
+    switch(classType) {
+      case Scale:
+        return Scale.parse(spec, context);
+      case DataSet:
+        return DataSet.parse(spec, context);
+      case Mark:
+        return Mark.parse(spec, context);
+      default:
+        throw new Error("Invalid Context Node: " + classType);
+    }
+  }
+  
   public trigger(eventName: string) {
     this._dispatch.trigger(eventName);
   }

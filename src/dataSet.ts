@@ -16,22 +16,12 @@ class DataSet extends ContextNode {
   constructor(name: string, context: Context) {
     super(name, context, DataSet.className);
   }
-
-  public static parseAll(specList: any[], context: Context): DataSet[] {
-    return _.map(specList, function(spec) {
-      return DataSet.parse(spec, context);
-    });
+  
+  public static parse(spec: any, context: Context) {
+    var output = new DataSet(spec["name"], context);
+    output.items = spec["items"]; // validate this input
+    return output;
   }
-
-  public static parse(spec: any, context: Context): DataSet {
-    var dataSet = new DataSet(spec["name"], context);
-
-    // This should probably validate somehow
-    dataSet.items = spec["items"];
-
-    return dataSet;
-  }
-
   get items(): any[] {
     return _.clone(this._items);
   }

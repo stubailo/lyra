@@ -11,26 +11,15 @@ class Scale extends ContextNode {
     super(spec["name"], context, Scale.className);
   }
 
-  public static parseAll(specList: any[], context: Context): Scale[] {
-    return _.map(specList, function(spec) {
-      return Scale.parse(spec, context);
-    });
-  }
-
-  public static parse(spec: any, context: Context): Scale {
-    var newScale: Scale;
-
+  public static parse(spec: any, context: Context) : Scale {
     switch(spec["type"]) {
       case "linear":
-        newScale = new LinearScale(spec, context);
+        return new LinearScale(spec, context);
       break;
       default:
-        throw new Error("Invalid Scale type: " + spec["type"]);
+        throw new Error("Invalid Scale type: " + spec["type"]); 
     }
-
-    return newScale;
   }
-
   // Main method for any scale, delegates to D3 most of the time
   public apply(input: any): any {
     throw new Error("Apply method not overridden for scale.");

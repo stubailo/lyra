@@ -12,22 +12,14 @@ class Mark extends ContextNode {
 
   public static EVENT_CHANGE: string = "change";
 
-  public static parseAll(specList: any[], context: Context): Mark[] {
-    return _.map(specList, function(spec) {
-      return Mark.parse(spec, context);
-    });
-  }
-
-  public static parse(spec: any, context: Context): Mark {
+  public static parse(spec: any, context: Context) {
     switch(spec["type"]) {
       case Mark.TYPE_SYMBOL:
         return new Mark(spec, context);
-      break;
       default:
         throw new Error("Unsupported mark type: " + spec["type"]);
     }
   }
-
   private parseProperty(name: string, spec: any) {
     if(this._properties[name]) {
       throw new Error("Duplicate property in mark specification: " + name);

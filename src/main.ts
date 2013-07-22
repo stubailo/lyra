@@ -31,13 +31,13 @@ class LyraModel {
       var context = this.context;
       switch(key) {
         case "data":
-          this._dataSets = DataSet.parseAll(value, context);
+          this._dataSets = ContextNode.parseAll(value, context, DataSet);
         break;
         case "scales":
-          this._scales = Scale.parseAll(value, context);
+          this._scales = ContextNode.parseAll(value, context, Scale);
         break;
         case "marks":
-          this._marks = Mark.parseAll(value, context);
+          this._marks = ContextNode.parseAll(value, context, Mark);
         break;
       }
     }
