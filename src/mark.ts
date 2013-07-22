@@ -47,7 +47,11 @@ class Mark extends ContextNode {
 
     if(typeof(spec["value"]) === "string") {
       this._properties[name] = function(dataItem){
-        return scale.apply(dataItem[spec["value"]]);
+        if(dataItem[spec["value"]]) {
+          return scale.apply(dataItem[spec["value"]]);
+        } else {
+          return scale.apply(spec["value"]);
+        }
       }
     } else {
       this._properties[name] = function(dataItem){

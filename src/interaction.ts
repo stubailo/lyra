@@ -63,6 +63,6 @@ class ClickPrintInteraction extends Interaction {
   }
 
   private onClick(d, i) {
-    console.log([d, i]);
+    console.log(d3.event);
   }
 }

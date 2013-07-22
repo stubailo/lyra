@@ -1,11 +1,9 @@
-// Dependencies
 /// <reference path="../defs/jquery.d.ts" />
 /// <reference path="../defs/underscore-typed.d.ts" />
 /// <reference path="../defs/backbone.d.ts" />
 /// <reference path="../defs/d3.d.ts" />
 /// <reference path="../defs/q.d.ts" />
 
-// Library source files
 /// <reference path="node.ts" />
 /// <reference path="context.ts" />
 /// <reference path="dataset.ts" />

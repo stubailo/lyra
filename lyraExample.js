@@ -29,6 +29,12 @@ $(function() {
         "type": "linear",
         "range": [0, 300],
         "domain": [0, 100]
+      },
+      {
+        "name": "z",
+        "type": "linear",
+        "range": [0, 250],
+        "domain": [0, 100]
       }
     ],
     "marks": [
@@ -47,6 +53,30 @@ $(function() {
           },
           "r": {
             "value": 5
+          },
+          "fill": {
+            "value": "red"
+          }
+        }
+      },
+      {
+        "name": "symbol2",
+        "type": "symbol",
+        "source": "table",
+        "properties": {
+          "cx": {
+            "value": "x",
+            "scale": "x"
+          },
+          "cy": {
+            "value": "y",
+            "scale": "z"
+          },
+          "r": {
+            "value": 5
+          },
+          "fill": {
+            "value": "blue"
           }
         }
       }

@@ -213,7 +213,11 @@ var Mark = (function (_super) {
 
         if (typeof (spec["value"]) === "string") {
             this._properties[name] = function (dataItem) {
-                return scale.apply(dataItem[spec["value"]]);
+                if (dataItem[spec["value"]]) {
+                    return scale.apply(dataItem[spec["value"]]);
+                } else {
+                    return scale.apply(spec["value"]);
+                }
             };
         } else {
             this._properties[name] = function (dataItem) {
@@ -360,7 +364,7 @@ var ClickPrintInteraction = (function (_super) {
     };
 
     ClickPrintInteraction.prototype.onClick = function (d, i) {
-        console.log([d, i]);
+        console.log(d3.event);
     };
     return ClickPrintInteraction;
 })(Interaction);
