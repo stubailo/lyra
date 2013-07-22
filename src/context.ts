@@ -1,7 +1,12 @@
 class Context extends Backbone.Model {
 
   public getNode(className: string, nodeName: string) {
-    return this.get(className + ":" + nodeName);
+    var result = this.get(className + ":" + nodeName);
+    if(result) {
+      return result;
+    } else {
+      throw new Error("No " + className + " with name " + nodeName + " exists.");
+    }
   }
 
 }

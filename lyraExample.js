@@ -1,5 +1,5 @@
 $(function() {
-  lyra = new Lyra({
+  var spec = {
     "data": [
       {
         "name": "table",
@@ -37,23 +37,26 @@ $(function() {
         "type": "symbol",
         "source": "table",
         "properties": {
-          "x": {
+          "cx": {
             "value": "x",
             "scale": "x"
           },
-          "y": {
+          "cy": {
             "value": "y",
             "scale": "y"
           },
-          "size": {
+          "r": {
             "value": 5
           }
         }
       }
     ]
-  });
+  }
 
-  lyra.context.getNode("DataSet", "table").items = [
+  el = $("#container").get(0);
+  lyra = new Lyra(spec, el);
+
+  lyra.model.context.getNode("DataSet", "table").items = [
           {"x": 1,  "y": 28}, {"x": 2,  "y": 55},
           {"x": 3,  "y": 43}, {"x": 4,  "y": 91},
           {"x": 5,  "y": 81}, {"x": 6,  "y": 53},

@@ -5,6 +5,8 @@ class Scale extends ContextNode {
 
   private static _className: string = "Scale";
 
+  public static EVENT_CHANGE: string = "change";
+
   public static get className() {
     return Scale._className;
   }
@@ -48,4 +50,14 @@ class LinearScale extends Scale {
     return this._scale(input);
   }
 
+}
+
+class IdentityScale extends Scale {
+  constructor(spec: any, context: Context) {
+    super(spec, context);
+  }
+
+  public apply(input) {
+    return input;
+  }
 }

@@ -47,7 +47,12 @@ var Context = (function (_super) {
         _super.apply(this, arguments);
     }
     Context.prototype.getNode = function (className, nodeName) {
-        return this.get(className + ":" + nodeName);
+        var result = this.get(className + ":" + nodeName);
+        if (result) {
+            return result;
+        } else {
+            throw new Error("No " + className + " with name " + nodeName + " exists.");
+        }
     };
     return Context;
 })(Backbone.Model);
@@ -117,13 +122,15 @@ var DataSet = (function (_super) {
         },
         set: function (items) {
             this._items = _.clone(items);
-            this.trigger("change");
+            this.trigger(DataSet.EVENT_CHANGE);
         },
         enumerable: true,
         configurable: true
     });
 
     DataSet._className = "DataSet";
+
+    DataSet.EVENT_CHANGE = "change";
     return DataSet;
 })(ContextNode);
 var Transform = (function () {
@@ -205,6 +212,8 @@ var Scale = (function (_super) {
         return newScale;
     };
     Scale._className = "Scale";
+
+    Scale.EVENT_CHANGE = "change";
     return Scale;
 })(ContextNode);
 
@@ -220,6 +229,17 @@ var LinearScale = (function (_super) {
     };
     return LinearScale;
 })(Scale);
+
+var IdentityScale = (function (_super) {
+    __extends(IdentityScale, _super);
+    function IdentityScale(spec, context) {
+        _super.call(this, spec, context);
+    }
+    IdentityScale.prototype.apply = function (input) {
+        return input;
+    };
+    return IdentityScale;
+})(Scale);
 var Mark = (function (_super) {
     __extends(Mark, _super);
     function Mark(spec, context) {
@@ -230,7 +250,7 @@ var Mark = (function (_super) {
 
         this._source = context.getNode(DataSet.className, spec["source"]);
         this.addDependency(this._source);
-        this._source.on("change", $.proxy(this.dataSetChanged, this));
+        this._source.on(DataSet.EVENT_CHANGE, $.proxy(this.dataSetChanged, this));
         this.dataSetChanged();
     }
     Mark.parseAll = function (specList, context) {
@@ -241,7 +261,7 @@ var Mark = (function (_super) {
 
     Mark.parse = function (spec, context) {
         switch (spec["type"]) {
-            case "symbol":
+            case Mark.TYPE_SYMBOL:
                 return new Mark(spec, context);
                 break;
             default:
@@ -259,15 +279,12 @@ var Mark = (function (_super) {
         if (spec["scale"]) {
             scale = this.context.getNode(Scale.className, spec["scale"]);
         } else {
-            scale = { apply: function (x) {
-                    return x;
-                }, on: function () {
-                } };
+            scale = new IdentityScale({}, new Context());
         }
 
         this.addDependency(scale);
 
-        scale.on("change", $.proxy(this.dataSetChanged, this));
+        scale.on(Scale.EVENT_CHANGE, $.proxy(this.dataSetChanged, this));
 
         if (typeof (spec["value"]) === "string") {
             this._properties[name] = function (dataItem) {
@@ -287,28 +304,65 @@ var Mark = (function (_super) {
     };
 
     Mark.prototype.dataSetChanged = function () {
-        this.render();
+        this.trigger(Mark.EVENT_CHANGE);
     };
 
-    Mark.prototype.render = function () {
-        SymbolMark.render(null, this._properties, this._source);
-    };
+    Object.defineProperty(Mark.prototype, "properties", {
+        get: function () {
+            return this._properties;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+    Object.defineProperty(Mark.prototype, "source", {
+        get: function () {
+            return this._source;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Mark.className = "Mark";
+
+    Mark.TYPE_SYMBOL = "symbol";
+
+    Mark.EVENT_CHANGE = "change";
     return Mark;
 })(ContextNode);
 
-var SymbolMark = (function () {
-    function SymbolMark() {
+var MarkView = (function () {
+    function MarkView(mark, element) {
+        this._model = mark;
+        this._element = element;
+
+        var render = $.proxy(this.render, this);
+        this._model.on(Mark.EVENT_CHANGE, render);
     }
-    SymbolMark.render = function (drawArea, properties, source) {
-        _.each(source.items, function (item) {
-            console.log(["x", properties["x"](item), "y", properties["y"](item), "size", properties["size"](item)]);
-        });
+    MarkView.prototype.render = function () {
+        var properties = this._model.properties;
+        var singleMark = this._element.selectAll("circle").data(this._model.source.items).enter().append("circle");
+
+        var props = [];
+        for (var key in properties) {
+            singleMark.attr(key, function (item) {
+                return properties[key](item);
+            });
+        }
     };
-    return SymbolMark;
+    return MarkView;
 })();
-var Lyra = (function () {
-    function Lyra(spec) {
+var LyraSVG = (function () {
+    function LyraSVG(model, element) {
+        this.model = model;
+        this.element = element;
+    }
+    LyraSVG.prototype.render = function () {
+        console.log("rendering in SVG not implemented...");
+    };
+    return LyraSVG;
+})();
+var LyraModel = (function () {
+    function LyraModel(spec) {
         this._context = new Context();
 
         for (var key in spec) {
@@ -329,13 +383,57 @@ var Lyra = (function () {
             }
         }
     }
-    Object.defineProperty(Lyra.prototype, "context", {
+    Object.defineProperty(LyraModel.prototype, "marks", {
+        get: function () {
+            return this._marks;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+    Object.defineProperty(LyraModel.prototype, "context", {
         get: function () {
             return this._context;
         },
         enumerable: true,
         configurable: true
     });
+    return LyraModel;
+})();
+
+var Lyra = (function () {
+    function Lyra(spec, element) {
+        this._element = element;
+
+        this._svg = d3.select(this._element).append('svg:svg').attr('width', 400).attr('height', 300);
+
+        this._model = new LyraModel(spec);
+        console.log(this._model);
+
+        var createMarkView = function (mark) {
+            var markView = new MarkView(mark, this._svg);
+            this._markViews.push(markView);
+        };
+        createMarkView = $.proxy(createMarkView, this);
+
+        this._markViews = [];
+        _.each(this.model.marks, createMarkView);
+
+        this.render();
+    }
+    Object.defineProperty(Lyra.prototype, "model", {
+        get: function () {
+            return this._model;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+    Lyra.prototype.render = function () {
+        _.each(this._markViews, function (markView) {
+            markView.render();
+        });
+    };
     return Lyra;
 })();
 (function () {

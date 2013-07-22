@@ -3,6 +3,8 @@ class DataSet extends ContextNode {
 
   private static _className: string = "DataSet";
 
+  public static EVENT_CHANGE: string = "change";
+
   public static get className() {
     return DataSet._className;
   }
@@ -29,6 +31,6 @@ class DataSet extends ContextNode {
 
   set items(items: any[]) {
     this._items = _.clone(items);
-    this.trigger("change");
+    this.trigger(DataSet.EVENT_CHANGE);
   }
 }

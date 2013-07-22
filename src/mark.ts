@@ -4,6 +4,10 @@ class Mark extends ContextNode {
 
   private static className: string = "Mark";
 
+  public static TYPE_SYMBOL: string = "symbol";
+
+  public static EVENT_CHANGE: string = "change";
+
   public static parseAll(specList: any[], context: Context): Mark[] {
     return _.map(specList, function(spec) {
       return Mark.parse(spec, context);
@@ -12,7 +16,7 @@ class Mark extends ContextNode {
 
   public static parse(spec: any, context: Context): Mark {
     switch(spec["type"]) {
-      case "symbol":
+      case Mark.TYPE_SYMBOL:
         return new Mark(spec, context);
       break;
       default:
@@ -30,12 +34,12 @@ class Mark extends ContextNode {
     if(spec["scale"]) {
       scale = this.context.getNode(Scale.className, spec["scale"]);
     } else {
-      scale = {apply: function(x){return x}, on: function(){}};
+      scale = new IdentityScale({}, new Context());
     }
 
     this.addDependency(scale);
     // HACKHACK we need real event handling
-    scale.on("change", $.proxy(this.dataSetChanged, this));
+    scale.on(Scale.EVENT_CHANGE, $.proxy(this.dataSetChanged, this));
 
     if(typeof(spec["value"]) === "string") {
       this._properties[name] = function(dataItem){
@@ -62,23 +66,47 @@ class Mark extends ContextNode {
 
     this._source = context.getNode(DataSet.className, spec["source"]);
     this.addDependency(this._source);
-    this._source.on("change", $.proxy(this.dataSetChanged, this));
+    this._source.on(DataSet.EVENT_CHANGE, $.proxy(this.dataSetChanged, this));
     this.dataSetChanged();
   }
 
   private dataSetChanged(): void {
-    this.render();
+    this.trigger(Mark.EVENT_CHANGE);
   }
 
-  public render(): void {
-    SymbolMark.render(null, this._properties, this._source);
+  public get properties() {
+    return this._properties;
+  }
+
+  public get source() {
+    return this._source;
   }
 }
 
-class SymbolMark {
-  public static render(drawArea, properties: any, source: DataSet) {
-    _.each(source.items, function(item) {
-      console.log(["x", properties["x"](item),"y", properties["y"](item),"size", properties["size"](item)]);
-    });
+class MarkView {
+  private _model: Mark;
+  private _element: D3.Selection;
+
+  constructor(mark: Mark, element: D3.Selection) {
+    this._model = mark;
+    this._element = element;
+
+    var render = $.proxy(this.render, this);
+    this._model.on(Mark.EVENT_CHANGE, render);
+  }
+
+  public render() {
+    var properties = this._model.properties;
+    var singleMark = this._element.selectAll("circle")
+      .data(this._model.source.items)
+      .enter()
+      .append("circle")
+
+    var props = [];
+    for(var key in properties) {
+      singleMark.attr(key, function(item) {
+        return properties[key](item)
+      });
+    }
   }
 }

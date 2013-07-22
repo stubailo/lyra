@@ -12,7 +12,9 @@
 /// <reference path="scale.ts" />
 /// <reference path="mark.ts" />
 
-class Lyra {
+/// <reference path="lyraSVG.ts" />
+
+class LyraModel {
 
   private _dataSets: DataSet[];
   private _scales: Scale[];
@@ -43,7 +45,54 @@ class Lyra {
     }
   }
 
+  public get marks(): Mark[] {
+    return this._marks;
+  }
+
   public get context(): Context {
     return this._context;
+  }
+}
+
+class Lyra {
+  private _model: LyraModel;
+
+  private _markViews: MarkView[];
+
+  private _element: HTMLElement;
+  private _svg: D3.Selection;
+
+  constructor(spec: any, element: HTMLElement) {
+    this._element = element;
+
+    this._svg = d3.select(this._element)
+      .append('svg:svg')
+      .attr('width', 400)
+      .attr('height', 300);
+
+    this._model = new LyraModel(spec);
+    console.log(this._model);
+
+    var createMarkView = function(mark: Mark) {
+
+      var markView = new MarkView(mark, this._svg);
+      this._markViews.push(markView);
+    }
+    createMarkView = $.proxy(createMarkView, this);
+
+    this._markViews = [];
+    _.each(this.model.marks, createMarkView);
+
+    this.render();
+  }
+
+  public get model(): LyraModel {
+    return this._model;
+  }
+
+  public render() {
+    _.each(this._markViews, function(markView) {
+      markView.render();
+    });
   }
 }
