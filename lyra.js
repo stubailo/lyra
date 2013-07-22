@@ -271,7 +271,7 @@ var MarkView = (function (_super) {
     }
     MarkView.prototype.render = function () {
         var properties = this._model.properties;
-        this.markSelection.data(this._model.source.items).enter().append("circle");
+        this.markSelection.data(this._model.source.items).enter().append("circle").attr("class", this._model.name);
 
         var props = [];
         for (var key in properties) {
@@ -293,7 +293,7 @@ var MarkView = (function (_super) {
 
     Object.defineProperty(MarkView.prototype, "markSelection", {
         get: function () {
-            return this._element.selectAll("circle");
+            return this._element.selectAll("circle." + this._model.name);
         },
         enumerable: true,
         configurable: true
@@ -444,6 +444,7 @@ var Lyra = (function () {
     });
 
     Lyra.prototype.render = function () {
+        console.log(this.model);
         _.each(this._markViews, function (markView) {
             markView.render();
         });

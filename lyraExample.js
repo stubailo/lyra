@@ -27,13 +27,13 @@ $(function() {
       {
         "name": "y",
         "type": "linear",
-        "range": [0, 300],
+        "range": [300, 0],
         "domain": [0, 100]
       },
       {
         "name": "z",
         "type": "linear",
-        "range": [0, 250],
+        "range": [300, 50],
         "domain": [0, 100]
       }
     ],

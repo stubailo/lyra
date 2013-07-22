@@ -115,6 +115,7 @@ class MarkView extends ContextNode {
       .data(this._model.source.items)
       .enter()
       .append("circle")
+      .attr("class", this._model.name);
 
     var props = [];
     for(var key in properties) {
@@ -131,6 +132,6 @@ class MarkView extends ContextNode {
   }
 
   public get markSelection() {
-    return this._element.selectAll("circle");
+    return this._element.selectAll("circle." + this._model.name);
   }
 }

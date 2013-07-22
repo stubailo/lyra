@@ -111,6 +111,7 @@ class Lyra {
   }
 
   public render() {
+    console.log(this.model);
     _.each(this._markViews, function(markView) {
       markView.render();
     });
