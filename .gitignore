@@ -1,0 +1,3 @@
+.DS_STORE
+*.js
+test/js/*.js
