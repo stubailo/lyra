@@ -21,13 +21,13 @@ $(function() {
       {
         "name": "x",
         "type": "linear",
-        "range": [0, 100],
+        "range": [0, 400],
         "domain": [0, 20]
       },
       {
         "name": "y",
         "type": "linear",
-        "range": [0, 100],
+        "range": [0, 300],
         "domain": [0, 100]
       }
     ],
@@ -49,6 +49,12 @@ $(function() {
             "value": 5
           }
         }
+      }
+    ],
+    "interactions": [
+      {
+        "type": "clickPrint",
+        "mark": "symbol"
       }
     ]
   }

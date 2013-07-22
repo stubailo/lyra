@@ -1,3 +1,7 @@
+/*
+  This class represents a set of items that can be the basis for marks in the chart area.
+*/
+
 class DataSet extends ContextNode {
   private _items: any[];
 
@@ -21,7 +25,10 @@ class DataSet extends ContextNode {
 
   public static parse(spec: any, context: Context): DataSet {
     var dataSet = new DataSet(spec["name"], context);
+
+    // This should probably validate somehow
     dataSet.items = spec["items"];
+
     return dataSet;
   }
 

@@ -56,41 +56,6 @@ var Context = (function (_super) {
     };
     return Context;
 })(Backbone.Model);
-var Property = (function (_super) {
-    __extends(Property, _super);
-    function Property(name, context, _spec) {
-        _super.call(this, name, context, Property.className);
-
-        this.spec = _spec;
-    }
-    Object.defineProperty(Property.prototype, "spec", {
-        get: function () {
-            return this._spec;
-        },
-        set: function (newSpec) {
-            if (newSpec !== this.spec) {
-                this._spec = newSpec;
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-
-
-    Object.defineProperty(Property.prototype, "val", {
-        get: function () {
-            return _.clone(this._val);
-        },
-        set: function (newVal) {
-            this._val = _.clone(newVal);
-            this.trigger("change");
-        },
-        enumerable: true,
-        configurable: true
-    });
-
-    return Property;
-})(ContextNode);
 var DataSet = (function (_super) {
     __extends(DataSet, _super);
     function DataSet(name, context) {
@@ -112,7 +77,9 @@ var DataSet = (function (_super) {
 
     DataSet.parse = function (spec, context) {
         var dataSet = new DataSet(spec["name"], context);
+
         dataSet.items = spec["items"];
+
         return dataSet;
     };
 
@@ -133,57 +100,11 @@ var DataSet = (function (_super) {
     DataSet.EVENT_CHANGE = "change";
     return DataSet;
 })(ContextNode);
-var Transform = (function () {
-    function Transform() {
-    }
-    Transform.prototype.apply = function (input, output) {
-        throw new Error("The apply method of this transform was not overridden.");
-    };
-
-    Transform.parse = function (spec) {
-        switch (spec["type"]) {
-            case "max":
-                return new MaxDataSetTransform(spec);
-                break;
-            default:
-                throw new Error("Invalid Transform type: " + spec["type"]);
-        }
-    };
-    return Transform;
-})();
-
-var MaxDataSetTransform = (function (_super) {
-    __extends(MaxDataSetTransform, _super);
-    function MaxDataSetTransform(spec) {
-        _super.call(this);
-        if (!(typeof (spec["parameter"]) == 'string')) {
-            throw new Error("Missing parameter to maximize for max transform.");
-        }
-
-        this._parameterToMax = spec["parameter"];
-    }
-    MaxDataSetTransform.prototype.apply = function (input, output) {
-        var outputValue = 0;
-        var parameterToMax = this._parameterToMax;
-        var maxItem = _.max(input.items, function (item) {
-            return item[parameterToMax];
-        });
-
-        outputValue = maxItem[this._parameterToMax];
-
-        output.val = outputValue;
-    };
-    return MaxDataSetTransform;
-})(Transform);
 var Scale = (function (_super) {
     __extends(Scale, _super);
     function Scale(spec, context) {
         _super.call(this, spec["name"], context, Scale.className);
     }
-    Scale.prototype.apply = function (input) {
-        throw new Error("Apply method not overridden for scale.");
-    };
-
     Object.defineProperty(Scale, "className", {
         get: function () {
             return Scale._className;
@@ -210,6 +131,10 @@ var Scale = (function (_super) {
         }
 
         return newScale;
+    };
+
+    Scale.prototype.apply = function (input) {
+        throw new Error("Apply method not overridden for scale.");
     };
     Scale._className = "Scale";
 
@@ -330,8 +255,10 @@ var Mark = (function (_super) {
     return Mark;
 })(ContextNode);
 
-var MarkView = (function () {
-    function MarkView(mark, element) {
+var MarkView = (function (_super) {
+    __extends(MarkView, _super);
+    function MarkView(mark, element, viewContext) {
+        _super.call(this, mark.name, viewContext, MarkView.className);
         this._model = mark;
         this._element = element;
 
@@ -340,34 +267,110 @@ var MarkView = (function () {
     }
     MarkView.prototype.render = function () {
         var properties = this._model.properties;
-        var singleMark = this._element.selectAll("circle").data(this._model.source.items).enter().append("circle");
+        this.markSelection.data(this._model.source.items).enter().append("circle");
 
         var props = [];
         for (var key in properties) {
-            singleMark.attr(key, function (item) {
+            this.markSelection.attr(key, function (item) {
                 return properties[key](item);
             });
         }
+
+        this.trigger(MarkView.EVENT_RENDER);
     };
+
+    Object.defineProperty(MarkView.prototype, "element", {
+        get: function () {
+            return this._element;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+    Object.defineProperty(MarkView.prototype, "markSelection", {
+        get: function () {
+            return this._element.selectAll("circle");
+        },
+        enumerable: true,
+        configurable: true
+    });
+    MarkView.className = "MarkView";
+
+    MarkView.EVENT_RENDER = "render";
     return MarkView;
-})();
-var LyraSVG = (function () {
-    function LyraSVG(model, element) {
-        this.model = model;
-        this.element = element;
+})(ContextNode);
+var Interaction = (function () {
+    function Interaction(modelContext, viewContext) {
+        this._modelContext = modelContext;
+        this._viewContext = viewContext;
     }
-    LyraSVG.prototype.render = function () {
-        console.log("rendering in SVG not implemented...");
+    Interaction.parseAll = function (specList, modelContext, viewContext) {
+        return _.map(specList, function (spec) {
+            return Interaction.parse(spec, modelContext, viewContext);
+        });
     };
-    return LyraSVG;
+
+    Interaction.parse = function (spec, modelContext, viewContext) {
+        switch (spec["type"]) {
+            case Interaction.TYPE_CLICK_PRINT:
+                return new ClickPrintInteraction(spec, modelContext, viewContext);
+            default:
+                throw new Error("Unsupported interaction type: " + spec["type"]);
+        }
+        return null;
+    };
+
+    Object.defineProperty(Interaction.prototype, "modelContext", {
+        get: function () {
+            return this._modelContext;
+        },
+        enumerable: true,
+        configurable: true
+    });
+
+    Object.defineProperty(Interaction.prototype, "viewContext", {
+        get: function () {
+            return this._viewContext;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Interaction.className = "Interaction";
+
+    Interaction.TYPE_CLICK_PRINT = "clickPrint";
+    return Interaction;
 })();
+
+var ClickPrintInteraction = (function (_super) {
+    __extends(ClickPrintInteraction, _super);
+    function ClickPrintInteraction(spec, modelContext, viewContext) {
+        _super.call(this, modelContext, viewContext);
+
+        if (spec["mark"]) {
+            this._markView = this.viewContext.getNode(MarkView.className, spec["mark"]);
+        } else {
+            throw new Error("No mark specified in ClickPrintInteraction.");
+        }
+
+        this.addEvents();
+        this._markView.on(MarkView.EVENT_RENDER, $.proxy(this.addEvents, this));
+    }
+    ClickPrintInteraction.prototype.addEvents = function () {
+        this._markView.markSelection.on("click", $.proxy(this.onClick, this));
+    };
+
+    ClickPrintInteraction.prototype.onClick = function (d, i) {
+        console.log([d, i]);
+    };
+    return ClickPrintInteraction;
+})(Interaction);
 var LyraModel = (function () {
     function LyraModel(spec) {
         this._context = new Context();
 
         for (var key in spec) {
             var value = spec[key];
-            var context = this._context;
+            var context = this.context;
             switch (key) {
                 case "data":
                     this._dataSets = DataSet.parseAll(value, context);
@@ -378,8 +381,6 @@ var LyraModel = (function () {
                 case "marks":
                     this._marks = Mark.parseAll(value, context);
                     break;
-                default:
-                    throw new Error("Unsupported Lyra spec section: " + key);
             }
         }
     }
@@ -403,21 +404,30 @@ var LyraModel = (function () {
 
 var Lyra = (function () {
     function Lyra(spec, element) {
+        this._viewContext = new Context();
+        this._model = new LyraModel(spec);
+
         this._element = element;
 
-        this._svg = d3.select(this._element).append('svg:svg').attr('width', 400).attr('height', 300);
-
-        this._model = new LyraModel(spec);
-        console.log(this._model);
+        this._svg = d3.select(this._element).append('svg:svg').attr('width', 400).attr('height', 300).attr('style', "border: 1px solid red");
 
         var createMarkView = function (mark) {
-            var markView = new MarkView(mark, this._svg);
+            var markView = new MarkView(mark, this._svg, this._viewContext);
             this._markViews.push(markView);
         };
         createMarkView = $.proxy(createMarkView, this);
 
         this._markViews = [];
         _.each(this.model.marks, createMarkView);
+
+        for (var key in spec) {
+            var value = spec[key];
+            switch (key) {
+                case "interactions":
+                    this._interactions = Interaction.parseAll(value, this.model.context, this._viewContext);
+                    break;
+            }
+        }
 
         this.render();
     }
@@ -456,31 +466,9 @@ var Lyra = (function () {
         });
     });
 
-    describe("Property", function () {
-        var context = new Context();
-        it('Can be constructed', function () {
-            var value = new Property(context);
-        });
-    });
-
-    describe("Transform", function () {
-        it("Correctly identifies and runs max data set transform", function () {
-            var transform = Transform.parse({ "type": "max", "parameter": "x" });
-            var dataSet = DataSet.parse({
-                name: "test",
-                items: [{ "x": 1 }, { "x": 3 }]
-            });
-            var maxProperty = new Property();
-
-            transform.apply(dataSet, maxProperty);
-
-            assert.equal(maxProperty.val, 3);
-        });
-    });
-
     describe("Scale", function () {
         it("Correctly identifies and applies linear scale", function () {
-            var scale = Scale.parse({ "type": "linear", "domain": [0, 5], "range": [0, 100] });
+            var scale = Scale.parse({ "type": "linear", "domain": [0, 5], "range": [0, 100] }, new Context());
 
             assert.equal(scale.apply(0), 0);
             assert.equal(scale.apply(1), 20);

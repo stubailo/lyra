@@ -1,8 +1,4 @@
 class Scale extends ContextNode {
-  public apply(input: any): any {
-    throw new Error("Apply method not overridden for scale.");
-  }
-
   private static _className: string = "Scale";
 
   public static EVENT_CHANGE: string = "change";
@@ -34,8 +30,16 @@ class Scale extends ContextNode {
 
     return newScale;
   }
+
+  // Main method for any scale, delegates to D3 most of the time
+  public apply(input: any): any {
+    throw new Error("Apply method not overridden for scale.");
+  }
 }
 
+/*
+  Represents a linear D3 scale.
+*/
 class LinearScale extends Scale {
 
   private _scale;
@@ -52,6 +56,9 @@ class LinearScale extends Scale {
 
 }
 
+/*
+  This scale doesn't change the input at all.
+*/
 class IdentityScale extends Scale {
   constructor(spec: any, context: Context) {
     super(spec, context);

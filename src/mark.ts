@@ -1,4 +1,8 @@
 class Mark extends ContextNode {
+  /*
+    Each property is a function of one item that specifies that property of an SVG element.
+    So for example a circle would have one function for "cx", one for "cy", etc.
+  */
   private _properties: any;
   private _source: DataSet;
 
@@ -83,11 +87,17 @@ class Mark extends ContextNode {
   }
 }
 
-class MarkView {
+class MarkView extends ContextNode {
   private _model: Mark;
   private _element: D3.Selection;
+  private _markSelection: D3.Selection;
 
-  constructor(mark: Mark, element: D3.Selection) {
+  public static className: string = "MarkView";
+
+  public static EVENT_RENDER: string = "render";
+
+  constructor(mark: Mark, element: D3.Selection, viewContext: Context) {
+    super(mark.name, viewContext, MarkView.className);
     this._model = mark;
     this._element = element;
 
@@ -97,16 +107,26 @@ class MarkView {
 
   public render() {
     var properties = this._model.properties;
-    var singleMark = this._element.selectAll("circle")
+    this.markSelection
       .data(this._model.source.items)
       .enter()
       .append("circle")
 
     var props = [];
     for(var key in properties) {
-      singleMark.attr(key, function(item) {
+      this.markSelection.attr(key, function(item) {
         return properties[key](item)
       });
     }
+
+    this.trigger(MarkView.EVENT_RENDER);
+  }
+
+  public get element() {
+    return this._element;
+  }
+
+  public get markSelection() {
+    return this._element.selectAll("circle");
   }
 }

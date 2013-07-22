@@ -24,31 +24,9 @@
     });
   });
 
-  describe("Property", function() {
-    var context = new Context();
-    it('Can be constructed', function() {
-      var value = new Property(context)
-    });
-  });
-
-  describe("Transform", function() {
-    it("Correctly identifies and runs max data set transform", function() {
-      var transform: MaxDataSetTransform = Transform.parse({"type": "max", "parameter": "x"});
-      var dataSet: DataSet = DataSet.parse({
-        name: "test",
-        items: [{"x": 1}, {"x": 3}]
-      });
-      var maxProperty: Property = new Property();
-
-      transform.apply(dataSet, maxProperty);
-
-      assert.equal(maxProperty.val, 3);
-    });
-  });
-
   describe("Scale", function() {
     it("Correctly identifies and applies linear scale", function() {
-      var scale: Scale = Scale.parse({"type": "linear", "domain": [0,5], "range": [0, 100]});
+      var scale: Scale = Scale.parse({"type": "linear", "domain": [0,5], "range": [0, 100]}, new Context());
 
       assert.equal(scale.apply(0), 0);
       assert.equal(scale.apply(1), 20);
