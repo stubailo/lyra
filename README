@@ -7,5 +7,6 @@ in the main repo folder.
 
 To run the page, first start a local web server on your machine:
 python -m SimpleHTTPServer 1234
+(python -m http.server 1234 on some machines)
 
 Then go to http://localhost:1234
