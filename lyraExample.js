@@ -40,7 +40,7 @@ $(function() {
     "marks": [
       {
         "name": "symbol",
-        "type": "symbol",
+        "type": "circle",
         "source": "table",
         "properties": {
           "cx": {
@@ -61,22 +61,28 @@ $(function() {
       },
       {
         "name": "symbol2",
-        "type": "symbol",
+        "type": "line",
         "source": "table",
         "properties": {
-          "cx": {
+          "x": {
             "value": "x",
             "scale": "x"
           },
-          "cy": {
+          "y": {
             "value": "y",
-            "scale": "z"
+            "scale": "y"
           },
-          "r": {
-            "value": 5
+          "interpolate": {
+            "value" : "cardinal"
+          }, 
+          "stroke-width" : {
+            "value" : 3
           },
-          "fill": {
-            "value": "blue"
+          "stroke" : {
+            "value" : "blue"
+          },
+          "fill" : {
+            "value" : "none"
           }
         }
       }
