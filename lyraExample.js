@@ -109,6 +109,14 @@ $(function() {
         "scale": "z",
         "mark": "symbol",
         "direction": "n"
+      }, 
+      {
+        "type": "clickPrint",
+        "mark": "symbol2"
+      },
+      {
+        "type" : "colorHover",
+        "mark": "symbol2"
       }
     ]
   }
