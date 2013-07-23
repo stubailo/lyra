@@ -85,7 +85,7 @@ class Mark extends ContextNode {
 
 class MarkView extends ContextNode {
   private _model: Mark;
-  private _element: D3.Selection;
+  private _element: D3.Selection; // the canvas
   private _markSelection: D3.Selection;
 
   public static className: string = "MarkView";
