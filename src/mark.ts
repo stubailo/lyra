@@ -50,7 +50,7 @@ class Mark extends ContextNode {
 
     if(typeof(spec["value"]) === "string") {
       this._properties[name] = function(dataItem){
-        if(dataItem[spec["value"]]) {
+        if(dataItem != null && dataItem[spec["value"]]) {
           return scale.apply(dataItem[spec["value"]]);
         } else {
           return scale.apply(spec["value"]);
@@ -194,7 +194,7 @@ class LineMarkView extends MarkView {
           });
           break;
         case "interpolate":
-          line.interpolate(properties["interpolate"]("value"));
+          line.interpolate(properties["interpolate"]());
           break;
         default:
           this.markSelection.attr(key, function(item) {
