@@ -145,10 +145,10 @@ class MarkView extends ContextNode {
 }
 
 class CircleMarkView extends MarkView {
+
   constructor(mark: Mark, element: D3.Selection, viewContext: Context) {
     super(mark, element, viewContext);
   }
-
 
   public render() {
     var properties = this.model.properties;
@@ -168,6 +168,7 @@ class CircleMarkView extends MarkView {
 }
 
 class LineMarkView extends MarkView {
+
    constructor(mark: Mark, element: D3.Selection, viewContext: Context) {
     super(mark, element, viewContext);
   }

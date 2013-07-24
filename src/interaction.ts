@@ -8,6 +8,7 @@ class Interaction {
 
   public static TYPE_CLICK_PRINT: string = "clickPrint";
   public static TYPE_PAN: string = "pan";
+  public static TYPE_COLOR_HOVER: string = "colorHover";
 
   private _modelContext: Context;
   private _viewContext: Context;
@@ -29,6 +30,8 @@ class Interaction {
         return new ClickPrintInteraction(spec, modelContext, viewContext);
       case Interaction.TYPE_PAN:
         return new PanInteraction(spec, modelContext, viewContext);
+      case Interaction.COLOR_HOVER:
+        return new ColorHoverInteraction(spec, modelContext, viewContext);
       default:
         throw new Error("Unsupported interaction type: " + spec["type"]);
     }
@@ -147,5 +150,39 @@ class PanInteraction extends Interaction {
     };
 
     this.addEvents();
+  }
+}
+
+
+class ColorHoverInteraction extends Interaction { 
+  private _markView: MarkView;
+  private _properties: any;
+  private _oldColor: string;
+
+  constructor(spec: any, modelContext: Context, viewContext: Context) {
+    super(modelContext, viewContext);
+    if (spec["mark"]){
+       this._markView = this.viewContext.getNode(MarkView.className, spec["mark"]);
+    } else {
+      throw new Error("No mark specified in ClickPrintInteraction.");
+    }
+
+    this.addEvents();
+    this._markView.on(MarkView.EVENT_RENDER, $.proxy(this.addEvents, this));
+  }
+
+  private addEvents() {
+    this._markView.markSelection.on("mouseover", $.proxy(this.onHoverIn, this));
+    this._markView.markSelection.on("mouseout", $.proxy(this.onHoverOut, this));
+  }
+
+  private onHoverIn(d, i) {
+    //HACK HACK: this does not work with other interactions 
+    this._markView.markSelection.attr("stroke", "green");
+  }
+
+  private onHoverOut(d, i) {
+    //HACK HACK: this removes all temporary properties
+    this._markView.render();
   }
 }
