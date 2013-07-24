@@ -52,6 +52,10 @@ class LyraModel {
     return this._marks;
   }
 
+  public get areas(): Area[] {
+    return this._areas;
+  }
+
   public get context(): Context {
     return this._context;
   }
@@ -66,10 +70,11 @@ class Lyra {
   // Spec-produced objects
   private _markViews: MarkView[];
   private _interactions: Interaction[];
+  private _areas;
 
   // DOM elements and such
   private _element: HTMLElement;
-  private _areas;
+  
 
   constructor(spec: any, element: HTMLElement) {
     // Initialize
@@ -79,21 +84,31 @@ class Lyra {
     // Initialize DOM
     this._element = element;
 
-    var createAreas = function(area: Area) {
-      var svg = d3.select(this._element).append('svg:svg');
-        for (var property in area.properties) {
-          svg.attr(property, area.get(property));
+    var svg = d3.select(this._element).append('svg:svg');
+    
+    // HACK HACK: ghetto translate
+    var padding = 25;
+    var translate = 0;
+    var createAreas = function(area: Area) {  
+        var newArea = svg.append("g").attr("name", area.name)
+        for (var property in area.attributes) {
+          newArea.attr(property, area.get(property));
         }
-        this._areas[area.name, svg];
+        newArea.attr("transform", "translate(" + translate + ")");
+        translate = translate + area.width;
+        this._areas[area.name] = newArea;
     }
 
     createAreas = $.proxy(createAreas, this);
-    this._areas = [];
+    this._areas = {};
     _.each(this.model.areas, createAreas);
+
+  
+
 
     // Create views for existing model nodes (should potentially be refactored into new method)
     var createMarkView = function(mark: Mark) {
-      var markView = MarkView.createView(mark, this._areas[mark.get("area")], this._viewContext);
+      var markView = MarkView.createView(mark, this._areas[mark.area.name], this._viewContext);
       this._markViews.push(markView);
     }
     createMarkView = $.proxy(createMarkView, this);

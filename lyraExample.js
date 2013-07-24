@@ -17,20 +17,20 @@ $(function() {
         ]
       }
     ],
-    "area": [
-    {
-      "name": "area1",
-      "height": 300,
-      "width": 400,
-      "style": "border: 1px solid red"
-    },
-    "area" : {
-      "name": "area2",
-      "height": 300,
-      "width": 400,
-      "style": "border: 1px solid blue"
-    }
-    ]
+    "areas": [
+      {
+        "name": "area1",
+        "height": 300,
+        "width": 400,
+        "style": "border: 1px solid red"
+      },
+      {
+        "name": "area2",
+        "height": 300,
+        "width": 400,
+        "style": "border: 1px solid blue"
+      }
+    ],
     "scales": [
       {
         "name": "x",
@@ -67,7 +67,7 @@ $(function() {
           },
           "cy": {
             "value": "y",
-            "scale": "z"
+            "scale": "y"
           },
           "r": {
             "value": 5
@@ -81,7 +81,7 @@ $(function() {
         "name": "symbol2",
         "type": "line",
         "source": "table",
-        "area": "area1",
+        "area": "area2",
         "properties": {
           "x": {
             "value": "x",
@@ -114,19 +114,19 @@ $(function() {
       {
         "type": "pan",
         "scale": "x",
-        "mark": "symbol",
+        "mark": "symbol2",
         "direction": "e"
       },
       {
         "type": "pan",
         "scale": "y",
-        "mark": "symbol",
+        "mark": "symbol2",
         "direction": "s"
       },
       {
         "type": "pan",
         "scale": "z",
-        "mark": "symbol",
+        "mark": "symbol2",
         "direction": "n"
       }, 
       {

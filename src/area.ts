@@ -4,11 +4,13 @@ class Area extends ContextNode {
 	private _height: number;
 	private _width: number;
 
-	constuctor(spec: any, context: Context){
+	constructor(spec: any, context: Context) {
 		super(spec["name"], context, Area.className);
 
 		this._height = spec["height"];
 		this._width = spec["width"];
+
+		this.parseProperties(spec);
 	}
 
 	private parseProperties(properties: any) {
