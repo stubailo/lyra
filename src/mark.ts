@@ -45,7 +45,6 @@ class Mark extends ContextNode {
       scale = new IdentityScale({}, new Context());
     }
 
-    this.addDependency(scale);
     // HACKHACK we need real event handling
     scale.on(Scale.EVENT_CHANGE, $.proxy(this.dataSetChanged, this));
 
@@ -78,7 +77,6 @@ class Mark extends ContextNode {
     this.parseProperties(spec["properties"]);
 
     this._source = context.getNode(DataSet.className, spec["source"]);
-    this.addDependency(this._source);
     this._source.on(DataSet.EVENT_CHANGE, $.proxy(this.dataSetChanged, this));
     this.dataSetChanged();
   }
