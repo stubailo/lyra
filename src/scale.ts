@@ -17,12 +17,20 @@ class Scale extends ContextNode {
         return new LinearScale(spec, context);
       break;
       default:
-        throw new Error("Invalid Scale type: " + spec["type"]); 
+        throw new Error("Invalid Scale type: " + spec["type"]);
     }
   }
   // Main method for any scale, delegates to D3 most of the time
   public apply(input: any): any {
     throw new Error("Apply method not overridden for scale.");
+  }
+
+  public invert(input: any): any {
+    throw new Error("Invert method not overridden for scale.");
+  }
+
+  public pan(pixels: number) {
+    throw new Error("Pan method not overridden for scale.");
   }
 }
 
@@ -43,6 +51,18 @@ class LinearScale extends Scale {
     return this._scale(input);
   }
 
+  public invert(input) {
+    return this._scale.invert(input);
+  }
+
+  public pan(pixels) {
+    var domain = _.clone(this._scale.domain());
+    var dx = this.invert(pixels) - this.invert(0);
+    domain[0] -= dx;
+    domain[1] -= dx;
+    this._scale.domain(domain);
+    this.trigger(Scale.EVENT_CHANGE);
+  }
 }
 
 /*
@@ -55,5 +75,13 @@ class IdentityScale extends Scale {
 
   public apply(input) {
     return input;
+  }
+
+  public invert(input) {
+    return input;
+  }
+
+  public pan(pixels) {
+    // does nothing
   }
 }

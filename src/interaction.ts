@@ -7,6 +7,7 @@ class Interaction {
   public static className: string = "Interaction";
 
   public static TYPE_CLICK_PRINT: string = "clickPrint";
+  public static TYPE_PAN: string = "pan";
 
   private _modelContext: Context;
   private _viewContext: Context;
@@ -26,6 +27,8 @@ class Interaction {
     switch(spec["type"]) {
       case Interaction.TYPE_CLICK_PRINT:
         return new ClickPrintInteraction(spec, modelContext, viewContext);
+      case Interaction.TYPE_PAN:
+        return new PanInteraction(spec, modelContext, viewContext);
       default:
         throw new Error("Unsupported interaction type: " + spec["type"]);
     }
@@ -59,10 +62,90 @@ class ClickPrintInteraction extends Interaction {
   }
 
   private addEvents() {
-    this._markView.markSelection.on("click", $.proxy(this.onClick, this));
+    this._markView.markSelection.on("click.ClickPrintInteraction", $.proxy(this.onClick, this));
   }
 
   private onClick(d, i) {
     console.log(d3.event);
+  }
+}
+
+class PanInteraction extends Interaction {
+  private _markView: MarkView;
+  private _scale: Scale;
+  private _properties: any;
+  private _direction: string;
+
+  private _startPosition: number[];
+  private _currentPosition: number[];
+  private _dragging: boolean;
+
+  private addEvents;
+  private startDrag;
+  private drag;
+  private stopDrag;
+
+  constructor(spec: any, modelContext: Context, viewContext: Context) {
+    super(modelContext, viewContext);
+
+    if(spec["mark"]) {
+      this._markView = this.viewContext.getNode(MarkView.className, spec["mark"]);
+    } else {
+      throw new Error("No mark specified in PanInteraction.");
+    }
+
+    if(spec["scale"]) {
+      this._scale = this.modelContext.getNode(Scale.className, spec["scale"]);
+    } else {
+      throw new Error("No scale specified in PanInteraction.");
+    }
+
+    if(spec["direction"]) {
+      this._direction = spec["direction"];
+    } else {
+      this._direction = "e";
+    }
+
+    this.addEvents = () => {
+      $(this._markView.element[0][0]).on("mousedown", this.startDrag);
+    };
+
+    this.drag = (event) => {
+      var newPosition: number[] = [event.clientX, event.clientY];
+      var dx = newPosition[0] - this._currentPosition[0];
+      var dy = newPosition[1] - this._currentPosition[1];
+      this._currentPosition = _.clone(newPosition);
+
+      switch(this._direction) {
+        case "n":
+          this._scale.pan(dy);
+        break;
+        case "s":
+          this._scale.pan(-dy);
+        break;
+        case "e":
+          this._scale.pan(dx);
+        break;
+        case "w":
+          this._scale.pan(-dx);
+        break;
+        default:
+          throw new Error("Invalid pan direction: " + this._direction);
+      }
+    };
+
+    this.startDrag = (event) => {
+      this._startPosition = [event.clientX, event.clientY];
+      this._currentPosition = _.clone(this._startPosition);
+      this._dragging = true;
+      $(window).on("mousemove", this.drag);
+      $(window).one("mouseup", this.stopDrag);
+    };
+
+    this.stopDrag = (event) => {
+      $(window).off("mousemove", this.drag);
+    };
+
+    this.addEvents();
   }
 }
