@@ -85,6 +85,24 @@ $(function() {
       {
         "type": "clickPrint",
         "mark": "symbol"
+      },
+      {
+        "type": "pan",
+        "scale": "x",
+        "mark": "symbol",
+        "direction": "e"
+      },
+      {
+        "type": "pan",
+        "scale": "y",
+        "mark": "symbol",
+        "direction": "s"
+      },
+      {
+        "type": "pan",
+        "scale": "z",
+        "mark": "symbol",
+        "direction": "n"
       }
     ]
   }

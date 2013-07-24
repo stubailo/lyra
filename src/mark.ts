@@ -71,6 +71,8 @@ class Mark extends ContextNode {
   }
 
   private dataSetChanged(): void {
+    console.log("triggered change");
+    console.log(this);
     this.trigger(Mark.EVENT_CHANGE);
   }
 
