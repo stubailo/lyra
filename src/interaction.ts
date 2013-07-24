@@ -55,7 +55,7 @@ class ClickPrintInteraction extends Interaction {
     super(modelContext, viewContext);
 
     if(spec["mark"]) {
-      this._markView = MarkView.getViewByName(spec["mark"]);
+      this._markView = this.viewContext.getNode(MarkView.className, spec["mark"]);
     } else {
       throw new Error("No mark specified in ClickPrintInteraction.");
     }
@@ -162,7 +162,7 @@ class ColorHoverInteraction extends Interaction {
   constructor(spec: any, modelContext: Context, viewContext: Context) {
     super(modelContext, viewContext);
     if (spec["mark"]){
-       this._markView = MarkView.getViewByName(spec["mark"]);
+       this._markView = this.viewContext.getNode(MarkView.className, spec["mark"]);
     } else {
       throw new Error("No mark specified in ClickPrintInteraction.");
     }
@@ -172,16 +172,17 @@ class ColorHoverInteraction extends Interaction {
   }
 
   private addEvents() {
-    this._markView.markSelection.on("mousemove", $.proxy(this.onHoverIn, this));
+    this._markView.markSelection.on("mouseover", $.proxy(this.onHoverIn, this));
     this._markView.markSelection.on("mouseout", $.proxy(this.onHoverOut, this));
   }
 
   private onHoverIn(d, i) {
-    //this._oldColor = this._markView.markSelection.attr("stroke").valueOf();
+    //HACK HACK: this does not work with other interactions 
     this._markView.markSelection.attr("stroke", "green");
   }
 
   private onHoverOut(d, i) {
-    this._markView.markSelection.attr("stroke", "blue");
+    //HACK HACK: this removes all temporary properties
+    this._markView.render();
   }
 }

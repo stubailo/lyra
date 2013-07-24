@@ -74,7 +74,7 @@ $(function() {
           },
           "interpolate": {
             "value" : "linear"
-          },
+          }, 
           "stroke-width" : {
             "value" : 3
           },

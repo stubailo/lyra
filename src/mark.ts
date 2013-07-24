@@ -105,12 +105,12 @@ class MarkView extends ContextNode {
   private _element: D3.Selection; // the canvas
   private _markSelection: D3.Selection;
 
+  public static className : string = "MarkView";
+
   public static EVENT_RENDER: string = "render";
 
-  private static _markViewMap = [];
-
-  constructor(mark: Mark, element: D3.Selection, viewContext: Context, className: string) {
-    super(mark.name, viewContext, className);
+  constructor(mark: Mark, element: D3.Selection, viewContext: Context) {
+    super(mark.name, viewContext, MarkView.className);
     this._model = mark;
     this._element = element;
 
@@ -121,20 +121,9 @@ class MarkView extends ContextNode {
   public static createView(mark: Mark, element: D3.Selection, viewContext: Context) {
     switch(mark.type) {
       case MarkType.CIRCLE:
-        MarkView._markViewMap[mark.name] = new CircleMarkView(mark, element, viewContext);
-        return MarkView._markViewMap[mark.name]
+        return new CircleMarkView(mark, element, viewContext);
       case MarkType.LINE:
-        MarkView._markViewMap[mark.name] = new LineMarkView(mark, element, viewContext);
-        return MarkView._markViewMap[mark.name]
-    }
-  }
-
-  public static getViewByName(name: string) {
-    var result = MarkView._markViewMap[name];
-    if(result) {
-      return result;
-    } else {
-      throw new Error("No view with name " + name + " exists.");
+        return new LineMarkView(mark, element, viewContext);
     }
   }
 
@@ -156,10 +145,9 @@ class MarkView extends ContextNode {
 }
 
 class CircleMarkView extends MarkView {
-  public static className: string = "CircleMarkView";
 
   constructor(mark: Mark, element: D3.Selection, viewContext: Context) {
-    super(mark, element, viewContext, CircleMarkView.className);
+    super(mark, element, viewContext);
   }
 
   public render() {
@@ -180,10 +168,9 @@ class CircleMarkView extends MarkView {
 }
 
 class LineMarkView extends MarkView {
-  public static className: string = "LineMarkView";
 
    constructor(mark: Mark, element: D3.Selection, viewContext: Context) {
-    super(mark, element, viewContext, LineMarkView.className);
+    super(mark, element, viewContext);
   }
 
   public render() {
