@@ -27,3 +27,21 @@ class ContextNode extends Backbone.Model {
     return this._context;
   }
 }
+
+// Only one view per model please
+class ContextView extends ContextNode {
+  private _propertyFallback: ContextNode;
+
+  constructor (propertyFallback: ContextNode, viewContext: Context, className: string) {
+    super(propertyFallback.name, viewContext, className);
+    this._propertyFallback = propertyFallback;
+  }
+
+  public getProperty(key: string): any {
+    if(this.has(key)){
+      return this.get(key);
+    } else {
+      return this._propertyFallback.get(key);
+    }
+  }
+}
