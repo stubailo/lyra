@@ -10,6 +10,7 @@
 /// <reference path="scale.ts" />
 /// <reference path="mark.ts" />
 /// <reference path="interaction.ts" />
+/// <reference path="area.ts" />
 
 // Model class, should not be exposed as API eventually
 class LyraModel {
@@ -18,6 +19,7 @@ class LyraModel {
   private _scales: Scale[];
   private _marks: Mark[];
   private _interactions: Interaction[];
+  private _areas: Area[];
 
   private _context: Context;
 
@@ -38,6 +40,9 @@ class LyraModel {
         break;
         case "marks":
           this._marks = ContextNode.parseAll(value, context, Mark);
+          break;
+        case "areas": 
+          this._areas = ContextNode.parseAll(value, context, Area);
         break;
       }
     }
@@ -64,7 +69,7 @@ class Lyra {
 
   // DOM elements and such
   private _element: HTMLElement;
-  private _svg: D3.Selection;
+  private _areas;
 
   constructor(spec: any, element: HTMLElement) {
     // Initialize
@@ -74,17 +79,21 @@ class Lyra {
     // Initialize DOM
     this._element = element;
 
-    // The width and height here should be dynamic properties that can be referenced by
-    // scales, and changed during runtime
-    this._svg = d3.select(this._element)
-      .append('svg:svg')
-      .attr('width', 400)
-      .attr('height', 300)
-      .attr('style', "border: 1px solid red");
+    var createAreas = function(area: Area) {
+      var svg = d3.select(this._element).append('svg:svg');
+        for (var property in area.properties) {
+          svg.attr(property, area.get(property));
+        }
+        this._areas[area.name, svg];
+    }
+
+    createAreas = $.proxy(createAreas, this);
+    this._areas = [];
+    _.each(this.model.areas, createAreas);
 
     // Create views for existing model nodes (should potentially be refactored into new method)
     var createMarkView = function(mark: Mark) {
-      var markView = MarkView.createView(mark, this._svg, this._viewContext);
+      var markView = MarkView.createView(mark, this._areas[mark.get("area")], this._viewContext);
       this._markViews.push(markView);
     }
     createMarkView = $.proxy(createMarkView, this);

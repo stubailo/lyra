@@ -17,24 +17,41 @@ $(function() {
         ]
       }
     ],
+    "area": [
+    {
+      "name": "area1",
+      "height": 300,
+      "width": 400,
+      "style": "border: 1px solid red"
+    },
+    "area" : {
+      "name": "area2",
+      "height": 300,
+      "width": 400,
+      "style": "border: 1px solid blue"
+    }
+    ]
     "scales": [
       {
         "name": "x",
         "type": "linear",
         "range": [0, 400],
-        "domain": [0, 20]
+        "domain": [0, 20],
+        "area": "area1"
       },
       {
         "name": "y",
         "type": "linear",
         "range": [300, 0],
-        "domain": [0, 100]
+        "domain": [0, 100],
+        "area": "area1"
       },
       {
         "name": "z",
         "type": "linear",
         "range": [300, 50],
-        "domain": [0, 100]
+        "domain": [0, 100],
+        "area": "area1"
       }
     ],
     "marks": [
@@ -42,6 +59,7 @@ $(function() {
         "name": "symbol",
         "type": "circle",
         "source": "table",
+        "area": "area1",
         "properties": {
           "cx": {
             "value": "x",
@@ -63,6 +81,7 @@ $(function() {
         "name": "symbol2",
         "type": "line",
         "source": "table",
+        "area": "area1",
         "properties": {
           "x": {
             "value": "x",
