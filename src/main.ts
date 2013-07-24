@@ -84,7 +84,7 @@ class Lyra {
 
     // Create views for existing model nodes (should potentially be refactored into new method)
     var createMarkView = function(mark: Mark) {
-      var markView = new MarkView(mark, this._svg, this._viewContext);
+      var markView = MarkView.createView(mark, this._svg, this._viewContext);
       this._markViews.push(markView);
     }
     createMarkView = $.proxy(createMarkView, this);
