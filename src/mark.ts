@@ -13,7 +13,6 @@ class Mark extends ContextNode {
     Each property is a function of one item that specifies that property of an SVG element.
     So for example a circle would have one function for "cx", one for "cy", etc.
   */
-  private _properties: any;
   private _source: DataSet;
   private _type: MarkType;
 
@@ -33,8 +32,8 @@ class Mark extends ContextNode {
   }
 
   private parseProperty(name: string, spec: any) {
-    this._properties;
-    if(this._properties[name]) {
+
+    if(this.get(name)) {
       throw new Error("Duplicate property in mark specification: " + name);
     }
 
@@ -48,8 +47,9 @@ class Mark extends ContextNode {
     // HACKHACK we need real event handling
     scale.on(Scale.EVENT_CHANGE, $.proxy(this.dataSetChanged, this));
 
+    var valueFunc;
     if(typeof(spec["value"]) === "string") {
-      this._properties[name] = function(dataItem){
+      valueFunc = function(dataItem){
         if(dataItem != null && dataItem[spec["value"]]) {
           return scale.apply(dataItem[spec["value"]]);
         } else {
@@ -57,10 +57,11 @@ class Mark extends ContextNode {
         }
       }
     } else {
-      this._properties[name] = function(dataItem){
+      valueFunc = function(dataItem){
         return scale.apply(spec["value"]);
       }
     }
+    this.set(name, valueFunc);
   }
 
   private parseProperties(properties: any): void {
@@ -73,7 +74,6 @@ class Mark extends ContextNode {
     super(spec["name"], context, Mark.className);
 
     this._type = type;
-    this._properties = {};
     this.parseProperties(spec["properties"]);
 
     this._source = context.getNode(DataSet.className, spec["source"]);
@@ -83,10 +83,6 @@ class Mark extends ContextNode {
 
   private dataSetChanged(): void {
     this.trigger(Mark.EVENT_CHANGE);
-  }
-
-  public get properties() {
-    return this._properties;
   }
 
   public get source() {
@@ -149,7 +145,7 @@ class CircleMarkView extends MarkView {
 
 
   public render() {
-    var properties = this.model.properties;
+    var properties = this.model.attributes;
     this.markSelection
       .data(this.model.source.items)
       .enter()
@@ -171,7 +167,7 @@ class LineMarkView extends MarkView {
   }
 
   public render() {
-    var properties = this.model.properties;
+    var properties = this.model.attributes;
 
      this.markSelection
       .data([this.model.source.items])

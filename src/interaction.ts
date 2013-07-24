@@ -46,7 +46,6 @@ class Interaction {
 
 class ClickPrintInteraction extends Interaction {
   private _markView: MarkView;
-  private _properties: any;
 
   constructor(spec: any, modelContext: Context, viewContext: Context) {
     super(modelContext, viewContext);
@@ -73,7 +72,6 @@ class ClickPrintInteraction extends Interaction {
 class PanInteraction extends Interaction {
   private _markView: MarkView;
   private _scale: Scale;
-  private _properties: any;
   private _direction: string;
 
   private _startPosition: number[];
