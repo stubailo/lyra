@@ -25,7 +25,7 @@ class Mark extends ContextNode {
     switch(spec["type"]) {
       case "circle":
         return new Mark(spec, context, MarkType.CIRCLE);
-      case "line" : 
+      case "line" :
         return new Mark(spec, context, MarkType.LINE);
       default:
         throw new Error("Unsupported mark type: " + spec["type"]);
@@ -33,6 +33,7 @@ class Mark extends ContextNode {
   }
 
   private parseProperty(name: string, spec: any) {
+    this._properties;
     if(this._properties[name]) {
       throw new Error("Duplicate property in mark specification: " + name);
     }
@@ -83,8 +84,6 @@ class Mark extends ContextNode {
   }
 
   private dataSetChanged(): void {
-    console.log("triggered change");
-    console.log(this);
     this.trigger(Mark.EVENT_CHANGE);
   }
 
@@ -131,7 +130,7 @@ class MarkView extends ContextNode {
   public render() {
     throw new Error ("This method is abstract, derived mark views must implement this method");
   }
-  
+
   public get model() {
     return this._model;
   }
@@ -175,13 +174,13 @@ class LineMarkView extends MarkView {
 
   public render() {
     var properties = this.model.properties;
-  
+
      this.markSelection
       .data([this.model.source.items])
       .enter()
       .append("svg:path")
       .attr("class", this.model.name);
-      
+
     var line = d3.svg.line();
     for(var key in properties) {
       switch(key) {
