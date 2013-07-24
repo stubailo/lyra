@@ -8,7 +8,7 @@ class Interaction {
 
   public static TYPE_CLICK_PRINT: string = "clickPrint";
   public static TYPE_PAN: string = "pan";
-  public static COLOR_HOVER: string = "colorHover";
+  public static TYPE_COLOR_HOVER: string = "colorHover";
 
   private _modelContext: Context;
   private _viewContext: Context;

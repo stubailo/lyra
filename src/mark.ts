@@ -105,7 +105,7 @@ class MarkView extends ContextNode {
   private _element: D3.Selection; // the canvas
   private _markSelection: D3.Selection;
 
-  public static className : string = "MarkView";
+  public static className: string = "MarkView";
 
   public static EVENT_RENDER: string = "render";
 
