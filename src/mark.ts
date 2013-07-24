@@ -18,8 +18,6 @@ class Mark extends ContextNode {
 
   private static className: string = "Mark";
 
-  public static EVENT_CHANGE: string = "change";
-
   public static parse(spec: any, context: Context) {
     switch(spec["type"]) {
       case "circle":
@@ -82,7 +80,7 @@ class Mark extends ContextNode {
   }
 
   private dataSetChanged(): void {
-    this.trigger(Mark.EVENT_CHANGE);
+    this.trigger("change");
   }
 
   public get source() {
@@ -94,22 +92,22 @@ class Mark extends ContextNode {
   }
 }
 
-class MarkView extends ContextNode {
-  private _model: Mark;
+class MarkView extends ContextView {
   private _element: D3.Selection; // the canvas
   private _markSelection: D3.Selection;
+  private _model: Mark;
 
   public static className: string = "MarkView";
 
   public static EVENT_RENDER: string = "render";
 
   constructor(mark: Mark, element: D3.Selection, viewContext: Context) {
-    super(mark.name, viewContext, MarkView.className);
-    this._model = mark;
+    super(mark, viewContext, MarkView.className);
     this._element = element;
+    this._model = mark;
 
     var render = $.proxy(this.render, this);
-    this._model.on(Mark.EVENT_CHANGE, render);
+    this.model.on("change", render);
   }
 
   public static createView(mark: Mark, element: D3.Selection, viewContext: Context) {
@@ -118,14 +116,6 @@ class MarkView extends ContextNode {
         return new CircleMarkView(mark, element, viewContext);
       case MarkType.LINE:
         return new LineMarkView(mark, element, viewContext);
-    }
-  }
-
-  public getProperty(key) {
-    if(this.has(key)) {
-      return this.get(key);
-    } else {
-      return this.model.get(key);
     }
   }
 
