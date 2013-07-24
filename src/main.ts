@@ -2,11 +2,11 @@
 /// <reference path="../defs/underscore-typed.d.ts" />
 /// <reference path="../defs/backbone.d.ts" />
 /// <reference path="../defs/d3.d.ts" />
-/// <reference path="../defs/q.d.ts" />
+/// <reference path="../defs/Q.d.ts" />
 
 /// <reference path="node.ts" />
 /// <reference path="context.ts" />
-/// <reference path="dataset.ts" />
+/// <reference path="dataSet.ts" />
 /// <reference path="scale.ts" />
 /// <reference path="mark.ts" />
 /// <reference path="interaction.ts" />
