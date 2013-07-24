@@ -25,7 +25,7 @@ class Scale extends ContextNode {
     throw new Error("Apply method not overridden for scale.");
   }
 
-  public invert(input: any): any {
+  public inverse(input: any): any {
     throw new Error("Invert method not overridden for scale.");
   }
 
@@ -51,13 +51,13 @@ class LinearScale extends Scale {
     return this._scale(input);
   }
 
-  public invert(input) {
+  public inverse(input) {
     return this._scale.invert(input);
   }
 
   public pan(pixels) {
     var domain = _.clone(this._scale.domain());
-    var dx = this.invert(pixels) - this.invert(0);
+    var dx = this.inverse(pixels) - this.inverse(0);
     domain[0] -= dx;
     domain[1] -= dx;
     this._scale.domain(domain);
@@ -77,7 +77,7 @@ class IdentityScale extends Scale {
     return input;
   }
 
-  public invert(input) {
+  public inverse(input) {
     return input;
   }
 
