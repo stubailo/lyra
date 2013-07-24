@@ -49,7 +49,7 @@ $(function() {
           },
           "cy": {
             "value": "y",
-            "scale": "y"
+            "scale": "z"
           },
           "r": {
             "value": 5
@@ -70,11 +70,11 @@ $(function() {
           },
           "y": {
             "value": "y",
-            "scale": "y"
+            "scale": "z"
           },
           "interpolate": {
-            "value" : "cardinal"
-          }, 
+            "value" : "linear"
+          },
           "stroke-width" : {
             "value" : 3
           },
