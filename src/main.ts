@@ -70,7 +70,7 @@ class Lyra {
   // Spec-produced objects
   private _markViews: MarkView[];
   private _interactions: Interaction[];
-  private _areas;
+  private _areaViews : AreaView[];
 
   // DOM elements and such
   private _element: HTMLElement;
@@ -86,29 +86,28 @@ class Lyra {
 
     var svg = d3.select(this._element).append('svg:svg');
     
-    // HACK HACK: ghetto translate
-    var padding = 25;
-    var translate = 0;
-    var createAreas = function(area: Area) {  
-        var newArea = svg.append("g").attr("name", area.name)
-        for (var property in area.attributes) {
-          newArea.attr(property, area.get(property));
-        }
-        newArea.attr("transform", "translate(" + translate + ")");
-        translate = translate + area.width;
-        this._areas[area.name] = newArea;
-    }
 
+   
+    var createAreas = function(area: Area) {  
+        this._areaViews.push(new AreaView(area, svg, this._viewContext));
+    }
+ 
     createAreas = $.proxy(createAreas, this);
-    this._areas = {};
+    this._areaViews = [];
     _.each(this.model.areas, createAreas);
 
-  
-
+   // HACK HACK: ghetto translate
+    var padding = 25;
+    var translate = 0;
+    
+    _.each(this._areaViews, function(area: AreaView) {
+      area.selection.attr("x", translate + padding);
+      translate += area.model.width;
+    });
 
     // Create views for existing model nodes (should potentially be refactored into new method)
     var createMarkView = function(mark: Mark) {
-      var markView = MarkView.createView(mark, this._areas[mark.area.name], this._viewContext);
+      var markView = MarkView.createView(mark, this._viewContext.getNode(AreaView.className, mark.area.name).selection, this._viewContext);
       this._markViews.push(markView);
     }
     createMarkView = $.proxy(createMarkView, this);
@@ -136,6 +135,9 @@ class Lyra {
 
   public render() {
     console.log(this.model);
+    _.each(this._areaViews, function(areaView) {
+      areaView.render();
+    });
     _.each(this._markViews, function(markView) {
       markView.render();
     });
