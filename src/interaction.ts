@@ -30,7 +30,7 @@ class Interaction {
         return new ClickPrintInteraction(spec, modelContext, viewContext);
       case Interaction.TYPE_PAN:
         return new PanInteraction(spec, modelContext, viewContext);
-      case Interaction.COLOR_HOVER:
+      case Interaction.TYPE_COLOR_HOVER:
         return new ColorHoverInteraction(spec, modelContext, viewContext);
       default:
         throw new Error("Unsupported interaction type: " + spec["type"]);
@@ -152,7 +152,7 @@ class PanInteraction extends Interaction {
 }
 
 
-class ColorHoverInteraction extends Interaction { 
+class ColorHoverInteraction extends Interaction {
   private _markView: MarkView;
   private _properties: any;
   private _oldColor: string;
@@ -175,7 +175,7 @@ class ColorHoverInteraction extends Interaction {
   }
 
   private onHoverIn(d, i) {
-    //HACK HACK: this does not work with other interactions 
+    //HACK HACK: this does not work with other interactions
     this._markView.markSelection.attr("stroke", "green");
   }
 
