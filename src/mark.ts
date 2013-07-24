@@ -1,3 +1,13 @@
+class MarkType {
+  constructor(private _name: string){}
+
+  public get name(){
+    return this._name;
+  }
+  public static LINE = new MarkType("path");
+  public static CIRCLE = new MarkType("circle");
+}
+
 class Mark extends ContextNode {
   /*
     Each property is a function of one item that specifies that property of an SVG element.
@@ -5,28 +15,29 @@ class Mark extends ContextNode {
   */
   private _properties: any;
   private _source: DataSet;
+  private _type: MarkType;
 
   private static className: string = "Mark";
-
-  public static TYPE_SYMBOL: string = "symbol";
 
   public static EVENT_CHANGE: string = "change";
 
   public static parse(spec: any, context: Context) {
     switch(spec["type"]) {
-      case Mark.TYPE_SYMBOL:
-        return new Mark(spec, context);
+      case "circle":
+        return new Mark(spec, context, MarkType.CIRCLE);
+      case "line" : 
+        return new Mark(spec, context, MarkType.LINE);
       default:
         throw new Error("Unsupported mark type: " + spec["type"]);
     }
   }
+
   private parseProperty(name: string, spec: any) {
     if(this._properties[name]) {
       throw new Error("Duplicate property in mark specification: " + name);
     }
 
     var scale;
-
     if(spec["scale"]) {
       scale = this.context.getNode(Scale.className, spec["scale"]);
     } else {
@@ -39,7 +50,7 @@ class Mark extends ContextNode {
 
     if(typeof(spec["value"]) === "string") {
       this._properties[name] = function(dataItem){
-        if(dataItem[spec["value"]]) {
+        if(dataItem != null && dataItem[spec["value"]]) {
           return scale.apply(dataItem[spec["value"]]);
         } else {
           return scale.apply(spec["value"]);
@@ -58,9 +69,10 @@ class Mark extends ContextNode {
     }
   }
 
-  constructor(spec: any, context: Context) {
+  constructor(spec: any, context: Context, type: MarkType) {
     super(spec["name"], context, Mark.className);
 
+    this._type = type;
     this._properties = {};
     this.parseProperties(spec["properties"]);
 
@@ -83,11 +95,15 @@ class Mark extends ContextNode {
   public get source() {
     return this._source;
   }
+
+  public get type() {
+    return this._type;
+  }
 }
 
 class MarkView extends ContextNode {
   private _model: Mark;
-  private _element: D3.Selection;
+  private _element: D3.Selection; // the canvas
   private _markSelection: D3.Selection;
 
   public static className: string = "MarkView";
@@ -103,15 +119,45 @@ class MarkView extends ContextNode {
     this._model.on(Mark.EVENT_CHANGE, render);
   }
 
+  public static createView(mark: Mark, element: D3.Selection, viewContext: Context) {
+    switch(mark.type) {
+      case MarkType.CIRCLE:
+        return new CircleMarkView(mark, element, viewContext);
+      case MarkType.LINE:
+        return new LineMarkView(mark, element, viewContext);
+    }
+  }
+
   public render() {
-    var properties = this._model.properties;
+    throw new Error ("This method is abstract, derived mark views must implement this method");
+  }
+  
+  public get model() {
+    return this._model;
+  }
+
+  public get element() {
+    return this._element;
+  }
+
+  public get markSelection() {
+    return this._element.selectAll(this.model.type.name + "." + this._model.name);
+  }
+}
+
+class CircleMarkView extends MarkView {
+  constructor(mark: Mark, element: D3.Selection, viewContext: Context) {
+    super(mark, element, viewContext);
+  }
+
+
+  public render() {
+    var properties = this.model.properties;
     this.markSelection
-      .data(this._model.source.items)
+      .data(this.model.source.items)
       .enter()
       .append("circle")
-      .attr("class", this._model.name);
-
-    var props = [];
+      .attr("class", this.model.name);
     for(var key in properties) {
       this.markSelection.attr(key, function(item) {
         return properties[key](item)
@@ -120,12 +166,48 @@ class MarkView extends ContextNode {
 
     this.trigger(MarkView.EVENT_RENDER);
   }
+}
 
-  public get element() {
-    return this._element;
+class LineMarkView extends MarkView {
+   constructor(mark: Mark, element: D3.Selection, viewContext: Context) {
+    super(mark, element, viewContext);
   }
 
-  public get markSelection() {
-    return this._element.selectAll("circle." + this._model.name);
+  public render() {
+    var properties = this.model.properties;
+  
+     this.markSelection
+      .data([this.model.source.items])
+      .enter()
+      .append("svg:path")
+      .attr("class", this.model.name);
+      
+    var line = d3.svg.line();
+    for(var key in properties) {
+      switch(key) {
+        case "x" :
+          line.x(function(item) {
+            return properties["x"](item);
+          });
+          break;
+        case "y" :
+          line.y(function(item) {
+            return properties["y"](item);
+          });
+          break;
+        case "interpolate":
+          line.interpolate(properties["interpolate"]());
+          break;
+        default:
+          this.markSelection.attr(key, function(item) {
+           return properties[key](item)
+          });
+          break;
+      }
+    }
+
+    this.markSelection.attr("d", line);
+
+    this.trigger(MarkView.EVENT_RENDER);
   }
 }
