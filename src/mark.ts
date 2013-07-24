@@ -121,6 +121,14 @@ class MarkView extends ContextNode {
     }
   }
 
+  public getProperty(key) {
+    if(this.has(key)) {
+      return this.get(key);
+    } else {
+      return this.model.get(key);
+    }
+  }
+
   public render() {
     throw new Error ("This method is abstract, derived mark views must implement this method");
   }
@@ -145,15 +153,14 @@ class CircleMarkView extends MarkView {
   }
 
   public render() {
-    var properties = this.model.attributes;
     this.markSelection
       .data(this.model.source.items)
       .enter()
       .append("circle")
       .attr("class", this.model.name);
-    for(var key in properties) {
-      this.markSelection.attr(key, function(item) {
-        return properties[key](item)
+    for(var key in this.model.attributes) {
+      this.markSelection.attr(key, (item) => {
+        return this.getProperty(key)(item);
       });
     }
 
@@ -168,8 +175,6 @@ class LineMarkView extends MarkView {
   }
 
   public render() {
-    var properties = this.model.attributes;
-
      this.markSelection
       .data([this.model.source.items])
       .enter()
@@ -177,24 +182,24 @@ class LineMarkView extends MarkView {
       .attr("class", this.model.name);
 
     var line = d3.svg.line();
-    for(var key in properties) {
+    for(var key in this.model.attributes) {
       switch(key) {
         case "x" :
-          line.x(function(item) {
-            return properties["x"](item);
+          line.x((item) => {
+            return this.getProperty("x")(item);
           });
           break;
         case "y" :
-          line.y(function(item) {
-            return properties["y"](item);
+          line.y((item) => {
+            return this.getProperty("y")(item);
           });
           break;
         case "interpolate":
-          line.interpolate(properties["interpolate"]());
+          line.interpolate(this.getProperty("interpolate")());
           break;
         default:
-          this.markSelection.attr(key, function(item) {
-           return properties[key](item)
+          this.markSelection.attr(key, (item) => {
+           return this.getProperty(key)(item);
           });
           break;
       }
