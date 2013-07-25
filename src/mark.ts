@@ -14,6 +14,7 @@ class Mark extends ContextNode {
     So for example a circle would have one function for "cx", one for "cy", etc.
   */
   private _source: DataSet;
+  private _area: Area;
   private _type: MarkType;
 
   private static className: string = "Mark";
@@ -79,6 +80,7 @@ class Mark extends ContextNode {
     this._type = type;
     this.parseProperties(spec["properties"]);
 
+    this._area = context.getNode(Area.className, spec["area"]);
     this._source = context.getNode(DataSet.className, spec["source"]);
     this._source.on(DataSet.EVENT_CHANGE, $.proxy(this.dataSetChanged, this));
     this.dataSetChanged();
@@ -90,6 +92,10 @@ class Mark extends ContextNode {
 
   public get source() {
     return this._source;
+  }
+
+  public get area() {
+    return this._area;
   }
 
   public get type() {

@@ -17,24 +17,41 @@ $(function() {
         ]
       }
     ],
+    "areas": [
+      {
+        "name": "area1",
+        "height": 300,
+        "width": 400,
+        "style": "border: 1px solid red"
+      },
+      {
+        "name": "area2",
+        "height": 300,
+        "width": 400,
+        "style": "border: 1px solid blue"
+      }
+    ],
     "scales": [
       {
         "name": "x",
         "type": "linear",
         "range": [0, 400],
-        "domain": [0, 20]
+        "domain": [0, 20],
+        "area": "area1"
       },
       {
         "name": "y",
         "type": "linear",
         "range": [300, 0],
-        "domain": [0, 100]
+        "domain": [0, 100],
+        "area": "area1"
       },
       {
         "name": "z",
         "type": "linear",
         "range": [300, 50],
-        "domain": [0, 100]
+        "domain": [0, 100],
+        "area": "area1"
       }
     ],
     "marks": [
@@ -42,6 +59,7 @@ $(function() {
         "name": "symbol",
         "type": "circle",
         "source": "table",
+        "area": "area1",
         "properties": {
           "cx": {
             "value": "x",
@@ -49,7 +67,7 @@ $(function() {
           },
           "cy": {
             "value": "y",
-            "scale": "z"
+            "scale": "y"
           },
           "r": {
             "value": 5
@@ -63,6 +81,7 @@ $(function() {
         "name": "symbol2",
         "type": "line",
         "source": "table",
+        "area": "area2",
         "properties": {
           "x": {
             "value": "x",
@@ -95,19 +114,19 @@ $(function() {
       {
         "type": "pan",
         "scale": "x",
-        "mark": "symbol",
+        "mark": "symbol2",
         "direction": "e"
       },
       {
         "type": "pan",
         "scale": "y",
-        "mark": "symbol",
+        "mark": "symbol2",
         "direction": "s"
       },
       {
         "type": "pan",
         "scale": "z",
-        "mark": "symbol",
+        "mark": "symbol2",
         "direction": "n"
       },
       {
