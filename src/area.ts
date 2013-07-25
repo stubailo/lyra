@@ -4,13 +4,7 @@ class Area extends ContextNode {
 	constructor(spec: any, context: Context) {
 		super(spec["name"], context, Area.className);
 
-		this.parseProperties(spec);
-	}
-
-	private parseProperties(properties: any) {
-		for (var key in properties) {
-			this.set(key, properties[key]);
-		}
+		this.set(spec);
 	}
 
 	public static parse(spec: any, context: Context) {
