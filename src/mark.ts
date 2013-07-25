@@ -46,6 +46,11 @@ class Mark extends ContextNode {
     scale.on(Scale.EVENT_CHANGE, $.proxy(this.dataSetChanged, this));
 
     var valueFunc;
+
+    if(Context.isPropertyReference(spec["value"])) {
+      this.context.getProperty(spec["value"]);
+    }
+
     if(typeof(spec["value"]) === "string") {
       valueFunc = function(dataItem){
         if(dataItem != null && dataItem[spec["value"]]) {

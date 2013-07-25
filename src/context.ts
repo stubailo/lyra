@@ -11,4 +11,16 @@ class Context extends Backbone.Model {
     }
   }
 
+  public static isPropertyReference(obj: any) {
+    var propertyRegex = /^[A-Za-z_\-0-9]+:[A-Za-z_\-0-9]+\.[A-Za-z_\-0-9]+$/;
+    return ((typeof(obj) === "string") && propertyRegex.test(obj));
+  }
+
+  public getProperty(path: string) {
+    // [type, name, propertyName]
+    var list = path.split(/:|\./);
+    var node: ContextNode = this.getNode(list[0], list[1]);
+    var property = node.get(list[2]);
+    console.log(property);
+  }
 }

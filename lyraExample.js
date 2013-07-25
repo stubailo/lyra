@@ -74,7 +74,7 @@ $(function() {
           },
           "interpolate": {
             "value" : "linear"
-          }, 
+          },
           "stroke-width" : {
             "value" : 3
           },
@@ -109,7 +109,7 @@ $(function() {
         "scale": "z",
         "mark": "symbol",
         "direction": "n"
-      }, 
+      },
       {
         "type": "clickPrint",
         "mark": "symbol2"
