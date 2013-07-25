@@ -102,7 +102,7 @@ class Lyra {
     
     _.each(this._areaViews, function(area: AreaView) {
       area.selection.attr("x", translate + padding);
-      translate += area.model.width;
+      translate += area.model.get("width");
     });
 
     // Create views for existing model nodes (should potentially be refactored into new method)

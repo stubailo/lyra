@@ -1,14 +1,8 @@
 class Area extends ContextNode {
 	public static className: string = "Area";
 	
-	private _height: number;
-	private _width: number;
-
 	constructor(spec: any, context: Context) {
 		super(spec["name"], context, Area.className);
-
-		this._height = spec["height"];
-		this._width = spec["width"];
 
 		this.parseProperties(spec);
 	}
@@ -21,14 +15,6 @@ class Area extends ContextNode {
 
 	public static parse(spec: any, context: Context) {
 		return new Area(spec, context);
-	}
-
-	public get height() {
-		return this._height;
-	}
-
-	public get width() {
-		return this._width;
 	}
 }
 
@@ -50,8 +36,8 @@ class AreaView extends ContextView {
 		this._areaSelection.attr("name", this._model.name).append("rect")
 	        .attr("x", 0)
 	        .attr("y", 0)
-	        .attr("width", this._model.width)
-	        .attr("height", this._model.height)
+	        .attr("width", this._model.get("width"))
+	        .attr("height", this._model.get("height"))
 	        .attr("fill", "white");
 
 	    for (var property in this.model.attributes) {
