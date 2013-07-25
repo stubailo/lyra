@@ -59,11 +59,14 @@ class LinearScale extends Scale {
     domain[0] -= dx;
     domain[1] -= dx;
     this._scale.domain(domain);
-    this.trigger(Scale.EVENT_CHANGE);
+
+    this.set({
+      domainBegin: domain[0],
+      domainEnd: domain[1]
+    });
   }
 
   public recalculate(callback) {
-    console.log("recalc called on scale");
     var domain = [this.get("domainBegin"), this.get("domainEnd")];
     var range = [this.get("rangeBegin"), this.get("rangeEnd")];
     this._scale = d3.scale.linear().domain(domain).range(range);

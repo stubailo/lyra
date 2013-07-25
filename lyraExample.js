@@ -149,5 +149,5 @@ $(function() {
   el = $("#container").get(0);
   lyra = new Lyra(spec, el);
 
-  lyra.model.context.getNode("Area", "area1").set("height", 200);
+  lyra.model.context.getNode("Area", "area1").set("height", 100);
 });

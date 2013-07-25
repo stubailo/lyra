@@ -44,8 +44,12 @@ class Mark extends ContextNode {
       scale = new IdentityScale({}, new Context());
     }
 
+
+
     // HACKHACK we need real event handling
-    scale.on(Scale.EVENT_CHANGE, $.proxy(this.dataSetChanged, this));
+    scale.on(ContextNode.EVENT_READY, () => {
+      this.dataSetChanged();
+    });
 
     var valueFunc;
 
