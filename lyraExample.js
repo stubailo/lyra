@@ -36,22 +36,19 @@ $(function() {
         "name": "x",
         "type": "linear",
         "range": [0, 400],
-        "domain": [0, 20],
-        "area": "area1"
+        "domain": [0, 20]
       },
       {
         "name": "y",
         "type": "linear",
         "range": [300, 0],
-        "domain": [0, 100],
-        "area": "area1"
+        "domain": [0, 100]
       },
       {
         "name": "z",
         "type": "linear",
         "range": [300, 50],
-        "domain": [0, 100],
-        "area": "area1"
+        "domain": [0, 100]
       }
     ],
     "marks": [
@@ -137,7 +134,25 @@ $(function() {
         "type" : "colorHover",
         "mark": "symbol2"
       }
-    ]
+    ],
+	"axes": [
+	  {
+		"name": "x",
+		"area": "area1",
+		"scale": "x",
+		"orient": "bottom",
+		"ticks": 5,
+		"location": "bottom"
+	  },
+	  {
+		"name": "y",
+		"area": "area1",
+		"scale": "y",
+		"orient": "left",
+		"ticks": 5,
+		"location": "left"
+	  }
+	]
   }
 
   el = $("#container").get(0);
