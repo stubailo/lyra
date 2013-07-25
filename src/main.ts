@@ -115,7 +115,7 @@ class Lyra {
 
     // Create views for existing model nodes (should potentially be refactored into new method)
     var createAxisView = function(axis: Axis) {
-      var axisView = new AxisView(axis, this._viewContext.getNode(AreaView.className, axis.get("area")).totalSelection, this._viewContext);
+      var axisView = new AxisView(axis, this._viewContext.getNode(AreaView.className, axis.get("area").name).totalSelection, this._viewContext);
       this._axisViews.push(axisView);
     }
     createAxisView = $.proxy(createAxisView, this);

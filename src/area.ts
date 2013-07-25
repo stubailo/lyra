@@ -18,6 +18,7 @@ class AreaView extends ContextView {
 
 	private _totalSelection: D3.Selection;
 	private _graphSelection: D3.Selection;
+	private _background: D3.Selection;
 
 	private _model: Area;
 
@@ -27,15 +28,17 @@ class AreaView extends ContextView {
 		this._model = area;
     	this._totalSelection = element.append("svg");
 		this._graphSelection = this._totalSelection.append("svg");
-		this._graphSelection
+		this._background = this._graphSelection.append("rect");
+
+		this._model.on(ContextNode.EVENT_READY, () => {this.render()});
+ 	}
+
+	public render() {this._graphSelection
 		.attr("x", AreaView.PADDING)
 		.attr("y",  AreaView.PADDING)
 		.attr("width",  this._model.get("width"))
 		.attr("height",  this._model.get("height"));
 
- 	}
-
-	public render() {
 		this._totalSelection.attr("name", this._model.name);
 		for (var property in this.model.attributes) {
 			if (property == "height" || property == "width") {
@@ -46,7 +49,7 @@ class AreaView extends ContextView {
 		}
 
 
-		this._graphSelection.append("rect")
+		this._background
 	        .attr("x", 0)
 	        .attr("y", 0)
 	        .attr("width", this._model.get("width"))

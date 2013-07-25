@@ -92,7 +92,7 @@ $(function() {
           },
           "y": {
             "value": "y",
-            "scale": "z"
+            "scale": "y"
           },
           "interpolate": {
             "value" : "linear"
@@ -136,6 +136,24 @@ $(function() {
         "direction": "n"
       },
       {
+        "type": "pan",
+        "scale": "x",
+        "mark": "symbol",
+        "direction": "e"
+      },
+      {
+        "type": "pan",
+        "scale": "y",
+        "mark": "symbol",
+        "direction": "n"
+      },
+      {
+        "type": "pan",
+        "scale": "z",
+        "mark": "symbol",
+        "direction": "n"
+      },
+      {
         "type": "clickPrint",
         "mark": "symbol2"
       },
@@ -147,16 +165,16 @@ $(function() {
   	"axes": [
   	  {
   		"name": "x",
-  		"area": "area1",
-  		"scale": "x",
+  		"area": "Area:area1",
+  		"scale": "Scale:x",
   		"orient": "bottom",
   		"ticks": 5,
   		"location": "bottom"
   	  },
   	  {
   		"name": "y",
-  		"area": "area1",
-  		"scale": "y",
+  		"area": "Area:area1",
+  		"scale": "Scale:y",
   		"orient": "left",
   		"ticks": 5,
   		"location": "left"
@@ -167,5 +185,5 @@ $(function() {
   el = $("#container").get(0);
   lyra = new Lyra(spec, el);
 
-  lyra.model.context.getNode("Area", "area1").set("height", 100);
+  //lyra.model.context.getNode("Area", "area1").set("height", 100);
 });
