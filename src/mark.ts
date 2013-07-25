@@ -16,6 +16,7 @@ class Mark extends ContextNode {
   private _source: DataSet;
   private _area: Area;
   private _type: MarkType;
+  private _markProperties;
 
   private static className: string = "Mark";
 
@@ -43,12 +44,17 @@ class Mark extends ContextNode {
       scale = new IdentityScale({}, new Context());
     }
 
+
+
     // HACKHACK we need real event handling
-    scale.on(Scale.EVENT_CHANGE, $.proxy(this.dataSetChanged, this));
+    scale.on(ContextNode.EVENT_READY, () => {
+      this.dataSetChanged();
+    });
 
     var valueFunc;
+
     if(typeof(spec["value"]) === "string") {
-      valueFunc = function(dataItem){
+      valueFunc = function(dataItem) {
         if(dataItem != null && dataItem[spec["value"]]) {
           return scale.apply(dataItem[spec["value"]]);
         } else {
@@ -61,19 +67,22 @@ class Mark extends ContextNode {
       }
     }
     this.set(name, valueFunc);
+    this._markProperties.push(name);
   }
 
-  private parseProperties(properties: any): void {
+  private parseMarkProperties(properties: any): void {
+    this._markProperties = [];
+
     for(var key in properties) {
       this.parseProperty(key, properties[key]);
     }
   }
 
   constructor(spec: any, context: Context, type: MarkType) {
-    super(spec["name"], context, Mark.className);
+    super(spec, context, Mark.className);
 
     this._type = type;
-    this.parseProperties(spec["properties"]);
+    this.parseMarkProperties(spec["properties"]);
 
     this._area = context.getNode(Area.className, spec["area"]);
     this._source = context.getNode(DataSet.className, spec["source"]);
@@ -96,6 +105,10 @@ class Mark extends ContextNode {
   public get type() {
     return this._type;
   }
+
+  public get markProperties() {
+    return this._markProperties;
+  }
 }
 
 class MarkView extends ContextView {
@@ -114,6 +127,7 @@ class MarkView extends ContextView {
 
     var render = $.proxy(this.render, this);
     this.model.on("change", render);
+    this.on("change", render);
   }
 
   public static createView(mark: Mark, element: D3.Selection, viewContext: Context) {
@@ -154,11 +168,11 @@ class CircleMarkView extends MarkView {
       .enter()
       .append("circle")
       .attr("class", this.model.name);
-    for(var key in this.model.attributes) {
+    _.each(this.model.markProperties, (key) => {
       this.markSelection.attr(key, (item) => {
         return this.getProperty(key)(item);
       });
-    }
+    });
 
     this.trigger(MarkView.EVENT_RENDER);
   }
@@ -178,7 +192,7 @@ class LineMarkView extends MarkView {
       .attr("class", this.model.name);
 
     var line = d3.svg.line();
-    for(var key in this.model.attributes) {
+    _.each(this.model.markProperties, (key) => {
       switch(key) {
         case "x" :
           line.x((item) => {
@@ -199,7 +213,7 @@ class LineMarkView extends MarkView {
           });
           break;
       }
-    }
+    });
 
     this.markSelection.attr("d", line);
 

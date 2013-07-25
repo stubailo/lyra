@@ -1,10 +1,8 @@
 class Area extends ContextNode {
 	public static className: string = "Area";
-	
-	constructor(spec: any, context: Context) {
-		super(spec["name"], context, Area.className);
 
-		this.set(spec);
+	constructor(spec: any, context: Context) {
+		super(spec, context, Area.className);
 	}
 
 	public static parse(spec: any, context: Context) {
@@ -15,27 +13,32 @@ class Area extends ContextNode {
 class AreaView extends ContextView {
 	public static className: string = "AreaView";
 	public static EVENT_RENDER: string = "render";
+
 	public static PADDING: number = 35;
-	
+
 	private _totalSelection: D3.Selection;
 	private _graphSelection: D3.Selection;
+	private _background: D3.Selection;
+
 	private _model: Area;
 
   	constructor(area: Area, element: D3.Selection, viewContext: Context) {
     	super(area, viewContext, AreaView.className);
-		
+
 		this._model = area;
     	this._totalSelection = element.append("svg");
 		this._graphSelection = this._totalSelection.append("svg");
-		this._graphSelection
+		this._background = this._graphSelection.append("rect");
+
+		this._model.on(ContextNode.EVENT_READY, () => {this.render()});
+ 	}
+
+	public render() {this._graphSelection
 		.attr("x", AreaView.PADDING)
 		.attr("y",  AreaView.PADDING)
 		.attr("width",  this._model.get("width"))
 		.attr("height",  this._model.get("height"));
-    	
- 	}
-	
-	public render() {
+
 		this._totalSelection.attr("name", this._model.name);
 		for (var property in this.model.attributes) {
 			if (property == "height" || property == "width") {
@@ -44,9 +47,9 @@ class AreaView extends ContextView {
 			  this._totalSelection.attr(property, this.getProperty(property) + AreaView.PADDING * 2);
 			}
 		}
-		
-	
-		this._graphSelection.append("rect")
+
+
+		this._background
 	        .attr("x", 0)
 	        .attr("y", 0)
 	        .attr("width", this._model.get("width"))
@@ -59,7 +62,7 @@ class AreaView extends ContextView {
 	public get graphSelection() {
 		return this._graphSelection;
 	}
-	
+
 	public get totalSelection() {
 		return this._totalSelection;
 	}
@@ -68,5 +71,5 @@ class AreaView extends ContextView {
 		return this._model;
 	}
 
-	
+
 }

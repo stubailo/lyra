@@ -8,7 +8,7 @@ class Scale extends ContextNode {
   }
 
   constructor(spec: any, context: Context) {
-    super(spec["name"], context, Scale.className);
+    super(spec, context, Scale.className);
   }
 
   public static parse(spec: any, context: Context) : Scale {
@@ -32,9 +32,9 @@ class Scale extends ContextNode {
   public pan(pixels: number) {
     throw new Error("Pan method not overridden for scale.");
   }
-  
-   public get scaleRepresentation() {
-	 throw new Error("Get scale not overridden for scale.");
+
+  public get scaleRepresentation() {
+    throw new Error("Get scale not overridden for scale.");
   }
 }
 
@@ -47,16 +47,14 @@ class LinearScale extends Scale {
 
   constructor(spec: any, context: Context) {
     super(spec, context);
-
-    this._scale = d3.scale.linear().domain(spec["domain"]).range(spec["range"]);
   }
 
   public apply(input) {
     return this._scale(input);
   }
-  
+
   public get scaleRepresentation() {
-	return this._scale;
+    return this._scale;
   }
 
   public inverse(input) {
@@ -69,7 +67,18 @@ class LinearScale extends Scale {
     domain[0] -= dx;
     domain[1] -= dx;
     this._scale.domain(domain);
-    this.trigger(Scale.EVENT_CHANGE);
+
+    this.set({
+      domainBegin: domain[0],
+      domainEnd: domain[1]
+    });
+  }
+
+  public recalculate(callback) {
+    var domain = [this.get("domainBegin"), this.get("domainEnd")];
+    var range = [this.get("rangeBegin"), this.get("rangeEnd")];
+    this._scale = d3.scale.linear().domain(domain).range(range);
+    callback();
   }
 }
 

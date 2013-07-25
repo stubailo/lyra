@@ -43,10 +43,10 @@ class LyraModel {
         case "marks":
           this._marks = ContextNode.parseAll(value, context, Mark);
           break;
-		case "axes":
+		    case "axes":
           this._axis = ContextNode.parseAll(value, context, Axis);
-          break;
-        case "areas": 
+        break;
+        case "areas":
           this._areas = ContextNode.parseAll(value, context, Area);
         break;
       }
@@ -56,7 +56,7 @@ class LyraModel {
   public get marks(): Mark[] {
     return this._marks;
   }
-  
+
   public get axis(): Axis[] {
     return this._axis;
   }
@@ -84,7 +84,7 @@ class Lyra {
 
   // DOM elements and such
   private _element: HTMLElement;
-  
+
 
   constructor(spec: any, element: HTMLElement) {
     // Initialize
@@ -95,34 +95,34 @@ class Lyra {
     this._element = element;
 
     var svg = d3.select(this._element).append('svg:svg');
-    
-   // Creates the view for areas
-    var createAreas = function(area: Area) {  
+
+    // Creates the view for areas
+    var createAreas = function(area: Area) {
         this._areaViews.push(new AreaView(area, svg, this._viewContext));
     }
- 
+
     createAreas = $.proxy(createAreas, this);
     this._areaViews = [];
     _.each(this.model.areas, createAreas);
 
-   // HACK HACK: ghetto translate
+    // HACK HACK: ghetto translate
     var translate = 0;
-    
+
     _.each(this._areaViews, function(area: AreaView) {
       area.totalSelection.attr("x", translate);
       translate += area.model.get("width") + 3 * AreaView.PADDING;
     });
-	
-	// Create views for existing model nodes (should potentially be refactored into new method)
+
+    // Create views for existing model nodes (should potentially be refactored into new method)
     var createAxisView = function(axis: Axis) {
-      var axisView = new AxisView(axis, this._viewContext.getNode(AreaView.className, axis.get("area")).totalSelection, this._viewContext);
+      var axisView = new AxisView(axis, this._viewContext.getNode(AreaView.className, axis.get("area").name).totalSelection, this._viewContext);
       this._axisViews.push(axisView);
     }
     createAxisView = $.proxy(createAxisView, this);
 
     this._axisViews = [];
     _.each(this.model.axis, createAxisView);
-	
+
     // Create views for existing model nodes (should potentially be refactored into new method)
     var createMarkView = function(mark: Mark) {
       var markView = MarkView.createView(mark, this._viewContext.getNode(AreaView.className, mark.area.name).graphSelection, this._viewContext);
@@ -152,11 +152,10 @@ class Lyra {
   }
 
   public render() {
-    console.log(this.model);
     _.each(this._areaViews, function(areaView) {
       areaView.render();
     });
-	 _.each(this._axisViews, function(axisView) {
+    _.each(this._axisViews, function(axisView) {
       axisView.render();
     });
     _.each(this._markViews, function(markView) {

@@ -11,4 +11,38 @@ class Context extends Backbone.Model {
     }
   }
 
+  public static isPropertyReference(obj: any) {
+    var propertyRegex = /^[A-Za-z_\-0-9]+:[A-Za-z_\-0-9]+\.[A-Za-z_\-0-9]+$/;
+    return ((typeof(obj) === "string") && propertyRegex.test(obj));
+  }
+
+  public static isObjectReference(obj: any) {
+    var propertyRegex = /^[A-Za-z_\-0-9]+:[A-Za-z_\-0-9]+$/;
+    return ((typeof(obj) === "string") && propertyRegex.test(obj));
+  }
+
+  public getPropertyFunction(path: string) {
+    // [type, name, propertyName]
+    var list = path.split(/:|\./);
+    var node: ContextNode = this.getNode(list[0], list[1]);
+
+    var key = list[2];
+
+    return () => {
+      return node.get(key);
+    }
+  }
+
+  public getObject(path: string) {
+    // [type, name, propertyName]
+    var list = path.split(/:|\./);
+    return this.getNode(list[0], list[1]);
+  }
+
+  public addPropertyListener(path: string, listener) {
+    var list = path.split(/:|\./);
+    var node: ContextNode = this.getNode(list[0], list[1]);
+    var key = list[2];
+    node.on("change:" + key, listener);
+  }
 }
