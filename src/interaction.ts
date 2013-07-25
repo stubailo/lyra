@@ -183,10 +183,11 @@ class ColorHoverInteraction extends Interaction {
   }
 
   private onHoverIn(d, i) {
-    this._markView.markSelection.attr("stroke", "green");
+    this._markView.set("stroke", () => {return "green"});
+    this._markView.trigger("change:stroke");
   }
 
   private onHoverOut(d, i) {
-    this._markView.render();
+    this._markView.set("stroke", null);
   }
 }

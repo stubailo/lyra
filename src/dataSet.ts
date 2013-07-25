@@ -13,21 +13,20 @@ class DataSet extends ContextNode {
     return DataSet._className;
   }
 
-  constructor(name: string, context: Context) {
-    super(name, context, DataSet.className);
+  constructor(spec: any, context: Context) {
+    super(spec, context, DataSet.className);
   }
-  
+
   public static parse(spec: any, context: Context) {
-    var output = new DataSet(spec["name"], context);
-    output.items = spec["items"]; // validate this input
-    return output;
+    return new DataSet(spec, context);
   }
+
   get items(): any[] {
-    return _.clone(this._items);
+    return _.clone(this.get("items"));
   }
 
   set items(items: any[]) {
-    this._items = _.clone(items);
+    this.set("items", _.clone(items));
     this.trigger(DataSet.EVENT_CHANGE);
   }
 }

@@ -1,10 +1,8 @@
 class Area extends ContextNode {
 	public static className: string = "Area";
-	
-	constructor(spec: any, context: Context) {
-		super(spec["name"], context, Area.className);
 
-		this.set(spec);
+	constructor(spec: any, context: Context) {
+		super(spec, context, Area.className);
 	}
 
 	public static parse(spec: any, context: Context) {
@@ -15,7 +13,7 @@ class Area extends ContextNode {
 class AreaView extends ContextView {
 	public static className: string = "AreaView";
 	public static EVENT_RENDER: string = "render";
-	
+
 	private _areaSelection: D3.Selection;
 	private _model: Area;
 
@@ -49,5 +47,5 @@ class AreaView extends ContextView {
 		return this._model;
 	}
 
-	
+
 }

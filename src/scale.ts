@@ -8,7 +8,7 @@ class Scale extends ContextNode {
   }
 
   constructor(spec: any, context: Context) {
-    super(spec["name"], context, Scale.className);
+    super(spec, context, Scale.className);
   }
 
   public static parse(spec: any, context: Context) : Scale {
@@ -43,8 +43,6 @@ class LinearScale extends Scale {
 
   constructor(spec: any, context: Context) {
     super(spec, context);
-
-    this._scale = d3.scale.linear().domain(spec["domain"]).range(spec["range"]);
   }
 
   public apply(input) {
@@ -62,6 +60,14 @@ class LinearScale extends Scale {
     domain[1] -= dx;
     this._scale.domain(domain);
     this.trigger(Scale.EVENT_CHANGE);
+  }
+
+  public recalculate(callback) {
+    console.log("recalc called on scale");
+    var domain = [this.get("domainBegin"), this.get("domainEnd")];
+    var range = [this.get("rangeBegin"), this.get("rangeEnd")];
+    this._scale = d3.scale.linear().domain(domain).range(range);
+    callback();
   }
 }
 

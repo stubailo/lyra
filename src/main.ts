@@ -41,7 +41,7 @@ class LyraModel {
         case "marks":
           this._marks = ContextNode.parseAll(value, context, Mark);
           break;
-        case "areas": 
+        case "areas":
           this._areas = ContextNode.parseAll(value, context, Area);
         break;
       }
@@ -74,7 +74,7 @@ class Lyra {
 
   // DOM elements and such
   private _element: HTMLElement;
-  
+
 
   constructor(spec: any, element: HTMLElement) {
     // Initialize
@@ -85,13 +85,13 @@ class Lyra {
     this._element = element;
 
     var svg = d3.select(this._element).append('svg:svg');
-    
 
-   
-    var createAreas = function(area: Area) {  
+
+
+    var createAreas = function(area: Area) {
         this._areaViews.push(new AreaView(area, svg, this._viewContext));
     }
- 
+
     createAreas = $.proxy(createAreas, this);
     this._areaViews = [];
     _.each(this.model.areas, createAreas);
@@ -99,7 +99,7 @@ class Lyra {
    // HACK HACK: ghetto translate
     var padding = 25;
     var translate = 0;
-    
+
     _.each(this._areaViews, function(area: AreaView) {
       area.selection.attr("x", translate + padding);
       translate += area.model.get("width");
@@ -134,7 +134,6 @@ class Lyra {
   }
 
   public render() {
-    console.log(this.model);
     _.each(this._areaViews, function(areaView) {
       areaView.render();
     });

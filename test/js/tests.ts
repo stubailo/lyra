@@ -24,13 +24,19 @@
     });
   });
 
-  describe("Scale", function() {
-    it("Correctly identifies and applies linear scale", function() {
-      var scale: Scale = Scale.parse({"type": "linear", "domain": [0,5], "range": [0, 100]}, new Context());
+  describe("Property Events", function() {
+    it("Correctly fires events and shit", function() {
+      var context: Context = new Context();
 
-      assert.equal(scale.apply(0), 0);
-      assert.equal(scale.apply(1), 20);
-      assert.equal(scale.apply(5), 100);
+      var node1 = new ContextNode({name: "node1", prop: 3}, context, "Node");
+
+      var node2 = new ContextNode({name: "node2", prop: "Node:node1.prop"}, context, "Node");
+
+      assert.equal(node1.get("prop"), node2.get("prop"));
+
+      node1.set("prop", 4);
+
+      assert.equal(node1.get("prop"), node2.get("prop"));
     });
   });
 })();
