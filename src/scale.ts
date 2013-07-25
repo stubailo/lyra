@@ -32,6 +32,10 @@ class Scale extends ContextNode {
   public pan(pixels: number) {
     throw new Error("Pan method not overridden for scale.");
   }
+  
+   public get scaleRepresentation() {
+	 throw new Error("Get scale not overridden for scale.");
+  }
 }
 
 /*
@@ -47,6 +51,10 @@ class LinearScale extends Scale {
 
   public apply(input) {
     return this._scale(input);
+  }
+  
+  public get scaleRepresentation() {
+	return this._scale;
   }
 
   public inverse(input) {

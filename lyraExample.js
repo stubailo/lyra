@@ -143,7 +143,25 @@ $(function() {
         "type" : "colorHover",
         "mark": "symbol2"
       }
-    ]
+    ],
+  	"axes": [
+  	  {
+  		"name": "x",
+  		"area": "area1",
+  		"scale": "x",
+  		"orient": "bottom",
+  		"ticks": 5,
+  		"location": "bottom"
+  	  },
+  	  {
+  		"name": "y",
+  		"area": "area1",
+  		"scale": "y",
+  		"orient": "left",
+  		"ticks": 5,
+  		"location": "left"
+  	  }
+  	]
   }
 
   el = $("#container").get(0);
