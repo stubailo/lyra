@@ -109,7 +109,7 @@ class Lyra {
 
     _.each(this._areaViews, function(area: AreaView) {
       area.totalSelection.attr("x", translate);
-      translate += area.model.get("width") + 4 *  AxisView.AXIS_WIDTH;
+      translate += area.model.get("width") + 90;
     });
 
     // Create views for existing model nodes (should potentially be refactored into new method)
