@@ -160,6 +160,11 @@ $(function() {
       {
         "type" : "colorHover",
         "mark": "symbol2"
+      },
+      {
+        "type": "zoom",
+        "area": "area1",
+        "scale": "x"
       }
     ],
   	"axes": [

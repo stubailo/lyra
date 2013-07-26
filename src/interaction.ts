@@ -191,3 +191,40 @@ class ColorHoverInteraction extends Interaction {
     this._markView.set("stroke", null);
   }
 }
+
+class ZoomInteraction extends Interaction {
+  private _areaView: AreaView;
+  private _scale: Scale;
+  private _properties: any;
+
+  private static ZOOM_FACTOR: number = 0.01;
+  // TODO : separate horizontal and vertical zoom factors?
+
+
+  constructor(spec: any, modelContext: Context, viewContext: Context, id: number) {
+    super(modelContext, viewContext, id);
+    if (spec["area"]){
+      this._areaView = this.viewContext.getNode(AreaView.className, spec["area"]);
+    } else {
+      throw new Error("No axes specified in ZoomInteraction.");
+    }
+
+    if (spec["scale"]) {
+      this._scale = this.modelContext.getNode(Scale.className, spec["scale"]);
+    } else {
+      throw new Error("No scale specified for ZoomInteraction");
+    }
+
+    this.addEvents();
+  }
+
+  private addEvents() {
+    $(this._areaView.graphSelection[0][0]).mousewheel($.proxy(this.onZoom, this));
+  }
+
+  private onZoom(e, delta, deltaX, deltaY) {
+    console.log("Zooming!");
+    this._scale.zoom(1 + ((deltaY < 0) ? 1 : -1) * ZoomInteraction.ZOOM_FACTOR);
+    return false;
+  }
+}
