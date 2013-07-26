@@ -134,6 +134,7 @@ class Lyra {
     this._areaViews = [];
     _.each(this.model.areas, (area: Area) => {
       this._areaViews.push(new AreaView(area, this._svg, this._viewContext, AreaView.className));
+
     });
  
     this._markViews = [];
