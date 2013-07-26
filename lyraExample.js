@@ -174,7 +174,7 @@ $(function() {
   		"area": "Area:area1",
   		"scale": "Scale:x",
   		"orient": "bottom",
-  		"ticks": 9,
+  		"ticks": 20,
   		"location": "bottom",
       "gridline": "lightgray"
   	  },
@@ -183,7 +183,7 @@ $(function() {
   		"area": "Area:area1",
   		"scale": "Scale:y",
   		"orient": "left",
-  		"ticks": 17,
+  		"ticks": 20,
   		"location": "left",
       "gridline": "lightgray"
   	  },
@@ -192,7 +192,7 @@ $(function() {
       "area": "Area:area1",
       "scale": "Scale:y",
       "orient": "left",
-      "ticks": 17,
+      "ticks": 25,
       "location": "left"
       },
       {
@@ -202,6 +202,24 @@ $(function() {
       "orient": "right",
       "ticks": 17,
       "location": "right"
+      },
+      {
+      "name": "x",
+      "area": "Area:area2",
+      "scale": "Scale:x",
+      "orient": "bottom",
+      "ticks": 20,
+      "location": "bottom",
+      "gridline": "lightgray"
+      },
+      {
+      "name": "y1",
+      "area": "Area:area2",
+      "scale": "Scale:y",
+      "orient": "left",
+      "ticks": 20,
+      "location": "left",
+      "gridline": "lightgray"
       }
   	]
   }

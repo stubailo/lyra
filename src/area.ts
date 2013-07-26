@@ -55,17 +55,17 @@ class AreaView extends ContextView {
 	public render() {
     var axisInfo = this.renderAxis();
     this._graphSelection
-      .attr("x", axisInfo["left"] * AxisView.AXIS_WIDTH)
-      .attr("y",  axisInfo["top"] * AxisView.AXIS_WIDTH)
+      .attr("x", axisInfo["left"])
+      .attr("y",  axisInfo["top"])
       .attr("width",  this._model.get("width"))
       .attr("height",  this._model.get("height"));
 
     this._totalSelection.attr("name", this._model.name);
     for (var property in this.model.attributes) {
       if (property == "height") {
-        this._totalSelection.attr(property, this.getProperty(property) + AxisView.AXIS_WIDTH * axisInfo["x"]);
+        this._totalSelection.attr(property, this.getProperty(property) + axisInfo["x"]);
       } else if (property == "width") {
-        this._totalSelection.attr(property, this.getProperty(property) + AxisView.AXIS_WIDTH * axisInfo["y"]);
+        this._totalSelection.attr(property, this.getProperty(property) + axisInfo["y"]);
       } else {
         this._totalSelection.attr(property, this.getProperty(property));
       }
@@ -87,14 +87,14 @@ class AreaView extends ContextView {
 		_.each(this._model.axes, (axis: Axis) => {
 			switch(axis.get("location")) {
 				case "left":
-					axisInfo["left"]++;
+					axisInfo["left"] += axis.get(Axis.AXIS_WIDTH);
 				case "right":
-					axisInfo["y"]++;
+					axisInfo["y"] += axis.get(Axis.AXIS_WIDTH);
 					break;
 				case "top":
-					axisInfo["top"]++;
+					axisInfo["top"] += axis.get(Axis.AXIS_WIDTH);
 				case "bottom":
-					axisInfo["x"]++;
+					axisInfo["x"] += axis.get(Axis.AXIS_WIDTH);
 					break;
 				default:
 					throw new Error("Unknown axis location: " + axis.get("location"));
@@ -106,20 +106,20 @@ class AreaView extends ContextView {
     _.each(this._axisViews, (axisView: AxisView) => {
       switch (axisView.model.get("location")) {
         case "left":
-          axisView.setOffsets(numLeft * AxisView.AXIS_WIDTH, axisInfo["top"] *  AxisView.AXIS_WIDTH);
-          numLeft++;
+          axisView.setOffsets(numLeft, axisInfo["top"]);
+          numLeft += axisView.model.get(Axis.AXIS_WIDTH);
           break;
         case "right":
-          axisView.setOffsets((axisInfo["left"] + numRight) *  AxisView.AXIS_WIDTH, axisInfo["top"] *  AxisView.AXIS_WIDTH);
-          numRight++;
+          axisView.setOffsets((axisInfo["left"] + numRight), axisInfo["top"]);
+          numRight += axisView.model.get(Axis.AXIS_WIDTH);;
           break;
         case "top":
-          axisView.setOffsets(axisInfo["left"] *  AxisView.AXIS_WIDTH, numTop *  AxisView.AXIS_WIDTH);
-          numTop++;
+          axisView.setOffsets(axisInfo["left"], numTop);
+          numTop += axisView.model.get(Axis.AXIS_WIDTH);;
           break;
         case "bottom":
-          axisView.setOffsets(axisInfo["left"] *  AxisView.AXIS_WIDTH, (axisInfo["top"] + numBottom) *  AxisView.AXIS_WIDTH);
-          numTop++;
+          axisView.setOffsets(axisInfo["left"], axisInfo["top"] + numBottom);
+          numTop += axisView.model.get(Axis.AXIS_WIDTH);
           break;
         }
     });
