@@ -164,7 +164,8 @@ $(function() {
       {
         "type": "zoom",
         "area": "area1",
-        "scale": "x"
+        "scale": "x",
+        "zoomFactor": 0.01
       }
     ],
   	"axes": [
