@@ -67,7 +67,6 @@ class Context extends Backbone.Model {
   public getPropertyFunction(className: string, nodeName: string, property: string): any;
   public getPropertyFunction(argumentOrClassName: string, nodeName?: string, property?: string): any {
     // Create argument depending on which method is called
-    debugger
     var argument: string = argumentOrClassName;
     if (nodeName) {
       argument = argumentOrClassName + ":" + nodeName + "." + property;
