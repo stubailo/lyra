@@ -37,17 +37,50 @@ class AxisView extends ContextView {
   		.attr("class", AxisView.className)
   		.attr("name", this.model.name);
 
+      if (this._model.get("gridline")) {
+        var gridSvg = this._element
+          .append("g")
+          .attr("class", "grid")
+      }
+
     this.render = () => {
+      var curScale = this._model.get("scale").scaleRepresentation;
+      var areaHeight = this._model.get("area").get("height");
+      var areaWidth =  this._model.get("area").get("width");
+
       this._axis
-        .scale(this._model.get("scale").scaleRepresentation)
+        .scale(curScale)
         .orient(this._model.get("orient"))
         .ticks(this._model.get("ticks"));
 
       axisSvg.call(this._axis);
 
+      if (gridSvg) {
+        var gridSelection = gridSvg.selectAll("path." + this._model.name)
+          .data(curScale.ticks(this._model.get("ticks")));
+          gridSelection.enter()
+          .append("path")
+          .attr("class", this._model.name)
+          .attr("stroke", this._model.get("gridline"));
+
+        if (this._model.get("location") == "bottom" || this._model.get("location") == "top") {
+          gridSelection.attr("d", (d) => {
+            return "M " + (curScale(d) + AreaView.PADDING) + " " + AreaView.PADDING + 
+              " L" + (curScale(d) + AreaView.PADDING)  + " " + (areaHeight + AreaView.PADDING);
+          });
+        } else {
+          gridSelection.attr("d", (d) => {
+            return "M " + AreaView.PADDING + " " + (curScale(d) + AreaView.PADDING) + 
+              " L" + (areaWidth + AreaView.PADDING)  + " " + (curScale(d) + AreaView.PADDING);
+            });
+        }
+
+          gridSelection.exit().remove();
+      }
+
   		switch(this._model.get("location")) {
   			case "bottom":
-  			  axisSvg.attr("transform", "translate(" + AreaView.PADDING + "," + (AreaView.PADDING + this._model.get("area").get("height")) +")");
+  			  axisSvg.attr("transform", "translate(" + AreaView.PADDING + "," + (AreaView.PADDING + areaHeight) +")");
   			break;
   			case "top":
   			  axisSvg.attr("transform", "translate(" + AreaView.PADDING + "," + AreaView.PADDING  +")");
@@ -56,7 +89,7 @@ class AxisView extends ContextView {
   			  axisSvg.attr("transform", "translate(" + AreaView.PADDING + "," + AreaView.PADDING  +")");
   			break;
   			case "right":
-  			  axisSvg.attr("transform", "translate(" +(AreaView.PADDING + this._model.get("area").get("width")) +"," + AreaView.PADDING +  ")");
+  			  axisSvg.attr("transform", "translate(" +(AreaView.PADDING + areaWidth) +"," + AreaView.PADDING +  ")");
   			break;
   			default:
   		}
