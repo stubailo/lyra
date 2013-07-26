@@ -163,12 +163,12 @@ $(function() {
       },
       {
         "type": "zoom",
-        "mark": "symbol", // hacky way to access the scales -- will change when we get axes/area
+        "area": "area1",
         "scale": "x"
       },
       {
         "type": "zoom",
-        "mark": "symobl",
+        "area": "area2",
         "scale": "y"
       }
     ],
