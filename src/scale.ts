@@ -80,8 +80,7 @@ class LinearScale extends Scale {
 
   public zoom(pixels) {
     var domain = _.clone(this._scale.domain());
-    var dx = this.inverse(pixels) - this.inverse(0);
-    // TODO : finish this stuff...
+    var dx = 
   }
 
   public recalculate(callback) {
