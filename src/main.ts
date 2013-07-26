@@ -19,7 +19,6 @@ class LyraModel {
   private _dataSets: DataSet[];
   private _scales: Scale[];
   private _marks: Mark[];
-  private _axis: Axis[];
   private _interactions: Interaction[];
   private _areas: Area[];
 
@@ -29,6 +28,7 @@ class LyraModel {
     // Initialize
     this._context = new Context();
 
+    var axisArray = [];
     // Parse all of the models
     for(var key in spec) {
       var value = spec[key];
@@ -44,23 +44,23 @@ class LyraModel {
           this._marks = ContextNode.parseAll(value, context, Mark);
           break;
 		    case "axes":
-          this._axis = ContextNode.parseAll(value, context, Axis);
+          axisArray = ContextNode.parseAll(value, context, Axis);
         break;
         case "areas":
           this._areas = ContextNode.parseAll(value, context, Area);
         break;
       }
     }
+
+    _.each(axisArray, (axis: Axis) => {
+      axis.get("area").addAxis(axis);
+    });
   }
 
   public get marks(): Mark[] {
     return this._marks;
   }
-
-  public get axis(): Axis[] {
-    return this._axis;
-  }
-
+  
   public get areas(): Area[] {
     return this._areas;
   }
@@ -78,7 +78,6 @@ class Lyra {
 
   // Spec-produced objects
   private _markViews: MarkView[];
-  private _axisViews: AxisView[];
   private _interactions: Interaction[];
   private _areaViews : AreaView[];
 
@@ -110,18 +109,8 @@ class Lyra {
 
     _.each(this._areaViews, function(area: AreaView) {
       area.totalSelection.attr("x", translate);
-      translate += area.model.get("width") + 3 * AreaView.PADDING;
+      translate += area.model.get("width") + 4 *  AxisView.AXIS_WIDTH;
     });
-
-    // Create views for existing model nodes (should potentially be refactored into new method)
-    var createAxisView = function(axis: Axis) {
-      var axisView = new AxisView(axis, this._viewContext.getNode(AreaView.className, axis.get("area").name).totalSelection, this._viewContext);
-      this._axisViews.push(axisView);
-    }
-    createAxisView = $.proxy(createAxisView, this);
-
-    this._axisViews = [];
-    _.each(this.model.axis, createAxisView);
 
     // Create views for existing model nodes (should potentially be refactored into new method)
     var createMarkView = function(mark: Mark) {
@@ -154,9 +143,6 @@ class Lyra {
   public render() {
     _.each(this._areaViews, function(areaView) {
       areaView.render();
-    });
-    _.each(this._axisViews, function(axisView) {
-      axisView.render();
     });
     _.each(this._markViews, function(markView) {
       markView.render();

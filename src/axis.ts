@@ -20,10 +20,13 @@ class AxisView extends ContextView {
   private _axisSelection: D3.Selection;
   private _model: Axis;
   private _axis;
+  private _xOffset: number;
+  private _yOffset: number;
   public render;
 
   public static className: string = "AxisView";
   public static EVENT_RENDER: string = "render";
+  public static AXIS_WIDTH: number = 35;
 
   constructor(axis: Axis, element: D3.Selection, viewContext: Context) {
     super(axis, viewContext, AxisView.className);
@@ -31,6 +34,8 @@ class AxisView extends ContextView {
     this._element = element;
     this._model = axis;
   	this._axis = d3.svg.axis()
+    this._xOffset = 0;
+    this._yOffset = 0;
 
 	  var axisSvg = this._element
 	    .append("g")
@@ -38,7 +43,7 @@ class AxisView extends ContextView {
   		.attr("name", this.model.name);
 
       if (this._model.get("gridline")) {
-        var gridSvg = this._element
+        var gridSvg = this._element.selectAll("svg.graph")
           .append("g")
           .attr("class", "grid")
       }
@@ -47,7 +52,6 @@ class AxisView extends ContextView {
       var curScale = this._model.get("scale").scaleRepresentation;
       var areaHeight = this._model.get("area").get("height");
       var areaWidth =  this._model.get("area").get("width");
-
       this._axis
         .scale(curScale)
         .orient(this._model.get("orient"))
@@ -65,13 +69,11 @@ class AxisView extends ContextView {
 
         if (this._model.get("location") == "bottom" || this._model.get("location") == "top") {
           gridSelection.attr("d", (d) => {
-            return "M " + (curScale(d) + AreaView.PADDING) + " " + AreaView.PADDING + 
-              " L" + (curScale(d) + AreaView.PADDING)  + " " + (areaHeight + AreaView.PADDING);
+            return "M " + curScale(d) + " 0 L" + curScale(d)  + " " + areaHeight;
           });
         } else {
           gridSelection.attr("d", (d) => {
-            return "M " + AreaView.PADDING + " " + (curScale(d) + AreaView.PADDING) + 
-              " L" + (areaWidth + AreaView.PADDING)  + " " + (curScale(d) + AreaView.PADDING);
+            return "M 0 "+ curScale(d) + " L" + areaWidth + " " + curScale(d);
             });
         }
 
@@ -80,16 +82,16 @@ class AxisView extends ContextView {
 
   		switch(this._model.get("location")) {
   			case "bottom":
-  			  axisSvg.attr("transform", "translate(" + AreaView.PADDING + "," + (AreaView.PADDING + areaHeight) +")");
+  			  axisSvg.attr("transform", "translate(" + this._xOffset + "," + (this._yOffset + areaHeight) +")");
   			break;
   			case "top":
-  			  axisSvg.attr("transform", "translate(" + AreaView.PADDING + "," + AreaView.PADDING  +")");
+  			  axisSvg.attr("transform", "translate(" + this._xOffset + "," + this._yOffset  +")");
   			break;
   			case "left":
-  			  axisSvg.attr("transform", "translate(" + AreaView.PADDING + "," + AreaView.PADDING  +")");
+  			  axisSvg.attr("transform", "translate(" + this._xOffset + "," + this._yOffset  +")");
   			break;
   			case "right":
-  			  axisSvg.attr("transform", "translate(" +(AreaView.PADDING + areaWidth) +"," + AreaView.PADDING +  ")");
+  			  axisSvg.attr("transform", "translate(" +(this._xOffset + areaWidth) +"," + this._yOffset +  ")");
   			break;
   			default:
   		}
@@ -98,6 +100,18 @@ class AxisView extends ContextView {
 
     this.render();
     this._model.on(ContextNode.EVENT_READY, this.render);
+  }
+
+  public setOffsets(x: number, y: number) {
+    this._xOffset = x;
+    this._yOffset = y;
+    if (this._model.get("orient") == "left") {
+      this._xOffset += AxisView.AXIS_WIDTH;
+    }
+    if (this._model.get("orient") == "top") {
+      this._yOffset += AxisView.AXIS_WIDTH;
+    }
+    this.render();
   }
 
   public get model() {
