@@ -9,6 +9,7 @@ class Interaction {
   public static TYPE_CLICK_PRINT: string = "clickPrint";
   public static TYPE_PAN: string = "pan";
   public static TYPE_COLOR_HOVER: string = "colorHover";
+  public static TYPE_ZOOM: string = "zoom";
 
   private _modelContext: Context;
   private _viewContext: Context;
@@ -36,6 +37,8 @@ class Interaction {
         return new PanInteraction(spec, modelContext, viewContext, i);
       case Interaction.TYPE_COLOR_HOVER:
         return new ColorHoverInteraction(spec, modelContext, viewContext, i);
+      case Interaction.TYPE_ZOOM:
+        return new ZoomInteraction(spec, modelContext, viewContext, i);
       default:
         throw new Error("Unsupported interaction type: " + spec["type"]);
     }
@@ -196,8 +199,9 @@ class ZoomInteraction extends Interaction {
   private _areaView: AreaView;
   private _scale: Scale;
   private _properties: any;
+  private _zoomFactor: number;
 
-  private static ZOOM_FACTOR: number = 0.01;
+  private static DEFAULT_ZOOM_FACTOR: number = 0.01;
   // TODO : separate horizontal and vertical zoom factors?
 
 
@@ -215,6 +219,12 @@ class ZoomInteraction extends Interaction {
       throw new Error("No scale specified for ZoomInteraction");
     }
 
+    if (spec["zoomFactor"]) {
+      this._zoomFactor = spec["zoomFactor"];
+    } else {
+      this._zoomFactor = ZoomInteraction.DEFAULT_ZOOM_FACTOR;
+    }
+
     this.addEvents();
   }
 
@@ -224,7 +234,7 @@ class ZoomInteraction extends Interaction {
 
   private onZoom(e, delta, deltaX, deltaY) {
     console.log("Zooming!");
-    this._scale.zoom(1 + ((deltaY < 0) ? 1 : -1) * ZoomInteraction.ZOOM_FACTOR);
+    this._scale.zoom(1 + ((deltaY < 0) ? 1 : -1) * this._zoomFactor);
     return false;
   }
 }
