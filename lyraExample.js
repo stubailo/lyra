@@ -179,14 +179,30 @@ $(function() {
       "gridline": "lightgray"
   	  },
   	  {
-  		"name": "y",
+  		"name": "y1",
   		"area": "Area:area1",
   		"scale": "Scale:y",
   		"orient": "left",
   		"ticks": 17,
   		"location": "left",
       "gridline": "lightgray"
-  	  }
+  	  },
+      {
+      "name": "y2",
+      "area": "Area:area1",
+      "scale": "Scale:y",
+      "orient": "left",
+      "ticks": 17,
+      "location": "left"
+      },
+      {
+      "name": "y3",
+      "area": "Area:area1",
+      "scale": "Scale:y",
+      "orient": "right",
+      "ticks": 17,
+      "location": "right"
+      }
   	]
   }
 
