@@ -227,21 +227,7 @@ class ZoomInteraction extends Interaction {
 
   private onZoom(e, delta, deltaX, deltaY) {
     console.log("Zooming!");
-
-    var newHeight;
-    var newWidth;
-
-    if (deltaY > 0) {
-      // scrolled down, i.e., zoomed out
-      newHeight = (1 + ZoomInteraction.ZOOM_FACTOR) * this._areaView.model.get("height");
-      newWidth = (1 + ZoomInteraction.ZOOM_FACTOR) * this._areaView.model.get("width");
-    }
-    else {
-      newHeight = (1 - ZoomInteraction.ZOOM_FACTOR) * this._areaView.model.get("height");
-      newWidth = (1 - ZoomInteraction.ZOOM_FACTOR) * this._areaView.model.get("width");
-    }
-    this._areaView.model
-        .set({height: newHeight, width: newWidth});
-    this._areaView.render();
+    this._scale.zoom(1 + ((deltaY < 0) ? 1 : -1) * ZoomInteraction.ZOOM_FACTOR);
+    return false;
   }
 }

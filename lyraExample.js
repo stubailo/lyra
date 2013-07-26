@@ -165,11 +165,6 @@ $(function() {
         "type": "zoom",
         "area": "area1",
         "scale": "x"
-      },
-      {
-        "type": "zoom",
-        "area": "area2",
-        "scale": "y"
       }
     ],
   	"axes": [

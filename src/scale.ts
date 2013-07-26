@@ -78,10 +78,21 @@ class LinearScale extends Scale {
     });
   }
 
-  public zoom(pixels) {
+  public zoom(zoomFactor: number) {
     var domain = _.clone(this._scale.domain());
-    var dx = this.inverse(pixels) - this.inverse(0);
-    // TODO : finish this stuff...
+    var mean = (domain[0] + domain[1]) / 2;
+    var domainLength = domain[1] - domain[0];
+
+    domain[0] = mean - (domainLength * zoomFactor / 2);
+    domain[1] = mean + (domainLength * zoomFactor / 2);
+    this._scale.domain(domain);
+
+    // console.log(domain);
+    
+    this.set({
+      domainBegin: domain[0],
+      domainEnd: domain[1]
+    });
   }
 
   public recalculate(callback) {
