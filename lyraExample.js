@@ -92,7 +92,7 @@ $(function() {
           },
           "y": {
             "value": "y",
-            "scale": "y"
+            "scale": "z"
           },
           "interpolate": {
             "value" : "linear"
@@ -173,16 +173,18 @@ $(function() {
   		"area": "Area:area1",
   		"scale": "Scale:x",
   		"orient": "bottom",
-  		"ticks": 5,
-  		"location": "bottom"
+  		"ticks": 9,
+  		"location": "bottom",
+      "gridline": "lightgray"
   	  },
   	  {
   		"name": "y",
   		"area": "Area:area1",
   		"scale": "Scale:y",
   		"orient": "left",
-  		"ticks": 5,
-  		"location": "left"
+  		"ticks": 17,
+  		"location": "left",
+      "gridline": "lightgray"
   	  }
   	]
   }

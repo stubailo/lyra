@@ -9,7 +9,6 @@ class Interaction {
   public static TYPE_CLICK_PRINT: string = "clickPrint";
   public static TYPE_PAN: string = "pan";
   public static TYPE_COLOR_HOVER: string = "colorHover";
-  public static TYPE_ZOOM: string = "zoom";
 
   private _modelContext: Context;
   private _viewContext: Context;
@@ -37,8 +36,6 @@ class Interaction {
         return new PanInteraction(spec, modelContext, viewContext, i);
       case Interaction.TYPE_COLOR_HOVER:
         return new ColorHoverInteraction(spec, modelContext, viewContext, i);
-      case Interaction.TYPE_ZOOM:
-        return new ZoomInteraction(spec, modelContext, viewContext, i);
       default:
         throw new Error("Unsupported interaction type: " + spec["type"]);
     }
@@ -151,7 +148,7 @@ class PanInteraction extends Interaction {
       this._currentPosition = _.clone(this._startPosition);
       this._dragging = true;
       $(window).on("mousemove", this.drag);
-      $(window).on("mouseup", this.stopDrag);
+      $(window).one("mouseup", this.stopDrag);
     };
 
     this.stopDrag = (event) => {

@@ -33,7 +33,7 @@ class Scale extends ContextNode {
     throw new Error("Pan method not overridden for scale.");
   }
 
-  public zoom(pixels: number) {
+  public zoom(zoomFactor: number) {
     throw new Error("Zoom method not overridden for scale.");
   }
 
@@ -120,10 +120,6 @@ class IdentityScale extends Scale {
   }
 
   public pan(pixels) {
-    // does nothing
-  }
-
-  public zoom(pixels) {
     // does nothing
   }
 }
