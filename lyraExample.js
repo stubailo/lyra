@@ -160,16 +160,6 @@ $(function() {
       {
         "type" : "colorHover",
         "mark": "symbol2"
-      },
-      {
-        "type": "zoom",
-        "mark": "symbol", // hacky way to access the scales -- will change when we get axes/area
-        "scale": "x"
-      },
-      {
-        "type": "zoom",
-        "mark": "symobl",
-        "scale": "y"
       }
     ],
   	"axes": [

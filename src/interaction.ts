@@ -9,7 +9,6 @@ class Interaction {
   public static TYPE_CLICK_PRINT: string = "clickPrint";
   public static TYPE_PAN: string = "pan";
   public static TYPE_COLOR_HOVER: string = "colorHover";
-  public static TYPE_ZOOM: string = "zoom";
 
   private _modelContext: Context;
   private _viewContext: Context;
@@ -149,7 +148,7 @@ class PanInteraction extends Interaction {
       this._currentPosition = _.clone(this._startPosition);
       this._dragging = true;
       $(window).on("mousemove", this.drag);
-      $(window).on("mouseup", this.stopDrag);
+      $(window).one("mouseup", this.stopDrag);
     };
 
     this.stopDrag = (event) => {
@@ -190,31 +189,5 @@ class ColorHoverInteraction extends Interaction {
 
   private onHoverOut(d, i) {
     this._markView.set("stroke", null);
-  }
-}
-
-class ZoomInteraction extends Interaction {
-  private _markView: MarkView;
-  private _properties: any;
-
-
-  constructor(spec: any, modelContext: Context, viewContext: Context) {
-    super(modelContext, viewContext);
-    if (spec["mark"]){
-      this._markView = this.viewContext.getNode(MarkView.className, spec["mark"]);
-    } else {
-      throw new Error("No mark specified in ZoomInteraction.");
-    }
-
-    this.addEvents();
-    this._markView.on(MarkView.EVENT_RENDER, $.proxy(this.addEvents, this));
-  }
-
-  private addEvents() {
-    this._markView.markSelection.on("scroll.in", $.proxy(this.onScroll, this));
-  }
-
-  private onScroll(d, i) {
-
   }
 }
