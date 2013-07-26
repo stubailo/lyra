@@ -33,10 +33,6 @@ class Scale extends ContextNode {
     throw new Error("Pan method not overridden for scale.");
   }
 
-  public zoom(pixels: number) {
-    throw new Error("Zoom method not overridden for scale.");
-  }
-
   public get scaleRepresentation() {
     throw new Error("Get scale not overridden for scale.");
   }
@@ -78,11 +74,6 @@ class LinearScale extends Scale {
     });
   }
 
-  public zoom(pixels) {
-    var domain = _.clone(this._scale.domain());
-    var dx = 
-  }
-
   public recalculate(callback) {
     var domain = [this.get("domainBegin"), this.get("domainEnd")];
     var range = [this.get("rangeBegin"), this.get("rangeEnd")];
@@ -108,10 +99,6 @@ class IdentityScale extends Scale {
   }
 
   public pan(pixels) {
-    // does nothing
-  }
-
-  public zoom(pixels) {
     // does nothing
   }
 }

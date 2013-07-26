@@ -37,8 +37,6 @@ class Interaction {
         return new PanInteraction(spec, modelContext, viewContext, i);
       case Interaction.TYPE_COLOR_HOVER:
         return new ColorHoverInteraction(spec, modelContext, viewContext, i);
-      case Interaction.TYPE_ZOOM:
-        return new ZoomInteraction(spec, modelContext, viewContext, i);
       default:
         throw new Error("Unsupported interaction type: " + spec["type"]);
     }
@@ -196,52 +194,27 @@ class ColorHoverInteraction extends Interaction {
 }
 
 class ZoomInteraction extends Interaction {
-  private _areaView: AreaView;
-  private _scale: Scale;
+  private _markView: MarkView;
   private _properties: any;
 
-  private static ZOOM_FACTOR: number = 0.01;
-  // TODO : separate horizontal and vertical zoom factors?
 
-
-  constructor(spec: any, modelContext: Context, viewContext: Context, id: number) {
-    super(modelContext, viewContext, id);
-    if (spec["area"]){
-      this._areaView = this.viewContext.getNode(AreaView.className, spec["area"]);
+  constructor(spec: any, modelContext: Context, viewContext: Context) {
+    super(modelContext, viewContext);
+    if (spec["mark"]){
+      this._markView = this.viewContext.getNode(MarkView.className, spec["mark"]);
     } else {
-      throw new Error("No axes specified in ZoomInteraction.");
-    }
-
-    if (spec["scale"]) {
-      this._scale = this.modelContext.getNode(Scale.className, spec["scale"]);
-    } else {
-      throw new Error("No scale specified for ZoomInteraction");
+      throw new Error("No mark specified in ZoomInteraction.");
     }
 
     this.addEvents();
+    this._markView.on(MarkView.EVENT_RENDER, $.proxy(this.addEvents, this));
   }
 
   private addEvents() {
-    $(this._areaView.graphSelection[0][0]).mousewheel($.proxy(this.onZoom, this));
+    this._markView.markSelection.on("scroll.in", $.proxy(this.onScroll, this));
   }
 
-  private onZoom(e, delta, deltaX, deltaY) {
-    console.log("Zooming!");
+  private onScroll(d, i) {
 
-    var newHeight;
-    var newWidth;
-
-    if (deltaY > 0) {
-      // scrolled down, i.e., zoomed out
-      newHeight = (1 + ZoomInteraction.ZOOM_FACTOR) * this._areaView.model.get("height");
-      newWidth = (1 + ZoomInteraction.ZOOM_FACTOR) * this._areaView.model.get("width");
-    }
-    else {
-      newHeight = (1 - ZoomInteraction.ZOOM_FACTOR) * this._areaView.model.get("height");
-      newWidth = (1 - ZoomInteraction.ZOOM_FACTOR) * this._areaView.model.get("width");
-    }
-    this._areaView.model
-        .set({height: newHeight, width: newWidth});
-    this._areaView.render();
   }
 }
