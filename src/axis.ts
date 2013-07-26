@@ -110,9 +110,7 @@ class AxisView extends ContextView {
           this.trigger(AxisView.EVENT_RENDER);
       }
 
-    this.render();
     this.node.on(ContextNode.EVENT_READY, this.render);
-
   }
 
   public setOffsets(x: number, y: number) {

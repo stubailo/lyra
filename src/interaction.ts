@@ -233,7 +233,6 @@ class ZoomInteraction extends Interaction {
   }
 
   private onZoom(e, delta, deltaX, deltaY) {
-    console.log("Zooming!");
     this._scale.zoom(1 + ((deltaY < 0) ? 1 : -1) * this._zoomFactor);
     return false;
   }
