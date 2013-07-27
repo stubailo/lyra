@@ -6,8 +6,6 @@ class ContextNode extends Backbone.Model {
   private _context: Context;
   private _name: string;
 
-  private _propertyFunctions;
-
   public static EVENT_READY: string = "EVENT_READY";
 
   public static parseAll(specList: any[], context: Context, classType: any) : any[] {
@@ -20,7 +18,6 @@ class ContextNode extends Backbone.Model {
     super();
     this._name = spec["name"];
     this._context = context;
-    this._propertyFunctions = {};
     this._context.set(className + ":" + this.name, this);
     this.parseProperties(spec);
 
@@ -35,14 +32,10 @@ class ContextNode extends Backbone.Model {
     for(var key in properties) {
       var value = properties[key];
       if(ContextNode.isPropertyReference(value)) {
-        this._propertyFunctions[key] = this.context.getPropertyFunction(value);
-        var currKey = key;
-        var updateProperty = () => {
-          this.set(currKey, this._propertyFunctions[currKey]());
-        }
-
-        updateProperty();
-        this.context.getNode(value).on(ContextNode.EVENT_READY, () => {updateProperty()});
+        var propertyFunction = this.context.getPropertyFunction(value);
+        var updateProperty = () => {this.set(key, propertyFunction())}
+        updateProperty()
+        this.context.getNode(value).on(ContextNode.EVENT_READY, updateProperty)
       } else if (ContextNode.isObjectReference(value)) {
         this.set(key, this.context.getNode(value));
         this.get(key).on(ContextNode.EVENT_READY, () => {
