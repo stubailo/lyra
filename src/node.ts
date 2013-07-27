@@ -10,6 +10,12 @@ class ContextNode extends Backbone.Model {
 
   public static EVENT_READY: string = "EVENT_READY";
 
+  public static parseAll(specList: any[], context: Context, classType: any) : any[] {
+    return _.map(specList, function(spec) {
+      return classType.parse(spec, context);
+    });
+  }
+
   constructor (spec: any, context: Context, className: string) {
     super();
     this._name = spec["name"];
@@ -22,16 +28,6 @@ class ContextNode extends Backbone.Model {
     this.on("change", () => {
       this.refresh();
     });
-  }
-
-  public static parseAll(specList: any[], context: Context, classType: any) : any[] {
-    return _.map(specList, function(spec) {
-      return ContextNode.parse(spec, context, classType);
-    });
-  }
-
-  public static parse(spec : any, context: Context, classType: any) : any {
-    return classType.parse(spec, context);
   }
 
   // look at all of the spec properties
