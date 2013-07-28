@@ -3,7 +3,7 @@
  */
 class ContextNode extends Backbone.Model {
   // Private references to the className, context, and name
-  private static _className: string;
+  public static className: string;
   private _context: Context;
   private _name: string;
 
@@ -90,10 +90,6 @@ class ContextNode extends Backbone.Model {
 
   public get context(): Context {
     return this._context;
-  }
-
-  public static get className(): string {
-    return this._className;
   }
 
   public recalculate(callback) {

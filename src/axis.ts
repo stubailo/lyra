@@ -5,7 +5,7 @@ class Axis extends ContextNode {
   */
   public static AXIS_WIDTH: string = "axis_width";
 
-  private static className: string = "axes";
+  public static className: string = "axes";
 
   public static parse(spec: any, context: Context) {
       return new Axis(spec, context);

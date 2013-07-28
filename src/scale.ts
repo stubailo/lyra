@@ -1,10 +1,10 @@
 class Scale extends ContextNode {
-  private static _className: string = "scales";
+  public static className: string = "scales";
 
   public static EVENT_CHANGE: string = "change";
 
-  public static get className() {
-    return Scale._className;
+  public initialize() {
+
   }
 
   constructor(spec: any, context: Context) {
