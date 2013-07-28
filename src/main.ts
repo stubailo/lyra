@@ -60,7 +60,7 @@ class LyraModel {
   public get marks(): Mark[] {
     return this._marks;
   }
-  
+
   public get areas(): Area[] {
     return this._areas;
   }
@@ -97,7 +97,7 @@ class Lyra {
 
     // Creates the view for areas
     var createAreas = function(area: Area) {
-        this._areaViews.push(new AreaView(area, svg, this._viewContext));
+        this._areaViews.push(new AreaView(area, svg, this._viewContext, AreaView.className));
     }
 
     createAreas = $.proxy(createAreas, this);
@@ -109,7 +109,7 @@ class Lyra {
 
     _.each(this._areaViews, function(area: AreaView) {
       area.totalSelection.attr("x", translate);
-      translate += area.model.get("width") + 90;
+      translate += area.node.get("width") + 90;
     });
 
     // Create views for existing model nodes (should potentially be refactored into new method)

@@ -75,7 +75,7 @@ class ContextNode extends Backbone.Model {
       } else if (ContextNode.isObjectReference(value)) {
         this.set(key, this.context.getNode(value));
         this.get(key).on(ContextNode.EVENT_READY, () => {
-          // REFACTOR THIS SHIT
+          // REFACTOR THIS SHIT <- Eventing needs to be cleaned up.
           this.refresh();
         });
       } else {
@@ -123,18 +123,28 @@ class ContextNode extends Backbone.Model {
 
 // Only one view per model please
 class ContextView extends ContextNode {
-  private _propertyFallback: ContextNode;
+  private _node: any;
+  private _element: D3.Selection;
 
-  constructor (propertyFallback: ContextNode, viewContext: Context, className: string) {
-    super({"name": propertyFallback.name}, viewContext, className);
-    this._propertyFallback = propertyFallback;
+  constructor (node: any, element: D3.Selection, viewContext: Context, className: string) {
+    this._node = node;
+    this._element = element;
+    super({"name": node.name}, viewContext, className);
   }
 
   public getProperty(key: string): any {
     if(this.has(key)){
       return this.get(key);
     } else {
-      return this._propertyFallback.get(key);
+      return this._node.get(key);
     }
+  }
+
+  public get node() {
+    return this._node;
+  }
+
+  public get element() {
+    return this._element;
   }
 }

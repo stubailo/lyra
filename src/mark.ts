@@ -112,30 +112,26 @@ class Mark extends ContextNode {
 }
 
 class MarkView extends ContextView {
-  private _element: D3.Selection; // the canvas
-  private _markSelection: D3.Selection;
-  private _model: Mark;
-
   public static className: string = "MarkView";
-
   public static EVENT_RENDER: string = "render";
 
-  constructor(mark: Mark, element: D3.Selection, viewContext: Context) {
-    super(mark, viewContext, MarkView.className);
-    this._element = element;
-    this._model = mark;
+  private _markSelection: D3.Selection;
 
+  public load() {
     var render = $.proxy(this.render, this);
-    this.model.on("change", render);
+    this.node.on("change", render);
     this.on("change", render);
   }
 
   public static createView(mark: Mark, element: D3.Selection, viewContext: Context) {
     switch(mark.type) {
       case MarkType.CIRCLE:
-        return new CircleMarkView(mark, element, viewContext);
+        return new CircleMarkView(mark, element, viewContext, MarkView.className);
       case MarkType.LINE:
-        return new LineMarkView(mark, element, viewContext);
+        return new LineMarkView(mark, element, viewContext, MarkView.className);
+      default:
+        throw new Error("Invalid MarkView type: " + mark.type);
+
     }
   }
 
@@ -143,32 +139,19 @@ class MarkView extends ContextView {
     throw new Error ("This method is abstract, derived mark views must implement this method");
   }
 
-  public get model() {
-    return this._model;
-  }
-
-  public get element() {
-    return this._element;
-  }
-
   public get markSelection() {
-    return this._element.selectAll(this.model.type.name + "." + this._model.name);
+    return this.element.selectAll(this.node.type.name + "." + this.node.name);
   }
 }
 
 class CircleMarkView extends MarkView {
-
-  constructor(mark: Mark, element: D3.Selection, viewContext: Context) {
-    super(mark, element, viewContext);
-  }
-
   public render() {
     this.markSelection
-      .data(this.model.source.items)
+      .data(this.node.source.items)
       .enter()
       .append("circle")
-      .attr("class", this.model.name);
-    _.each(this.model.markProperties, (key) => {
+      .attr("class", this.node.name);
+    _.each(this.node.markProperties, (key) => {
       this.markSelection.attr(key, (item) => {
         return this.getProperty(key)(item);
       });
@@ -179,20 +162,15 @@ class CircleMarkView extends MarkView {
 }
 
 class LineMarkView extends MarkView {
-
-   constructor(mark: Mark, element: D3.Selection, viewContext: Context) {
-    super(mark, element, viewContext);
-  }
-
   public render() {
      this.markSelection
-      .data([this.model.source.items])
+      .data([this.node.source.items])
       .enter()
       .append("svg:path")
-      .attr("class", this.model.name);
+      .attr("class", this.node.name);
 
     var line = d3.svg.line();
-    _.each(this.model.markProperties, (key) => {
+    _.each(this.node.markProperties, (key) => {
       switch(key) {
         case "x" :
           line.x((item) => {
