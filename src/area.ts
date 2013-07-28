@@ -31,25 +31,25 @@ class AreaView extends ContextView {
 	private _model: Area;
 	private _axisViews: AxisView[];
 
-  	constructor(area: Area, element: D3.Selection, viewContext: Context) {
-      super(area, viewContext, AreaView.className);
+	constructor(area: Area, element: D3.Selection, viewContext: Context) {
+    super(area, viewContext, AreaView.className);
 
-  		this._model = area;
-      this._totalSelection = element.append("svg");
-  		this._graphSelection = this._totalSelection.append("svg").attr("class", "graph");
-  		this._background = this._graphSelection.append("rect");
-  		// Create views for existing model nodes (should potentially be refactored into new method)
+		this._model = area;
+    this._totalSelection = element.append("svg");
+		this._graphSelection = this._totalSelection.append("svg").attr("class", "graph");
+		this._background = this._graphSelection.append("rect");
+		// Create views for existing model nodes (should potentially be refactored into new method)
 
-    	var createAxisView = (axis: Axis) => {
-      		var axisView = new AxisView(axis, this._totalSelection, viewContext);
-      		this._axisViews.push(axisView);
-   		 }
-    	createAxisView = $.proxy(createAxisView, this);
+  	var createAxisView = (axis: Axis) => {
+    		var axisView = new AxisView(axis, this._totalSelection, viewContext);
+    		this._axisViews.push(axisView);
+ 		 }
+  	createAxisView = $.proxy(createAxisView, this);
 
-    	this._axisViews = [];
-    	_.each(this._model.axes, createAxisView);
+  	this._axisViews = [];
+  	_.each(this._model.axes, createAxisView);
 
-  		this._model.on(ContextNode.EVENT_READY, () => {this.render()});
+		this._model.on(ContextNode.EVENT_READY, () => {this.render()});
  	}
 
 	public render() {

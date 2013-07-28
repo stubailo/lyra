@@ -9,10 +9,6 @@ class DataSet extends ContextNode {
 
   public static EVENT_CHANGE: string = "change";
 
-  public static get className() {
-    return DataSet._className;
-  }
-
   constructor(spec: any, context: Context) {
     super(spec, context, DataSet.className);
   }

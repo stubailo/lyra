@@ -20,7 +20,6 @@ class ContextNode extends Backbone.Model {
   public static parseAll(specList: any[], context: Context, classType: any) : any[] {
     return _.map(specList, function(spec) {
       return classType.parse(spec, context)
-      // return new classType(spec, context, classType.className)
     });
   }
 
