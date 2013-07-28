@@ -5,7 +5,7 @@
 class DataSet extends ContextNode {
   private _items: any[];
 
-  private static _className: string = "DataSet";
+  private static _className: string = "datasets";
 
   public static EVENT_CHANGE: string = "change";
 

@@ -2,7 +2,8 @@
  * graph context.
  */
 class ContextNode extends Backbone.Model {
-  // Private references to the context and the name
+  // Private references to the className, context, and name
+  private static _className: string;
   private _context: Context;
   private _name: string;
 
@@ -18,7 +19,8 @@ class ContextNode extends Backbone.Model {
    */
   public static parseAll(specList: any[], context: Context, classType: any) : any[] {
     return _.map(specList, function(spec) {
-      return classType.parse(spec, context);
+      return classType.parse(spec, context)
+      // return new classType(spec, context, classType.className)
     });
   }
 
@@ -89,6 +91,10 @@ class ContextNode extends Backbone.Model {
 
   public get context(): Context {
     return this._context;
+  }
+
+  public static get className(): string {
+    return this._className;
   }
 
   public recalculate(callback) {

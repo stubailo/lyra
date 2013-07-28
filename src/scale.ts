@@ -1,5 +1,5 @@
 class Scale extends ContextNode {
-  private static _className: string = "Scale";
+  private static _className: string = "scales";
 
   public static EVENT_CHANGE: string = "change";
 
@@ -88,7 +88,7 @@ class LinearScale extends Scale {
     this._scale.domain(domain);
 
     // console.log(domain);
-    
+
     this.set({
       domainBegin: domain[0],
       domainEnd: domain[1]

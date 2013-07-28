@@ -18,7 +18,7 @@ class Mark extends ContextNode {
   private _type: MarkType;
   private _markProperties;
 
-  private static className: string = "Mark";
+  private static _className: string = "marks";
 
   public static parse(spec: any, context: Context) {
     switch(spec["type"]) {

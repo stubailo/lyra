@@ -5,7 +5,7 @@ class Axis extends ContextNode {
   */
   public static AXIS_WIDTH: string = "axis_width";
 
-  private static className: string = "Axis";
+  private static className: string = "axes";
 
   public static parse(spec: any, context: Context) {
       return new Axis(spec, context);
@@ -65,7 +65,7 @@ class AxisView extends ContextView {
             });
           }
       }
-      
+
       var transformFunction;
       switch(this._model.get("location")) {
         case "bottom":
