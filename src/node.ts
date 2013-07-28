@@ -37,14 +37,23 @@ class ContextNode extends Backbone.Model {
     this._context.set(className + ":" + this.name, this);
     // Parse the properties of this node from the specification
     this.parseProperties(spec);
-    // Additional initialization
-    this.initialize()
 
     // Event to be removed
     this.refresh();
     this.on("change", () => {
       this.refresh();
     });
+
+    // Additional initialization
+    this.initialize();
+  }
+
+  /* The behavior of initialize is set as a no-op, but can be overriden to add additional behavior.
+   *
+   * This method is called immediately after a ContextNode is constructed.
+   */
+  public initialize() {
+    // NO-OP
   }
 
   /* Given a hash of properties, attaches the properties to the contextNode.
