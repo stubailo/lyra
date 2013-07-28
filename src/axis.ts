@@ -1,19 +1,16 @@
 class Axis extends ContextNode {
+  public static className: string = "axes";
   /*
-    Each property is a function of one item that specifies that property of an SVG element.
-    So for example a circle would have one function for "cx", one for "cy", etc.
-  */
+   * Each property is a function of one item that specifies that property of an SVG element.
+   * So for example a circle would have one function for "cx", one for "cy", etc.
+   */
   public static AXIS_WIDTH: string = "axis_width";
 
-  public static className: string = "axes";
-
   public static parse(spec: any, context: Context) {
-      return new Axis(spec, context);
+      return new Axis(spec, context, Axis.className);
   }
 
-  constructor(spec: any, context: Context) {
-    super(spec, context, Axis.className);
-
+  public load() {
     this.set(Axis.AXIS_WIDTH, 35);
   }
 }

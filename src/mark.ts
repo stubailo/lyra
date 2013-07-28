@@ -9,26 +9,38 @@ class MarkType {
 }
 
 class Mark extends ContextNode {
-  /*
-    Each property is a function of one item that specifies that property of an SVG element.
-    So for example a circle would have one function for "cx", one for "cy", etc.
-  */
+  public static className: string = "marks";
+
+  /* Each property is a function of one item that specifies that property of an SVG element.
+   * So for example a circle would have one function for "cx", one for "cy", etc.
+   */
   private _source: DataSet;
   private _area: Area;
   private _type: MarkType;
   private _markProperties;
 
-  public static className: string = "marks";
-
   public static parse(spec: any, context: Context) {
-    switch(spec["type"]) {
+    return new Mark(spec, context, Mark.className);
+  }
+
+  public load() {
+    var context = this.context;
+    switch(this.get("type")) {
       case "circle":
-        return new Mark(spec, context, MarkType.CIRCLE);
-      case "line" :
-        return new Mark(spec, context, MarkType.LINE);
+        this._type = MarkType.CIRCLE;
+        break;
+      case "line":
+        this._type = MarkType.LINE;
+        break;
       default:
-        throw new Error("Unsupported mark type: " + spec["type"]);
+        throw new Error("Unsupported mark type: " + this.get("type"));
     }
+    this.parseMarkProperties(this.get("properties"));
+
+    this._area = context.getNode(Area.className, this.get("area"));
+    this._source = context.getNode(DataSet.className, this.get("source"));
+    this._source.on(DataSet.EVENT_CHANGE, $.proxy(this.dataSetChanged, this));
+    this.dataSetChanged();
   }
 
   private parseProperty(name: string, spec: any) {
@@ -41,7 +53,7 @@ class Mark extends ContextNode {
     if(spec["scale"]) {
       scale = this.context.getNode(Scale.className, spec["scale"]);
     } else {
-      scale = new IdentityScale({}, new Context());
+      scale = Scale.parse({type: "identity"}, new Context());
     }
 
 
@@ -76,18 +88,6 @@ class Mark extends ContextNode {
     for(var key in properties) {
       this.parseProperty(key, properties[key]);
     }
-  }
-
-  constructor(spec: any, context: Context, type: MarkType) {
-    super(spec, context, Mark.className);
-
-    this._type = type;
-    this.parseMarkProperties(spec["properties"]);
-
-    this._area = context.getNode(Area.className, spec["area"]);
-    this._source = context.getNode(DataSet.className, spec["source"]);
-    this._source.on(DataSet.EVENT_CHANGE, $.proxy(this.dataSetChanged, this));
-    this.dataSetChanged();
   }
 
   private dataSetChanged(): void {

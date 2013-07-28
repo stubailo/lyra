@@ -2,14 +2,14 @@ class Area extends ContextNode {
 	public static className: string = "areas";
 
 	private _axes: Axis[];
-	constructor(spec: any, context: Context) {
-		super(spec, context, Area.className);
-		this._axes = [];
-	}
 
-	public static parse(spec: any, context: Context) {
-		return new Area(spec, context);
-	}
+  public static parse(spec: any, context: Context) {
+    return new Area(spec, context, Area.className);
+  }
+
+  public load() {
+    this._axes = [];
+  }
 
 	public addAxis(axis: Axis) {
 		this._axes.push(axis);

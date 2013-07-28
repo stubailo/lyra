@@ -3,18 +3,13 @@
 */
 
 class DataSet extends ContextNode {
-  private _items: any[];
-
   public static className: string = "datasets";
-
   public static EVENT_CHANGE: string = "change";
 
-  constructor(spec: any, context: Context) {
-    super(spec, context, DataSet.className);
-  }
+  private _items: any[];
 
   public static parse(spec: any, context: Context) {
-    return new DataSet(spec, context);
+    return new DataSet(spec, context, DataSet.className);
   }
 
   get items(): any[] {

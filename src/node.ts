@@ -46,14 +46,14 @@ class ContextNode extends Backbone.Model {
     });
 
     // Additional initialization
-    this.initialize();
+    this.load();
   }
 
-  /* The behavior of initialize is set as a no-op, but can be overriden to add additional behavior.
+  /* The behavior of load is set as a no-op, but can be overriden to add additional behavior.
    *
    * This method is called immediately after a ContextNode is constructed.
    */
-  public initialize() {
+  public load() {
     // NO-OP
   }
 
