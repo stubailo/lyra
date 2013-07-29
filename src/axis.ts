@@ -11,7 +11,7 @@ class Axis extends ContextNode {
   }
 
   public load() {
-    this.set(Axis.AXIS_WIDTH, 35);
+    this.set(Axis.AXIS_WIDTH, 45);
   }
 }
 
@@ -22,8 +22,12 @@ class AxisView extends ContextView {
   private _yOffset: number;
   public render;
 
-  public static className: string = "AxisView";
+  public static className: string = Axis.className;
   public static EVENT_RENDER: string = "render";
+
+  public get axisSelection () {
+    return this._axisSelection;
+  }
 
   public load() {
     this._axis = d3.svg.axis()
@@ -110,6 +114,7 @@ class AxisView extends ContextView {
           this.trigger(AxisView.EVENT_RENDER);
       }
 
+    this._axisSelection = axisSvg;
     this.node.on(ContextNode.EVENT_READY, this.render);
   }
 

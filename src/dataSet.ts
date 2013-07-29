@@ -6,8 +6,6 @@ class DataSet extends ContextNode {
   public static className: string = "datasets";
   public static EVENT_CHANGE: string = "change";
 
-  private _items: any[];
-
   public static parse(spec: any, context: Context) {
     return new DataSet(spec, context, DataSet.className);
   }

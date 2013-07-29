@@ -84,7 +84,7 @@ class ClickPrintInteraction extends Interaction {
 }
 
 class PanInteraction extends Interaction {
-  private _markView: MarkView;
+  private _element: D3.Selection;
   private _scale: Scale;
   private _direction: string;
 
@@ -100,10 +100,13 @@ class PanInteraction extends Interaction {
   constructor(spec: any, modelContext: Context, viewContext: Context, id: number) {
     super(modelContext, viewContext, id);
 
-    if(spec["mark"]) {
-      this._markView = this.viewContext.getNode(MarkView.className, spec["mark"]);
+    if(spec["area"]) {
+      this._element = this.viewContext.getNode(AreaView.className, spec["area"]).graphSelection;
+    } else if(spec["axis"]) {
+      console.log(this.viewContext);
+      this._element = this.viewContext.getNode(AxisView.className, spec["axis"]).axisSelection;
     } else {
-      throw new Error("No mark specified in PanInteraction.");
+      throw new Error("No axis or area specified in PanInteraction.");
     }
 
     if(spec["scale"]) {
@@ -119,7 +122,7 @@ class PanInteraction extends Interaction {
     }
 
     this.addEvents = () => {
-      this._markView.element.on("mousedown." + this.id, this.startDrag);
+      this._element.on("mousedown." + this.id, this.startDrag);
     };
 
     this.drag = (event) => {
