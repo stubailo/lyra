@@ -48,6 +48,7 @@ class AreaView extends ContextView {
     this.node.on(ContextNode.EVENT_READY, () => {this.render()});
   }
 
+
 	public render() {
     var axisInfo = this.renderAxis();
     this._graphSelection
@@ -79,6 +80,7 @@ class AreaView extends ContextView {
   private renderAxis() {
     var axisInfo = [];
     axisInfo["left"] = 0, axisInfo["top"] = 0, axisInfo["x"] = 0, axisInfo["y"] = 0;
+    
 		_.each(this.node.axes, (axis: Axis) => {
 			switch(axis.get("location")) {
 				case "left":
