@@ -253,6 +253,8 @@ class AddPointInteraction extends Interaction {
   private _rangeScale: Scale;
   private _properties: any;
   private _dataSetName: string;
+  private _domain: string;
+  private _range: string;
 
   private addPoint;
   private addEvents;
@@ -273,6 +275,18 @@ class AddPointInteraction extends Interaction {
       throw new Error("No area specified in AddPointInteraction.");
     }
 
+    if (spec["domain"]) {
+      this._domain = spec["domain"];
+    } else {
+      throw new Error("No domain specified for AddPointInteraction.");
+    }
+
+    if (spec["range"]) {
+      this._range = spec["range"];
+    } else {
+      throw new Error("No range specified for AddPointInteraction.");
+    }
+
     if (spec["domainScale"]) {
       this._domainScale = this.modelContext.getNode(Scale.className, spec["domainScale"]);
     } else {
@@ -290,6 +304,9 @@ class AddPointInteraction extends Interaction {
       var data = this.modelContext.getNode(DataSet.className, this._dataSetName);
       var items = data.items;
 
+      console.log(this._domain);
+      console.log(this._range);
+
       console.log(d);
 
       console.log(d.x);
@@ -301,12 +318,16 @@ class AddPointInteraction extends Interaction {
       console.log(this._areaView.totalSelection.attr("x"));
       console.log(this._areaView.totalSelection.attr("y"));
 
-      var clickLocation: number[] = [d.clientX - parseInt(this._areaView.graphSelection.attr("x")) - parseInt(this._areaView.totalSelection.attr("x")),
-                                     d.clientY - parseInt(this._areaView.graphSelection.attr("y")) - parseInt(this._areaView.totalSelection.attr("y"))];
-      var newDataPoint = { "x": this._domainScale.inverse(clickLocation[0]),
-                           "y": this._rangeScale.inverse(clickLocation[1])};
+      var clickLocation: number[] = [
+                                     d.clientX - parseInt(this._areaView.graphSelection.attr(this._domain)) - parseInt(this._areaView.totalSelection.attr(this._domain)),
+                                     d.clientY - parseInt(this._areaView.graphSelection.attr(this._range)) - parseInt(this._areaView.totalSelection.attr(this._range))
+                                    ];
+      var newDataPoint = {};
+      newDataPoint[this._domain] = this._domainScale.inverse(clickLocation[0]);
+      newDataPoint[this._range] = this._rangeScale.inverse(clickLocation[1]);
+
       items.push(newDataPoint);
-      items.sort(function (aPoint, bPoint) {return aPoint["x"] - bPoint["x"]});
+      items = _.sortBy(items, this._domain);
 
       data.items = items;
       console.log(data.items.length);

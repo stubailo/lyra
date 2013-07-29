@@ -238,7 +238,9 @@ $(function() {
         "mark": "symbol",
         "area": "area1",
         "domainScale": "x",
-        "rangeScale": "y"
+        "rangeScale": "y",
+        "domain": "x",
+        "range" : "y"
       }
     ]
   }
