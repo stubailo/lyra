@@ -51,7 +51,7 @@ class Context extends Backbone.Model {
       path = argumentOrClassName + ":" + nodeName;
     } else {
       path = Context.getPath(argumentOrClassName);
-      property = Context.getProperty(argumentOrClassName);
+      property = Context.getProp(argumentOrClassName);
     }
 
     // Get the property of the node associated with the key
@@ -79,7 +79,7 @@ class Context extends Backbone.Model {
   /* Attaches a listener to a property change of a node stored in the Context.
    */
   public addPropertyListener(argument: string, listener) {
-    var property = Context.getProperty(argument)
+    var property = Context.getProp(argument)
     var node = this.getNode(argument);
     node.on("change:" + property, listener);
   }
@@ -95,7 +95,7 @@ class Context extends Backbone.Model {
   /* Private method to get the property given an argument of the form
    * "className:nodeName.property".
    */
-  private static getProperty(argument: string): string {
+  private static getProp(argument: string): string {
     Context.checkArgument(argument, true);
     return argument.split(/\./)[1];
   }

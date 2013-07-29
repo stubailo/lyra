@@ -1,27 +1,22 @@
 class Axis extends ContextNode {
+  public static className: string = "axes";
   /*
-    Each property is a function of one item that specifies that property of an SVG element.
-    So for example a circle would have one function for "cx", one for "cy", etc.
-  */
+   * Each property is a function of one item that specifies that property of an SVG element.
+   * So for example a circle would have one function for "cx", one for "cy", etc.
+   */
   public static AXIS_WIDTH: string = "axis_width";
 
-  private static className: string = "Axis";
-
   public static parse(spec: any, context: Context) {
-      return new Axis(spec, context);
+      return new Axis(spec, context, Axis.className);
   }
 
-  constructor(spec: any, context: Context) {
-    super(spec, context, Axis.className);
-
+  public load() {
     this.set(Axis.AXIS_WIDTH, 35);
   }
 }
 
 class AxisView extends ContextView {
-  private _element: D3.Selection; // the canvas
   private _axisSelection: D3.Selection;
-  private _model: Axis;
   private _axis;
   private _xOffset: number;
   private _yOffset: number;
@@ -30,29 +25,24 @@ class AxisView extends ContextView {
   public static className: string = "AxisView";
   public static EVENT_RENDER: string = "render";
 
-
-  constructor(axis: Axis, element: D3.Selection, viewContext: Context) {
-    super(axis, viewContext, AxisView.className);
-
-    this._element = element;
-    this._model = axis;
-  	this._axis = d3.svg.axis()
+  public load() {
+    this._axis = d3.svg.axis()
     this._xOffset = 0;
     this._yOffset = 0;
 
-	  var axisSvg = this._element
-	    .append("g")
-  		.attr("class", AxisView.className)
-  		.attr("name", this.model.name);
+    var axisSvg = this.element
+      .append("g")
+      .attr("class", AxisView.className)
+      .attr("name", this.node.name);
 
-      if (this._model.get("gridline")) {
-        var gridSvg = this._element.selectAll("svg.graph")
+      if (this.node.get("gridline")) {
+        var gridSvg = this.element.selectAll("svg.graph")
           .append("g")
           .attr("class", "grid")
       }
 
       var gridFunction;
-      if (this._model.get("location") == "bottom" || this._model.get("location") == "top") {
+      if (this.node.get("location") == "bottom" || this.node.get("location") == "top") {
           gridFunction = (selection, curScale, height: number, width: number) => {
             selection.attr("d", (d) => {
               return "M " + curScale(d) + " 0 L" + curScale(d)  + " " + height;
@@ -65,9 +55,9 @@ class AxisView extends ContextView {
             });
           }
       }
-      
+
       var transformFunction;
-      switch(this._model.get("location")) {
+      switch(this.node.get("location")) {
         case "bottom":
         transformFunction = (axisSvg, areaHeight, areaWidth) => {
             axisSvg.attr("transform", "translate(" + this._xOffset + "," + (this._yOffset + areaHeight) +")");
@@ -92,55 +82,48 @@ class AxisView extends ContextView {
       }
 
       this.render = () => {
-        var curScale = this._model.get("scale").scaleRepresentation;
-        var areaHeight = this._model.get("area").get("height");
-        var areaWidth =  this._model.get("area").get("width");
+        var curScale = this.node.get("scale").scaleRepresentation;
+        var areaHeight = this.node.get("area").get("height");
+        var areaWidth =  this.node.get("area").get("width");
         this._axis
           .scale(curScale)
-          .orient(this._model.get("orient"))
-          .ticks(this._model.get("ticks"));
+          .orient(this.node.get("orient"))
+          .ticks(this.node.get("ticks"));
 
         axisSvg.call(this._axis);
 
         if (gridSvg) {
-          var gridSelection = gridSvg.selectAll("path." + this._model.name)
-            .data(curScale.ticks(this._model.get("ticks")));
+          var gridSelection = gridSvg.selectAll("path." + this.node.name)
+            .data(curScale.ticks(this.node.get("ticks")));
 
             gridSelection.enter()
             .append("path")
-            .attr("class", this._model.name)
-            .attr("stroke", this._model.get("gridline"));
+            .attr("class", this.node.name)
+            .attr("stroke", this.node.get("gridline"));
 
             gridFunction(gridSelection, curScale, areaHeight, areaWidth);
 
             gridSelection.exit().remove();
         }
 
-      		transformFunction(axisSvg, areaHeight, areaWidth);
-      	  this.trigger(AxisView.EVENT_RENDER);
-    	}
+          transformFunction(axisSvg, areaHeight, areaWidth);
+          this.trigger(AxisView.EVENT_RENDER);
+      }
 
     this.render();
-    this._model.on(ContextNode.EVENT_READY, this.render);
+    this.node.on(ContextNode.EVENT_READY, this.render);
+
   }
 
   public setOffsets(x: number, y: number) {
     this._xOffset = x;
     this._yOffset = y;
-    if (this._model.get("orient") == "left") {
-      this._xOffset += this._model.get(Axis.AXIS_WIDTH);
+    if (this.node.get("orient") == "left") {
+      this._xOffset += this.node.get(Axis.AXIS_WIDTH);
     }
-    if (this._model.get("orient") == "top") {
-       this._yOffset += this._model.get(Axis.AXIS_WIDTH);
+    if (this.node.get("orient") == "top") {
+       this._yOffset += this.node.get(Axis.AXIS_WIDTH);
     }
     this.render();
-  }
-
-  public get model() {
-    return this._model;
-  }
-
-  public get element() {
-    return this._element;
   }
 }

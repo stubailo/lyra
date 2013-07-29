@@ -36,7 +36,7 @@ $(function() {
         "name": "x",
         "type": "linear",
         "rangeBegin": 0,
-        "rangeEnd": "Area:area1.width",
+        "rangeEnd": "areas:area1.width",
         "domainBegin": 0,
         "domainEnd": 20
       },
@@ -44,7 +44,7 @@ $(function() {
         "name": "y",
         "type": "linear",
         "rangeBegin": 0,
-        "rangeEnd": "Area:area1.height",
+        "rangeEnd": "areas:area1.height",
         "domainBegin": 100,
         "domainEnd": 0
       },
@@ -52,7 +52,7 @@ $(function() {
         "name": "z",
         "type": "linear",
         "rangeBegin": 0,
-        "rangeEnd": "Area:area2.height",
+        "rangeEnd": "areas:area2.height",
         "domainBegin": 100,
         "domainEnd": 0
       }
@@ -107,7 +107,7 @@ $(function() {
             "value" : "none"
           },
           "heyo" : {
-            "value" : "Area:area1.height"
+            "value" : "areas:area1.height"
           }
         }
       }
@@ -171,8 +171,8 @@ $(function() {
   	"axes": [
   	  {
   		"name": "x",
-  		"area": "Area:area1",
-  		"scale": "Scale:x",
+  		"area": "areas:area1",
+  		"scale": "scales:x",
   		"orient": "bottom",
   		"ticks": 20,
   		"location": "bottom",
@@ -180,8 +180,8 @@ $(function() {
   	  },
   	  {
   		"name": "y1",
-  		"area": "Area:area1",
-  		"scale": "Scale:y",
+  		"area": "areas:area1",
+  		"scale": "scales:y",
   		"orient": "left",
   		"ticks": 20,
   		"location": "left",
@@ -189,24 +189,24 @@ $(function() {
   	  },
       {
       "name": "y2",
-      "area": "Area:area1",
-      "scale": "Scale:y",
+      "area": "areas:area1",
+      "scale": "scales:y",
       "orient": "left",
       "ticks": 25,
       "location": "left"
       },
       {
       "name": "y3",
-      "area": "Area:area1",
-      "scale": "Scale:y",
+      "area": "areas:area1",
+      "scale": "scales:y",
       "orient": "right",
       "ticks": 17,
       "location": "right"
       },
       {
       "name": "x",
-      "area": "Area:area2",
-      "scale": "Scale:x",
+      "area": "areas:area2",
+      "scale": "scales:x",
       "orient": "bottom",
       "ticks": 20,
       "location": "bottom",
@@ -214,8 +214,8 @@ $(function() {
       },
       {
       "name": "y1",
-      "area": "Area:area2",
-      "scale": "Scale:y",
+      "area": "areas:area2",
+      "scale": "scales:y",
       "orient": "left",
       "ticks": 20,
       "location": "left",

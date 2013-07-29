@@ -1,21 +1,14 @@
 class Scale extends ContextNode {
-  private static _className: string = "Scale";
+  public static className: string = "scales";
 
   public static EVENT_CHANGE: string = "change";
-
-  public static get className() {
-    return Scale._className;
-  }
-
-  constructor(spec: any, context: Context) {
-    super(spec, context, Scale.className);
-  }
 
   public static parse(spec: any, context: Context) : Scale {
     switch(spec["type"]) {
       case "linear":
-        return new LinearScale(spec, context);
-      break;
+        return new LinearScale(spec, context, Scale.className);
+      case "identity":
+        return new IdentityScale(spec, context, Scale.className);
       default:
         throw new Error("Invalid Scale type: " + spec["type"]);
     }
@@ -48,10 +41,6 @@ class Scale extends ContextNode {
 class LinearScale extends Scale {
 
   private _scale;
-
-  constructor(spec: any, context: Context) {
-    super(spec, context);
-  }
 
   public apply(input) {
     return this._scale(input);
@@ -88,7 +77,7 @@ class LinearScale extends Scale {
     this._scale.domain(domain);
 
     // console.log(domain);
-    
+
     this.set({
       domainBegin: domain[0],
       domainEnd: domain[1]
@@ -107,10 +96,6 @@ class LinearScale extends Scale {
   This scale doesn't change the input at all.
 */
 class IdentityScale extends Scale {
-  constructor(spec: any, context: Context) {
-    super(spec, context);
-  }
-
   public apply(input) {
     return input;
   }

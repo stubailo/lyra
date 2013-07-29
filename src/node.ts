@@ -2,71 +2,86 @@
  * graph context.
  */
 class ContextNode extends Backbone.Model {
-  // Private references to the context and the name
+  // Private references to the className, context, and name
+  public static className: string;
   private _context: Context;
   private _name: string;
 
-  private _propertyFunctions;
-
+  // This event is triggered when a context node has finished rendering.
   public static EVENT_READY: string = "EVENT_READY";
 
+  /* Utility method that returns an array of ContextNodes of a certain type.
+   *
+   * @param specList A list of specifications that will be passed to each new node
+   * @param context The universal context
+   * @param classType A class (should be extending ContextNode) that will be created
+   * @return An array of ContextNodes of type classtype
+   */
+  public static parseAll(specList: any[], context: Context, classType: any) : any[] {
+    return _.map(specList, function(spec) {
+      return classType.parse(spec, context)
+    });
+  }
+
+  /* Creates a ContextNode, setting up the name, context, and properties from the specification
+   * passed to it.
+   *
+   * This method should not be overriden. Instead, override the intialize method to perform additional
+   * operations before the contextNode is rendered.
+   */
   constructor (spec: any, context: Context, className: string) {
     super();
+    // Setup instance variables
     this._name = spec["name"];
     this._context = context;
-    this._propertyFunctions = {};
+    // Save this ContextNode in the context
     this._context.set(className + ":" + this.name, this);
+    // Parse the properties of this node from the specification
     this.parseProperties(spec);
 
+    // Event to be removed
     this.refresh();
     this.on("change", () => {
       this.refresh();
     });
+
+    // Additional initialization
+    this.load();
   }
 
-  public static parseAll(specList: any[], context: Context, classType: any) : any[] {
-    return _.map(specList, function(spec) {
-      return ContextNode.parse(spec, context, classType);
-    });
+  /* The behavior of load is set as a no-op, but can be overriden to add additional behavior.
+   *
+   * This method is called immediately after a ContextNode is constructed.
+   */
+  public load() {
+    // NO-OP
   }
 
-  public static parse(spec : any, context: Context, classType: any) : any {
-    return classType.parse(spec, context);
-  }
-
-  // look at all of the spec properties
+  /* Given a hash of properties, attaches the properties to the contextNode.
+   *
+   * This method parses three type of property values.
+   * 1) Static numerical values
+   * 2) Objects
+   * 3) Property References (e.g. Set the property width of the contextNode to be the width of another contextNode)
+   */
   public parseProperties(properties: any): void {
     for(var key in properties) {
       var value = properties[key];
       if(ContextNode.isPropertyReference(value)) {
-        this._propertyFunctions[key] = this.context.getPropertyFunction(value);
-        var currKey = key;
-        var updateProperty = () => {
-          this.set(currKey, this._propertyFunctions[currKey]());
-        }
-
-        updateProperty();
-        this.context.getNode(value).on(ContextNode.EVENT_READY, () => {updateProperty()});
+        var propertyFunction = this.context.getPropertyFunction(value);
+        var updateProperty = () => {this.set(key, propertyFunction())}
+        updateProperty()
+        this.context.getNode(value).on(ContextNode.EVENT_READY, updateProperty)
       } else if (ContextNode.isObjectReference(value)) {
         this.set(key, this.context.getNode(value));
         this.get(key).on(ContextNode.EVENT_READY, () => {
-          // REFACTOR THIS SHIT
+          // REFACTOR THIS SHIT <- Eventing needs to be cleaned up.
           this.refresh();
         });
       } else {
         this.set(key, value);
       }
     }
-  }
-
-  private static isPropertyReference(obj: string) {
-    var propertyRegex = /^[A-Za-z_\-0-9]+:[A-Za-z_\-0-9]+\.[A-Za-z_\-0-9]+$/;
-    return ((typeof(obj) === "string") && propertyRegex.test(obj));
-  }
-
-  private static isObjectReference(obj: string) {
-    var objectRegex = /^[A-Za-z_\-0-9]+:[A-Za-z_\-0-9]+$/;
-    return ((typeof(obj) === "string") && objectRegex.test(obj));
   }
 
   public get name(): string {
@@ -81,6 +96,24 @@ class ContextNode extends Backbone.Model {
     callback();
   }
 
+  /* Private method to check if a property string is a property reference.
+   *
+   * This method checks if the string is of the form: <className>:<name>.<property>
+   */
+  private static isPropertyReference(obj: string) {
+    var propertyRegex = /^[A-Za-z_\-0-9]+:[A-Za-z_\-0-9]+\.[A-Za-z_\-0-9]+$/;
+    return propertyRegex.test(obj);
+  }
+
+  /* Private method to check if a property string is an object reference.
+   *
+   * This method checks if the string is of the form: <className>:<name>
+   */
+  private static isObjectReference(obj: string) {
+    var objectRegex = /^[A-Za-z_\-0-9]+:[A-Za-z_\-0-9]+$/;
+    return objectRegex.test(obj);
+  }
+
   private refresh() {
     this.recalculate(() => {
       this.trigger(ContextNode.EVENT_READY);
@@ -90,18 +123,28 @@ class ContextNode extends Backbone.Model {
 
 // Only one view per model please
 class ContextView extends ContextNode {
-  private _propertyFallback: ContextNode;
+  private _node: any;
+  private _element: D3.Selection;
 
-  constructor (propertyFallback: ContextNode, viewContext: Context, className: string) {
-    super({"name": propertyFallback.name}, viewContext, className);
-    this._propertyFallback = propertyFallback;
+  constructor (node: any, element: D3.Selection, viewContext: Context, className: string) {
+    this._node = node;
+    this._element = element;
+    super({"name": node.name}, viewContext, className);
   }
 
   public getProperty(key: string): any {
     if(this.has(key)){
       return this.get(key);
     } else {
-      return this._propertyFallback.get(key);
+      return this._node.get(key);
     }
+  }
+
+  public get node() {
+    return this._node;
+  }
+
+  public get element() {
+    return this._element;
   }
 }
