@@ -232,6 +232,11 @@ $(function() {
         "axis": "x",
         "scale": "x",
         "zoomFactor": 0.01
+      },
+      {
+        "type": "addPoint",
+        "mark": "symbol",
+        "scale": "x"
       }
     ]
   }

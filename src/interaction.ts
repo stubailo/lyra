@@ -10,6 +10,7 @@ class Interaction {
   public static TYPE_PAN: string = "pan";
   public static TYPE_COLOR_HOVER: string = "colorHover";
   public static TYPE_ZOOM: string = "zoom";
+  public static TYPE_ADD_POINT: string = "addPoint";
 
   private _modelContext: Context;
   private _viewContext: Context;
@@ -39,6 +40,8 @@ class Interaction {
         return new ColorHoverInteraction(spec, modelContext, viewContext, i);
       case Interaction.TYPE_ZOOM:
         return new ZoomInteraction(spec, modelContext, viewContext, i);
+      case Interaction.TYPE_ADD_POINT:
+        return new AddPointInteraction(spec, modelContext, viewContext, i);
       default:
         throw new Error("Unsupported interaction type: " + spec["type"]);
     }
@@ -241,4 +244,53 @@ class ZoomInteraction extends Interaction {
     this._scale.zoom(1 + ((deltaY < 0) ? 1 : -1) * this._zoomFactor);
     return false;
   }
+}
+
+class AddPointInteraction extends Interaction {
+  private _markView: MarkView;
+  private _areaView: AreaView;
+  private _scale: Scale;
+  private _properties: any;
+  private _dataSetName: string;
+
+  private addPoint;
+  private addEvents;
+
+  constructor(spec: any, modelContext: Context, viewContext: Context, id: number) {
+    super(modelContext, viewContext, id);
+
+    if (spec["mark"]) {
+      this._markView = this.viewContext.getNode(MarkView.className, spec["mark"]);
+      this._dataSetName = this._markView.node.get("source");
+    } else {
+      throw new Error("No mark specified in AddPointInteraction.");
+    }
+
+    if (spec["scale"]) {
+      this._scale = this.modelContext.getNode(Scale.className, spec["scale"]);
+    } else {
+      throw new Error("No scale specified for AddPointInteraction.");
+    }
+
+    this.addPoint = () => {
+      // console.log(this._dataSetName);
+      var data = this.modelContext.getNode(DataSet.className, this._dataSetName);
+      var items = data.items;
+
+      var clickLocation: number[] = [event.clientX, event.clientY];
+      var newDataPoint = { "x": this._scale.inverse(clickLocation[0]),
+                           "y": this._scale.inverse(clickLocation[1])};
+      items.push(newDataPoint);
+
+      data.items = items;
+      console.log(data.items.length);
+    };
+
+    this.addEvents = () => {
+      this._markView.element.on("dblclick." + this.id, this.addPoint);
+    };
+
+    this.addEvents();
+  }
+
 }
