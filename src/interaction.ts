@@ -249,7 +249,8 @@ class ZoomInteraction extends Interaction {
 class AddPointInteraction extends Interaction {
   private _markView: MarkView;
   private _areaView: AreaView;
-  private _scale: Scale;
+  private _domainScale: Scale;
+  private _rangeScale: Scale;
   private _properties: any;
   private _dataSetName: string;
 
@@ -266,20 +267,44 @@ class AddPointInteraction extends Interaction {
       throw new Error("No mark specified in AddPointInteraction.");
     }
 
-    if (spec["scale"]) {
-      this._scale = this.modelContext.getNode(Scale.className, spec["scale"]);
+    if (spec["area"]) {
+      this._areaView = this.viewContext.getNode(AreaView.className, spec["area"]);
     } else {
-      throw new Error("No scale specified for AddPointInteraction.");
+      throw new Error("No area specified in AddPointInteraction.");
     }
 
-    this.addPoint = () => {
+    if (spec["domainScale"]) {
+      this._domainScale = this.modelContext.getNode(Scale.className, spec["domainScale"]);
+    } else {
+      throw new Error("No domain scale specified for AddPointInteraction.");
+    }
+
+    if (spec["rangeScale"]) {
+      this._rangeScale = this.modelContext.getNode(Scale.className, spec["rangeScale"]);
+    } else {
+      throw new Error("No domain range scale specified for AddPointInteraction.");
+    }
+
+    this.addPoint = (d, i) => {
       // console.log(this._dataSetName);
       var data = this.modelContext.getNode(DataSet.className, this._dataSetName);
       var items = data.items;
 
-      var clickLocation: number[] = [event.clientX, event.clientY];
-      var newDataPoint = { "x": this._scale.inverse(clickLocation[0]),
-                           "y": this._scale.inverse(clickLocation[1])};
+      console.log(d);
+
+      console.log(d.x);
+      console.log(d.y);
+
+      console.log(this._areaView.graphSelection.attr("x"));
+      console.log(this._areaView.graphSelection.attr("y"));
+
+      console.log(this._areaView.totalSelection.attr("x"));
+      console.log(this._areaView.totalSelection.attr("y"));
+
+      var clickLocation: number[] = [d.clientX - parseInt(this._areaView.graphSelection.attr("x")) - parseInt(this._areaView.totalSelection.attr("x")),
+                                     d.clientY - parseInt(this._areaView.graphSelection.attr("y")) - parseInt(this._areaView.totalSelection.attr("y"))];
+      var newDataPoint = { "x": this._domainScale.inverse(clickLocation[0]),
+                           "y": this._rangeScale.inverse(clickLocation[1])};
       items.push(newDataPoint);
 
       data.items = items;
@@ -287,7 +312,7 @@ class AddPointInteraction extends Interaction {
     };
 
     this.addEvents = () => {
-      this._markView.element.on("dblclick." + this.id, this.addPoint);
+      $(this._areaView.graphSelection[0][0]).on("dblclick", this.addPoint);
     };
 
     this.addEvents();

@@ -236,7 +236,9 @@ $(function() {
       {
         "type": "addPoint",
         "mark": "symbol",
-        "scale": "x"
+        "area": "area1",
+        "domainScale": "x",
+        "rangeScale": "y"
       }
     ]
   }
