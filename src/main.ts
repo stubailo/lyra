@@ -100,8 +100,9 @@ class Lyra {
     this.render();
 
     // Set up the layout for the chart areas
-    this.setUpLayout();
+    var bounds = this.setUpLayout();
 
+    this._svg.attr("width", bounds[0]).attr("height", bounds[1]);
     // Parse new nodes that don't have models already (should potentially be refactored into new method)
     for(var key in spec) {
       var value = spec[key];
@@ -146,7 +147,7 @@ class Lyra {
 
   private setUpLayout() {
     var window_width: number = $(window).width();
-    var curX = 0, curY = Lyra.AREA_SPACE, maxY = 0;
+    var curX = 0, curY = Lyra.AREA_SPACE+10, maxY = 0, yBound = 0, xBound = 0;
 
     _.each(this._areaViews, (areaView) => {
       var areaWidth = parseFloat(areaView.totalSelection.attr("width"));
@@ -161,7 +162,13 @@ class Lyra {
       if (areaHeight > maxY) {
           maxY = areaHeight;
         }
+      if (yBound < curY + areaHeight) {
+        yBound = curY + areaHeight;
+      }
+      if (xBound < curX) {
+        xBound = curX;
+      }
     });
-    
+    return [xBound, yBound];
   }
 }
