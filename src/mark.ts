@@ -6,6 +6,7 @@ class MarkType {
   }
   public static LINE = new MarkType("path");
   public static CIRCLE = new MarkType("circle");
+  public static RECTANGLE = new MarkType("rect");
 }
 
 class Mark extends ContextNode {
@@ -31,6 +32,9 @@ class Mark extends ContextNode {
         break;
       case "line":
         this._type = MarkType.LINE;
+        break;
+      case "rect":
+        this._type = MarkType.RECTANGLE;
         break;
       default:
         throw new Error("Unsupported mark type: " + this.get("type"));
@@ -67,7 +71,7 @@ class Mark extends ContextNode {
 
     if(typeof(spec["value"]) === "string") {
       valueFunc = function(dataItem) {
-        if(dataItem != null && dataItem[spec["value"]]) {
+        if(dataItem != null && dataItem[spec["value"]] != null) {
           return scale.apply(dataItem[spec["value"]]);
         } else {
           return scale.apply(spec["value"]);
@@ -78,6 +82,7 @@ class Mark extends ContextNode {
         return scale.apply(spec["value"]);
       }
     }
+
     this.set(name, valueFunc);
     this._markProperties.push(name);
   }
@@ -129,6 +134,8 @@ class MarkView extends ContextView {
         return new CircleMarkView(mark, element, viewContext, MarkView.className);
       case MarkType.LINE:
         return new LineMarkView(mark, element, viewContext, MarkView.className);
+      case MarkType.RECTANGLE:
+        return new RectMarkView(mark, element, viewContext, MarkView.className);
       default:
         throw new Error("Invalid MarkView type: " + mark.type);
 
@@ -151,6 +158,7 @@ class CircleMarkView extends MarkView {
       .enter()
       .append("circle")
       .attr("class", this.node.name);
+
     _.each(this.node.markProperties, (key) => {
       this.markSelection.attr(key, (item) => {
         return this.getProperty(key)(item);
@@ -166,7 +174,7 @@ class LineMarkView extends MarkView {
      this.markSelection
       .data([this.node.source.items])
       .enter()
-      .append("svg:path")
+      .append("path")
       .attr("class", this.node.name);
 
     var line = d3.svg.line();
@@ -197,4 +205,28 @@ class LineMarkView extends MarkView {
 
     this.trigger(MarkView.EVENT_RENDER);
   }
+}
+ 
+class RectMarkView extends MarkView {
+
+    public render() {
+      this.markSelection
+        .data(this.node.source.items)
+        .enter()
+        .append("rect")
+        .attr("class", this.node.name);
+
+    this.markSelection.attr("width", ((item) => {
+      return this.getProperty("x2")(item) - this.getProperty("x")(item);
+    }));
+    this.markSelection.attr("height", ((item) => {
+      return this.getProperty("y2")(item) - this.getProperty("y")(item);
+    }));
+
+    _.each(this.node.markProperties, (key) => {
+        this.markSelection.attr(key, (item) => {
+          return this.getProperty(key)(item);
+        });
+    });
+    } 
 }

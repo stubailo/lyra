@@ -45,6 +45,8 @@ class BarDataSetTransform extends DataSet {
       prevValue = item[domain];
     });
 
+    barWidth = barWidth * .95;
+
     return _.map(prevItems, (item) => {
       item = _.clone(item);
       item["barWidth"] = barWidth;
