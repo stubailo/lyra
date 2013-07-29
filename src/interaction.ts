@@ -10,6 +10,7 @@ class Interaction {
   public static TYPE_PAN: string = "pan";
   public static TYPE_COLOR_HOVER: string = "colorHover";
   public static TYPE_ZOOM: string = "zoom";
+  public static TYPE_ADD_POINT: string = "addPoint";
 
   private _modelContext: Context;
   private _viewContext: Context;
@@ -39,6 +40,8 @@ class Interaction {
         return new ColorHoverInteraction(spec, modelContext, viewContext, i);
       case Interaction.TYPE_ZOOM:
         return new ZoomInteraction(spec, modelContext, viewContext, i);
+      case Interaction.TYPE_ADD_POINT:
+        return new AddPointInteraction(spec, modelContext, viewContext, i);
       default:
         throw new Error("Unsupported interaction type: " + spec["type"]);
     }
@@ -241,4 +244,100 @@ class ZoomInteraction extends Interaction {
     this._scale.zoom(1 + ((deltaY < 0) ? 1 : -1) * this._zoomFactor);
     return false;
   }
+}
+
+class AddPointInteraction extends Interaction {
+  private _markView: MarkView;
+  private _areaView: AreaView;
+  private _domainScale: Scale;
+  private _rangeScale: Scale;
+  private _properties: any;
+  private _dataSetName: string;
+  private _domain: string;
+  private _range: string;
+
+  private addPoint;
+  private addEvents;
+
+  constructor(spec: any, modelContext: Context, viewContext: Context, id: number) {
+    super(modelContext, viewContext, id);
+
+    if (spec["mark"]) {
+      this._markView = this.viewContext.getNode(MarkView.className, spec["mark"]);
+      this._dataSetName = this._markView.node.get("source");
+    } else {
+      throw new Error("No mark specified in AddPointInteraction.");
+    }
+
+    if (spec["area"]) {
+      this._areaView = this.viewContext.getNode(AreaView.className, spec["area"]);
+    } else {
+      throw new Error("No area specified in AddPointInteraction.");
+    }
+
+    if (spec["domain"]) {
+      this._domain = spec["domain"];
+    } else {
+      throw new Error("No domain specified for AddPointInteraction.");
+    }
+
+    if (spec["range"]) {
+      this._range = spec["range"];
+    } else {
+      throw new Error("No range specified for AddPointInteraction.");
+    }
+
+    if (spec["domainScale"]) {
+      this._domainScale = this.modelContext.getNode(Scale.className, spec["domainScale"]);
+    } else {
+      throw new Error("No domain scale specified for AddPointInteraction.");
+    }
+
+    if (spec["rangeScale"]) {
+      this._rangeScale = this.modelContext.getNode(Scale.className, spec["rangeScale"]);
+    } else {
+      throw new Error("No domain range scale specified for AddPointInteraction.");
+    }
+
+    this.addPoint = (d, i) => {
+      // console.log(this._dataSetName);
+      var data = this.modelContext.getNode(DataSet.className, this._dataSetName);
+      var items = data.items;
+
+      console.log(this._domain);
+      console.log(this._range);
+
+      console.log(d);
+
+      console.log(d.x);
+      console.log(d.y);
+
+      console.log(this._areaView.graphSelection.attr(this._domain));
+      console.log(this._areaView.graphSelection.attr(this._range));
+
+      console.log(this._areaView.totalSelection.attr(this._domain));
+      console.log(this._areaView.totalSelection.attr(this._range));
+
+      var clickLocation: number[] = [
+                                     d.clientX - parseFloat(this._areaView.graphSelection.attr(this._domain)) - parseFloat(this._areaView.totalSelection.attr(this._domain)),
+                                     d.clientY - parseFloat(this._areaView.graphSelection.attr(this._range)) - parseFloat(this._areaView.totalSelection.attr(this._range))
+                                    ];
+      var newDataPoint = {};
+      newDataPoint[this._domain] = this._domainScale.inverse(clickLocation[0]);
+      newDataPoint[this._range] = this._rangeScale.inverse(clickLocation[1]);
+
+      items.push(newDataPoint);
+      items = _.sortBy(items, this._domain);
+
+      data.items = items;
+      console.log(data.items.length);
+    };
+
+    this.addEvents = () => {
+      $(this._areaView.graphSelection[0][0]).on("dblclick", this.addPoint);
+    };
+
+    this.addEvents();
+  }
+
 }

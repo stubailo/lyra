@@ -2,6 +2,21 @@ $(function() {
   var spec = {
     "data": [
       {
+        "name": "smalltable",
+        "items": [
+          {"x": 1,  "y": 28}, {"x": 2,  "y": 55},
+          {"x": 3,  "y": 43}, {"x": 4,  "y": 91},
+          {"x": 5,  "y": 81}, {"x": 6,  "y": 53},
+          {"x": 7,  "y": 19}, {"x": 8,  "y": 87},
+          {"x": 9,  "y": 52}, {"x": 10, "y": 48},
+          {"x": 11, "y": 24}, {"x": 12, "y": 49},
+          {"x": 13, "y": 87}, {"x": 14, "y": 66},
+          {"x": 15, "y": 17}, {"x": 16, "y": 27},
+          {"x": 17, "y": 68}, {"x": 18, "y": 16},
+          {"x": 19, "y": 49}, {"x": 20, "y": 15}
+        ]
+      },
+      {
         "name": "table",
         "items": [
           {"x": 1,  "y": 28, "z": 1200}, {"x": 2,  "y": 55, "z": 1230},
@@ -19,7 +34,7 @@ $(function() {
       {
         "name": "barData",
         "type": "bar",
-        "source": "data:table",
+        "source": "data:smalltable",
         "domain": "x"
       }
     ],
@@ -104,7 +119,7 @@ $(function() {
       {
         "name": "symbol",
         "type": "circle",
-        "source": "table",
+        "source": "smalltable",
         "area": "area2",
         "properties": {
           "cx": {
@@ -126,7 +141,7 @@ $(function() {
       {
         "name": "symbol2",
         "type": "line",
-        "source": "table",
+        "source": "smalltable",
         "area": "area1",
         "properties": {
           "x": {
@@ -134,8 +149,8 @@ $(function() {
             "scale": "x"
           },
           "y": {
-            "value": "z",
-            "scale": "z"
+            "value": "y",
+            "scale": "y"
           },
           "interpolate": {
             "value" : "linear"
@@ -232,6 +247,15 @@ $(function() {
         "axis": "x",
         "scale": "x",
         "zoomFactor": 0.01
+      },
+      {
+        "type": "addPoint",
+        "mark": "symbol",
+        "area": "area2",
+        "domainScale": "x",
+        "rangeScale": "y",
+        "domain": "x",
+        "range" : "y"
       }
     ]
   }
