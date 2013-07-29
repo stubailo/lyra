@@ -34,7 +34,7 @@ $(function() {
       {
         "name": "barData",
         "type": "bar",
-        "source": "data:table",
+        "source": "data:smalltable",
         "domain": "x"
       }
     ],
