@@ -28,6 +28,11 @@ $(function() {
         "name": "area1",
         "height": 300,
         "width": 400
+      },
+      {
+        "name": "area2",
+        "height": 300,
+        "width": 400
       }
     ],
     "scales": [
@@ -54,14 +59,53 @@ $(function() {
         "rangeEnd": "areas:area1.height",
         "domainBegin": 1000,
         "domainEnd": 2000
+      },
+      {
+        "name": "opacityY",
+        "type": "linear",
+        "rangeBegin": 0,
+        "rangeEnd": 1,
+        "domainBegin": 0,
+        "domainEnd": 100
       }
     ],
     "marks": [
+    {
+        "name": "symbol3",
+        "type": "rect",
+        "source": "barData",
+        "area": "area1",
+        "properties": {
+          "x": {
+            "value": "barDomain",
+            "scale": "x"
+          },
+          "y": {
+            "value": "y",
+            "scale": "y"
+          },
+          "x2": {
+            "value": "barDomain2",
+            "scale": "x"
+          },
+          "y2": {
+            "value": "barBase",
+            "scale": "y"
+          },
+          "fill": {
+            "value": "green"
+          },
+          "fill-opacity": {
+            "value": "y",
+            "scale": "opacityY"
+          }
+        }
+      },
       {
         "name": "symbol",
         "type": "circle",
         "source": "table",
-        "area": "area1",
+        "area": "area2",
         "properties": {
           "cx": {
             "value": "x",
@@ -115,8 +159,7 @@ $(function() {
       "scale": "scales:x",
       "orient": "bottom",
       "ticks": 20,
-      "location": "bottom",
-      "gridline": "lightgray"
+      "location": "bottom"
       },
       {
       "name": "y",
@@ -125,12 +168,28 @@ $(function() {
       "orient": "left",
       "ticks": 10,
       "location": "left",
-      "gridline": "#ffaaaa"
+      "gridline": "#aaaaff"
       },
       {
       "name": "z",
       "area": "areas:area1",
       "scale": "scales:z",
+      "orient": "left",
+      "ticks": 10,
+      "location": "left"
+      }, 
+      {
+      "name": "x2",
+      "area": "areas:area2",
+      "scale": "scales:x",
+      "orient": "bottom",
+      "ticks": 20,
+      "location": "bottom"
+      },
+      {
+      "name": "y2",
+      "area": "areas:area2",
+      "scale": "scales:y",
       "orient": "left",
       "ticks": 10,
       "location": "left",
