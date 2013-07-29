@@ -5,12 +5,14 @@ class Axis extends ContextNode {
    * So for example a circle would have one function for "cx", one for "cy", etc.
    */
   public static AXIS_WIDTH: string = "axis_width";
+  public static AXIS_PADDING: string = "axis_padding";
 
   public static parse(spec: any, context: Context) {
       return new Axis(spec, context, Axis.className);
   }
 
   public load() {
+    this.set(Axis.AXIS_PADDING, 2);
     this.set(Axis.AXIS_WIDTH, 45);
   }
 }
@@ -71,25 +73,29 @@ class AxisView extends ContextView {
       case "bottom":
       transformFunction = (axisSvg, areaHeight, areaWidth) => {
         axisSvg.attr("transform", "translate(" + this._xOffset + "," + (this._yOffset + areaHeight) +")");
-        rectSvg.attr("x", this._xOffset).attr("y", (this._yOffset + areaHeight)).attr("height", this.node.get(Axis.AXIS_WIDTH)).attr("width", areaWidth);
+        rectSvg.attr("x", this._xOffset).attr("y", (this._yOffset + areaHeight))
+          .attr("height", this.node.get(Axis.AXIS_WIDTH)).attr("width", areaWidth);
       };
       break;
       case "top":
       transformFunction = (axisSvg, areaHeight, areaWidth) => {
         axisSvg.attr("transform", "translate(" + this._xOffset + "," + this._yOffset +")");
-        rectSvg.attr("x", this._xOffset).attr("y", this._yOffset - this.node.get(Axis.AXIS_WIDTH)).attr("height", this.node.get(Axis.AXIS_WIDTH)).attr("width", areaWidth);
+        rectSvg.attr("x", this._xOffset).attr("y", this._yOffset - this.node.get(Axis.AXIS_WIDTH))
+          .attr("height", this.node.get(Axis.AXIS_WIDTH)).attr("width", areaWidth);
       };
       break;
       case "left":
       transformFunction = (axisSvg, areaHeight, areaWidth) => {
         axisSvg.attr("transform", "translate(" + this._xOffset + "," + this._yOffset +")");
-        rectSvg.attr("x", this._xOffset - this.node.get(Axis.AXIS_WIDTH)).attr("y", this._yOffset).attr("height", areaHeight).attr("width", this.node.get(Axis.AXIS_WIDTH));
+        rectSvg.attr("x", this._xOffset - this.node.get(Axis.AXIS_WIDTH)).attr("y", this._yOffset)
+          .attr("height", areaHeight).attr("width", this.node.get(Axis.AXIS_WIDTH));
       };
       break;
       case "right":
       transformFunction = (axisSvg, areaHeight, areaWidth) => {
         axisSvg.attr("transform", "translate(" +(this._xOffset + areaWidth) +"," + this._yOffset + ")");
-        rectSvg.attr("x", (this._xOffset + areaWidth)).attr("y", this._yOffset).attr("height", areaHeight).attr("width", this.node.get(Axis.AXIS_WIDTH));
+        rectSvg.attr("x", (this._xOffset + areaWidth)).attr("y", this._yOffset)
+          .attr("height", areaHeight).attr("width", this.node.get(Axis.AXIS_WIDTH));
       };
       break;
       default:
@@ -121,7 +127,7 @@ class AxisView extends ContextView {
       }
 
       this._axisSelection = totalSvg;
-      
+
       transformFunction(axisSvg, areaHeight, areaWidth);
       this.trigger(AxisView.EVENT_RENDER);
     }

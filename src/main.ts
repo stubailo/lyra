@@ -135,14 +135,6 @@ class Lyra {
     _.each(this.model.areas, (area: Area) => {
       this._areaViews.push(new AreaView(area, this._svg, this._viewContext, AreaView.className));
     });
-
-     // HACK HACK: ghetto translate
-    var translate = 0;
-
-    _.each(this._areaViews, function(area: AreaView) {
-      area.totalSelection.attr("x", translate);
-      translate += area.node.get("width") + 90;
-    });
  
     this._markViews = [];
     _.each(this.model.marks, (mark: Mark) => {
