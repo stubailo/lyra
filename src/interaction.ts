@@ -103,7 +103,6 @@ class PanInteraction extends Interaction {
     if(spec["area"]) {
       this._element = this.viewContext.getNode(AreaView.className, spec["area"]).graphSelection;
     } else if(spec["axis"]) {
-      console.log(this.viewContext);
       this._element = this.viewContext.getNode(AxisView.className, spec["axis"]).axisSelection;
     } else {
       throw new Error("No axis or area specified in PanInteraction.");
@@ -214,7 +213,6 @@ class ZoomInteraction extends Interaction {
     if(spec["area"]) {
       this._element = this.viewContext.getNode(AreaView.className, spec["area"]).graphSelection;
     } else if(spec["axis"]) {
-      console.log(this.viewContext);
       this._element = this.viewContext.getNode(AxisView.className, spec["axis"]).axisSelection;
     } else {
       throw new Error("No axis or area specified in PanInteraction.");

@@ -15,6 +15,12 @@ $(function() {
           {"x": 17, "y": 68, "z": 1800}, {"x": 18, "y": 16, "z": 1880},
           {"x": 19, "y": 49, "z": 1000}, {"x": 20, "y": 15, "z": 1200}
         ]
+      },
+      {
+        "name": "barData",
+        "type": "bar",
+        "source": "data:table",
+        "domain": "x"
       }
     ],
     "areas": [
@@ -175,4 +181,6 @@ $(function() {
   lyra = new Lyra(spec, el);
   lyra.render();
   //lyra.model.context.getNode("Area", "area1").set("height", 100);
+
+  console.log(lyra.model.context.getNode("data:barData").items);
 });

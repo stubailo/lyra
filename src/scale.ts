@@ -76,8 +76,6 @@ class LinearScale extends Scale {
     domain[1] = mean + (domainLength * zoomFactor / 2);
     this._scale.domain(domain);
 
-    // console.log(domain);
-
     this.set({
       domainBegin: domain[0],
       domainEnd: domain[1]
