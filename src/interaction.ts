@@ -312,15 +312,15 @@ class AddPointInteraction extends Interaction {
       console.log(d.x);
       console.log(d.y);
 
-      console.log(this._areaView.graphSelection.attr("x"));
-      console.log(this._areaView.graphSelection.attr("y"));
+      console.log(this._areaView.graphSelection.attr(this._domain));
+      console.log(this._areaView.graphSelection.attr(this._range));
 
-      console.log(this._areaView.totalSelection.attr("x"));
-      console.log(this._areaView.totalSelection.attr("y"));
+      console.log(this._areaView.totalSelection.attr(this._domain));
+      console.log(this._areaView.totalSelection.attr(this._range));
 
       var clickLocation: number[] = [
-                                     d.clientX - parseInt(this._areaView.graphSelection.attr(this._domain)) - parseInt(this._areaView.totalSelection.attr(this._domain)),
-                                     d.clientY - parseInt(this._areaView.graphSelection.attr(this._range)) - parseInt(this._areaView.totalSelection.attr(this._range))
+                                     d.clientX - parseFloat(this._areaView.graphSelection.attr(this._domain)) - parseFloat(this._areaView.totalSelection.attr(this._domain)),
+                                     d.clientY - parseFloat(this._areaView.graphSelection.attr(this._range)) - parseFloat(this._areaView.totalSelection.attr(this._range))
                                     ];
       var newDataPoint = {};
       newDataPoint[this._domain] = this._domainScale.inverse(clickLocation[0]);
