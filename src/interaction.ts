@@ -199,7 +199,7 @@ class ColorHoverInteraction extends Interaction {
 }
 
 class ZoomInteraction extends Interaction {
-  private _areaView: AreaView;
+  private _element: D3.Selection;
   private _scale: Scale;
   private _properties: any;
   private _zoomFactor: number;
@@ -210,10 +210,14 @@ class ZoomInteraction extends Interaction {
 
   constructor(spec: any, modelContext: Context, viewContext: Context, id: number) {
     super(modelContext, viewContext, id);
-    if (spec["area"]){
-      this._areaView = this.viewContext.getNode(AreaView.className, spec["area"]);
+
+    if(spec["area"]) {
+      this._element = this.viewContext.getNode(AreaView.className, spec["area"]).graphSelection;
+    } else if(spec["axis"]) {
+      console.log(this.viewContext);
+      this._element = this.viewContext.getNode(AxisView.className, spec["axis"]).axisSelection;
     } else {
-      throw new Error("No axes specified in ZoomInteraction.");
+      throw new Error("No axis or area specified in PanInteraction.");
     }
 
     if (spec["scale"]) {
@@ -232,7 +236,7 @@ class ZoomInteraction extends Interaction {
   }
 
   private addEvents() {
-    $(this._areaView.graphSelection[0][0]).mousewheel($.proxy(this.onZoom, this));
+    $(this._element[0][0]).mousewheel($.proxy(this.onZoom, this));
   }
 
   private onZoom(e, delta, deltaX, deltaY) {

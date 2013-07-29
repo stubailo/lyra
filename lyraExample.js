@@ -117,17 +117,18 @@ $(function() {
       "area": "areas:area1",
       "scale": "scales:y",
       "orient": "left",
-      "ticks": 20,
+      "ticks": 10,
       "location": "left",
-      "gridline": "lightgray"
+      "gridline": "#ffaaaa"
       },
       {
       "name": "z",
       "area": "areas:area1",
       "scale": "scales:z",
       "orient": "left",
-      "ticks": 25,
-      "location": "left"
+      "ticks": 10,
+      "location": "left",
+      "gridline": "#aaaaff"
       }
     ],
     "interactions": [
@@ -163,12 +164,11 @@ $(function() {
       },
       {
         "type": "zoom",
-        "area": "area1",
+        "axis": "x",
         "scale": "x",
         "zoomFactor": 0.01
       }
     ]
-
   }
 
   el = $("#container").get(0);
