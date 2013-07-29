@@ -206,7 +206,7 @@ class ZoomInteraction extends Interaction {
   private _properties: any;
   private _zoomFactor: number;
 
-  private static DEFAULT_ZOOM_FACTOR: number = 0.01;
+  private static DEFAULT_ZOOM_FACTOR: number = 0.02;
   // TODO : separate horizontal and vertical zoom factors?
 
 
@@ -304,20 +304,6 @@ class AddPointInteraction extends Interaction {
       var data = this.modelContext.getNode(DataSet.className, this._dataSetName);
       var items = data.items;
 
-      console.log(this._domain);
-      console.log(this._range);
-
-      console.log(d);
-
-      console.log(d.x);
-      console.log(d.y);
-
-      console.log(this._areaView.graphSelection.attr(this._domain));
-      console.log(this._areaView.graphSelection.attr(this._range));
-
-      console.log(this._areaView.totalSelection.attr(this._domain));
-      console.log(this._areaView.totalSelection.attr(this._range));
-
       var clickLocation: number[] = [
                                      d.clientX - parseFloat(this._areaView.graphSelection.attr(this._domain)) - parseFloat(this._areaView.totalSelection.attr(this._domain)),
                                      d.clientY - parseFloat(this._areaView.graphSelection.attr(this._range)) - parseFloat(this._areaView.totalSelection.attr(this._range))
@@ -330,7 +316,6 @@ class AddPointInteraction extends Interaction {
       items = _.sortBy(items, this._domain);
 
       data.items = items;
-      console.log(data.items.length);
     };
 
     this.addEvents = () => {

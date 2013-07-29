@@ -27,6 +27,7 @@ class DataSet extends ContextNode {
   set items(items: any[]) {
     this.set("items", _.clone(items));
     this.trigger(DataSet.EVENT_CHANGE);
+    this.trigger(ContextNode.EVENT_READY);
   }
 }
 

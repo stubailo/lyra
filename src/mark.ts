@@ -43,7 +43,7 @@ class Mark extends ContextNode {
 
     this._area = context.getNode(Area.className, this.get("area"));
     this._source = context.getNode(DataSet.className, this.get("source"));
-    this._source.on(DataSet.EVENT_CHANGE, $.proxy(this.dataSetChanged, this));
+    this._source.on(DataSet.EVENT_READY, $.proxy(this.dataSetChanged, this));
     this.dataSetChanged();
   }
 
@@ -124,7 +124,7 @@ class MarkView extends ContextView {
 
   public load() {
     var render = $.proxy(this.render, this);
-    this.node.on("change", render);
+    this.node.on(ContextNode.EVENT_READY, render);
     this.on("change", render);
   }
 
@@ -206,7 +206,7 @@ class LineMarkView extends MarkView {
     this.trigger(MarkView.EVENT_RENDER);
   }
 }
- 
+
 class RectMarkView extends MarkView {
 
     public render() {
@@ -216,17 +216,20 @@ class RectMarkView extends MarkView {
         .append("rect")
         .attr("class", this.node.name);
 
-    this.markSelection.attr("width", ((item) => {
-      return this.getProperty("x2")(item) - this.getProperty("x")(item);
-    }));
-    this.markSelection.attr("height", ((item) => {
-      return this.getProperty("y2")(item) - this.getProperty("y")(item);
-    }));
+      this.markSelection.attr("width", (item) => {
+        return this.getProperty("x2")(item) - this.getProperty("x")(item);
+      });
 
-    _.each(this.node.markProperties, (key) => {
+      this.markSelection.attr("height", (item) => {
+        return this.getProperty("y2")(item) - this.getProperty("y")(item);
+      });
+
+      _.each(this.node.markProperties, (key) => {
         this.markSelection.attr(key, (item) => {
           return this.getProperty(key)(item);
         });
-    });
-    } 
+      });
+
+      this.trigger(MarkView.EVENT_RENDER);
+    }
 }
