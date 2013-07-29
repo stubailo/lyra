@@ -84,7 +84,7 @@ class ClickPrintInteraction extends Interaction {
 }
 
 class PanInteraction extends Interaction {
-  private _markView: MarkView;
+  private _element: D3.Selection;
   private _scale: Scale;
   private _direction: string;
 
@@ -100,10 +100,12 @@ class PanInteraction extends Interaction {
   constructor(spec: any, modelContext: Context, viewContext: Context, id: number) {
     super(modelContext, viewContext, id);
 
-    if(spec["mark"]) {
-      this._markView = this.viewContext.getNode(MarkView.className, spec["mark"]);
+    if(spec["area"]) {
+      this._element = this.viewContext.getNode(AreaView.className, spec["area"]).graphSelection;
+    } else if(spec["axis"]) {
+      this._element = this.viewContext.getNode(AxisView.className, spec["axis"]).axisSelection;
     } else {
-      throw new Error("No mark specified in PanInteraction.");
+      throw new Error("No axis or area specified in PanInteraction.");
     }
 
     if(spec["scale"]) {
@@ -119,7 +121,7 @@ class PanInteraction extends Interaction {
     }
 
     this.addEvents = () => {
-      this._markView.element.on("mousedown." + this.id, this.startDrag);
+      this._element.on("mousedown." + this.id, this.startDrag);
     };
 
     this.drag = (event) => {
@@ -196,7 +198,7 @@ class ColorHoverInteraction extends Interaction {
 }
 
 class ZoomInteraction extends Interaction {
-  private _areaView: AreaView;
+  private _element: D3.Selection;
   private _scale: Scale;
   private _properties: any;
   private _zoomFactor: number;
@@ -207,10 +209,13 @@ class ZoomInteraction extends Interaction {
 
   constructor(spec: any, modelContext: Context, viewContext: Context, id: number) {
     super(modelContext, viewContext, id);
-    if (spec["area"]){
-      this._areaView = this.viewContext.getNode(AreaView.className, spec["area"]);
+
+    if(spec["area"]) {
+      this._element = this.viewContext.getNode(AreaView.className, spec["area"]).graphSelection;
+    } else if(spec["axis"]) {
+      this._element = this.viewContext.getNode(AxisView.className, spec["axis"]).axisSelection;
     } else {
-      throw new Error("No axes specified in ZoomInteraction.");
+      throw new Error("No axis or area specified in PanInteraction.");
     }
 
     if (spec["scale"]) {
@@ -229,7 +234,7 @@ class ZoomInteraction extends Interaction {
   }
 
   private addEvents() {
-    $(this._areaView.graphSelection[0][0]).mousewheel($.proxy(this.onZoom, this));
+    $(this._element[0][0]).mousewheel($.proxy(this.onZoom, this));
   }
 
   private onZoom(e, delta, deltaX, deltaY) {
