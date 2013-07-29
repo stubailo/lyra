@@ -49,6 +49,8 @@ class BarDataSetTransform extends DataSet {
       item = _.clone(item);
       item["barWidth"] = barWidth;
       item["barDomain"] = item[domain] - barWidth/2;
+      item["barDomain2"] = item[domain] + barWidth/2;
+      item["barBase"] = 0;
       return item;
     });
   }
