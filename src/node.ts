@@ -1,4 +1,8 @@
+/* ContextNode is a generalized class that represents a node in the
+ * graph context.
+ */
 class ContextNode extends Backbone.Model {
+  // Private references to the context and the name
   private _context: Context;
   private _name: string;
 
@@ -10,8 +14,8 @@ class ContextNode extends Backbone.Model {
     super();
     this._name = spec["name"];
     this._context = context;
-    this._context.set(className + ":" + this.name, this);
     this._propertyFunctions = {};
+    this._context.set(className + ":" + this.name, this);
     this.parseProperties(spec);
 
     this.refresh();
@@ -34,18 +38,17 @@ class ContextNode extends Backbone.Model {
   public parseProperties(properties: any): void {
     for(var key in properties) {
       var value = properties[key];
-      if(Context.isPropertyReference(value)) {
+      if(ContextNode.isPropertyReference(value)) {
         this._propertyFunctions[key] = this.context.getPropertyFunction(value);
-
         var currKey = key;
         var updateProperty = () => {
           this.set(currKey, this._propertyFunctions[currKey]());
         }
 
         updateProperty();
-        this.context.getObject(value).on(ContextNode.EVENT_READY, () => {updateProperty()});
-      } else if (Context.isObjectReference(value)) {
-        this.set(key, this.context.getObject(value));
+        this.context.getNode(value).on(ContextNode.EVENT_READY, () => {updateProperty()});
+      } else if (ContextNode.isObjectReference(value)) {
+        this.set(key, this.context.getNode(value));
         this.get(key).on(ContextNode.EVENT_READY, () => {
           // REFACTOR THIS SHIT
           this.refresh();
@@ -54,6 +57,16 @@ class ContextNode extends Backbone.Model {
         this.set(key, value);
       }
     }
+  }
+
+  private static isPropertyReference(obj: string) {
+    var propertyRegex = /^[A-Za-z_\-0-9]+:[A-Za-z_\-0-9]+\.[A-Za-z_\-0-9]+$/;
+    return ((typeof(obj) === "string") && propertyRegex.test(obj));
+  }
+
+  private static isObjectReference(obj: string) {
+    var objectRegex = /^[A-Za-z_\-0-9]+:[A-Za-z_\-0-9]+$/;
+    return ((typeof(obj) === "string") && objectRegex.test(obj));
   }
 
   public get name(): string {
