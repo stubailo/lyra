@@ -34,12 +34,14 @@ class AxisView extends ContextView {
     this._xOffset = 0;
     this._yOffset = 0;
     
-    var rectSvg = this.element
+    var totalSvg = this.element
+      .append("g");
+
+    var rectSvg = totalSvg
       .append("svg:rect")
       .attr("fill", "white");
 
-    var axisSvg = this.element
-      .append("g")
+    var axisSvg = totalSvg.append("g")
       .attr("class", AxisView.className)
       .attr("name", this.node.name);
 
@@ -118,9 +120,8 @@ class AxisView extends ContextView {
           gridSelection.exit().remove();
       }
 
-
-      this._axisSelection = axisSvg;
-
+      this._axisSelection = totalSvg;
+      
       transformFunction(axisSvg, areaHeight, areaWidth);
       this.trigger(AxisView.EVENT_RENDER);
     }
