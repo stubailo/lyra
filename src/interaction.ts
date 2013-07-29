@@ -306,6 +306,7 @@ class AddPointInteraction extends Interaction {
       var newDataPoint = { "x": this._domainScale.inverse(clickLocation[0]),
                            "y": this._rangeScale.inverse(clickLocation[1])};
       items.push(newDataPoint);
+      items.sort(function (aPoint, bPoint) {return aPoint["x"] - bPoint["x"]});
 
       data.items = items;
       console.log(data.items.length);
