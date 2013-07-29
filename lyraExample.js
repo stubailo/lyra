@@ -4,27 +4,22 @@ $(function() {
       {
         "name": "table",
         "items": [
-          {"x": 1,  "y": 28}, {"x": 2,  "y": 55},
-          {"x": 3,  "y": 43}, {"x": 4,  "y": 91},
-          {"x": 5,  "y": 81}, {"x": 6,  "y": 53},
-          {"x": 7,  "y": 19}, {"x": 8,  "y": 87},
-          {"x": 9,  "y": 52}, {"x": 10, "y": 48},
-          {"x": 11, "y": 24}, {"x": 12, "y": 49},
-          {"x": 13, "y": 87}, {"x": 14, "y": 66},
-          {"x": 15, "y": 17}, {"x": 16, "y": 27},
-          {"x": 17, "y": 68}, {"x": 18, "y": 16},
-          {"x": 19, "y": 49}, {"x": 20, "y": 15}
+          {"x": 1,  "y": 28, "z": 1200}, {"x": 2,  "y": 55, "z": 1230},
+          {"x": 3,  "y": 43, "z": 1100}, {"x": 4,  "y": 91, "z": 1120},
+          {"x": 5,  "y": 81, "z": 1300}, {"x": 6,  "y": 53, "z": 1350},
+          {"x": 7,  "y": 19, "z": 1400}, {"x": 8,  "y": 87, "z": 1560},
+          {"x": 9,  "y": 52, "z": 1500}, {"x": 10, "y": 48, "z": 1460},
+          {"x": 11, "y": 24, "z": 1700}, {"x": 12, "y": 49, "z": 1680},
+          {"x": 13, "y": 87, "z": 1600}, {"x": 14, "y": 66, "z": 1660},
+          {"x": 15, "y": 17, "z": 1900}, {"x": 16, "y": 27, "z": 1990},
+          {"x": 17, "y": 68, "z": 1800}, {"x": 18, "y": 16, "z": 1880},
+          {"x": 19, "y": 49, "z": 1000}, {"x": 20, "y": 15, "z": 1200}
         ]
       }
     ],
     "areas": [
       {
         "name": "area1",
-        "height": 300,
-        "width": 400
-      },
-      {
-        "name": "area2",
         "height": 300,
         "width": 400
       }
@@ -50,9 +45,9 @@ $(function() {
         "name": "z",
         "type": "linear",
         "rangeBegin": 0,
-        "rangeEnd": "areas:area2.height",
-        "domainBegin": 100,
-        "domainEnd": 0
+        "rangeEnd": "areas:area1.height",
+        "domainBegin": 1000,
+        "domainEnd": 2000
       }
     ],
     "marks": [
@@ -82,14 +77,14 @@ $(function() {
         "name": "symbol2",
         "type": "line",
         "source": "table",
-        "area": "area2",
+        "area": "area1",
         "properties": {
           "x": {
             "value": "x",
             "scale": "x"
           },
           "y": {
-            "value": "y",
+            "value": "z",
             "scale": "z"
           },
           "interpolate": {
@@ -103,11 +98,36 @@ $(function() {
           },
           "fill" : {
             "value" : "none"
-          },
-          "heyo" : {
-            "value" : "areas:area1.height"
           }
         }
+      }
+    ],
+    "axes": [
+      {
+      "name": "x",
+      "area": "areas:area1",
+      "scale": "scales:x",
+      "orient": "bottom",
+      "ticks": 20,
+      "location": "bottom",
+      "gridline": "lightgray"
+      },
+      {
+      "name": "y",
+      "area": "areas:area1",
+      "scale": "scales:y",
+      "orient": "left",
+      "ticks": 20,
+      "location": "left",
+      "gridline": "lightgray"
+      },
+      {
+      "name": "z",
+      "area": "areas:area1",
+      "scale": "scales:z",
+      "orient": "left",
+      "ticks": 25,
+      "location": "left"
       }
     ],
     "interactions": [
@@ -118,37 +138,19 @@ $(function() {
       {
         "type": "pan",
         "scale": "x",
-        "mark": "symbol2",
+        "axis": "x",
         "direction": "e"
       },
       {
         "type": "pan",
         "scale": "y",
-        "mark": "symbol2",
+        "axis": "y",
         "direction": "n"
       },
       {
         "type": "pan",
         "scale": "z",
-        "mark": "symbol2",
-        "direction": "n"
-      },
-      {
-        "type": "pan",
-        "scale": "x",
-        "mark": "symbol",
-        "direction": "e"
-      },
-      {
-        "type": "pan",
-        "scale": "y",
-        "mark": "symbol",
-        "direction": "n"
-      },
-      {
-        "type": "pan",
-        "scale": "z",
-        "mark": "symbol",
+        "axis": "z",
         "direction": "n"
       },
       {
@@ -165,61 +167,8 @@ $(function() {
         "scale": "x",
         "zoomFactor": 0.01
       }
-    ],
-  	"axes": [
-  	  {
-  		"name": "x",
-  		"area": "areas:area1",
-  		"scale": "scales:x",
-  		"orient": "bottom",
-  		"ticks": 20,
-  		"location": "bottom",
-      "gridline": "lightgray"
-  	  },
-  	  {
-  		"name": "y1",
-  		"area": "areas:area1",
-  		"scale": "scales:y",
-  		"orient": "left",
-  		"ticks": 20,
-  		"location": "left",
-      "gridline": "lightgray"
-  	  },
-      {
-      "name": "y2",
-      "area": "areas:area1",
-      "scale": "scales:y",
-      "orient": "left",
-      "ticks": 25,
-      "location": "left"
-      },
-      {
-      "name": "y3",
-      "area": "areas:area1",
-      "scale": "scales:y",
-      "orient": "right",
-      "ticks": 17,
-      "location": "right"
-      },
-      {
-      "name": "x",
-      "area": "areas:area2",
-      "scale": "scales:x",
-      "orient": "bottom",
-      "ticks": 20,
-      "location": "bottom",
-      "gridline": "lightgray"
-      },
-      {
-      "name": "y1",
-      "area": "areas:area2",
-      "scale": "scales:y",
-      "orient": "left",
-      "ticks": 20,
-      "location": "left",
-      "gridline": "lightgray"
-      }
-  	]
+    ]
+
   }
 
   el = $("#container").get(0);
