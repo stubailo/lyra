@@ -21,14 +21,12 @@ $(function() {
       {
         "name": "area1",
         "height": 300,
-        "width": 400,
-        "style": "border: 1px solid red"
+        "width": 400
       },
       {
         "name": "area2",
         "height": 300,
-        "width": 400,
-        "style": "border: 1px solid blue"
+        "width": 400
       }
     ],
     "scales": [
@@ -226,6 +224,6 @@ $(function() {
 
   el = $("#container").get(0);
   lyra = new Lyra(spec, el);
-
+  lyra.render();
   //lyra.model.context.getNode("Area", "area1").set("height", 100);
 });

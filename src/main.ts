@@ -72,6 +72,7 @@ class LyraModel {
 
 // Entry point into library
 class Lyra {
+  private static AREA_SPACE = 25;
   // Necessary properties
   private _model: LyraModel;
   private _viewContext: Context;
@@ -83,7 +84,7 @@ class Lyra {
 
   // DOM elements and such
   private _element: HTMLElement;
-
+  private _svg: D3.Selection;
 
   constructor(spec: any, element: HTMLElement) {
     // Initialize
@@ -93,34 +94,13 @@ class Lyra {
     // Initialize DOM
     this._element = element;
 
-    var svg = d3.select(this._element).append('svg:svg');
+    // Generate all the views for this model
+    this.generateViews();
 
-    // Creates the view for areas
-    var createAreas = function(area: Area) {
-        this._areaViews.push(new AreaView(area, svg, this._viewContext, AreaView.className));
-    }
+    this.render();
 
-    createAreas = $.proxy(createAreas, this);
-    this._areaViews = [];
-    _.each(this.model.areas, createAreas);
-
-    // HACK HACK: ghetto translate
-    var translate = 0;
-
-    _.each(this._areaViews, function(area: AreaView) {
-      area.totalSelection.attr("x", translate);
-      translate += area.node.get("width") + 90;
-    });
-
-    // Create views for existing model nodes (should potentially be refactored into new method)
-    var createMarkView = function(mark: Mark) {
-      var markView = MarkView.createView(mark, this._viewContext.getNode(AreaView.className, mark.area.name).graphSelection, this._viewContext);
-      this._markViews.push(markView);
-    }
-    createMarkView = $.proxy(createMarkView, this);
-
-    this._markViews = [];
-    _.each(this.model.marks, createMarkView);
+    // Set up the layout for the chart areas
+    this.setUpLayout();
 
     // Parse new nodes that don't have models already (should potentially be refactored into new method)
     for(var key in spec) {
@@ -132,8 +112,6 @@ class Lyra {
       }
     }
 
-    // Render for the first time
-    this.render();
   }
 
   public get model(): LyraModel {
@@ -147,5 +125,50 @@ class Lyra {
     _.each(this._markViews, function(markView) {
       markView.render();
     });
+  }
+
+  private generateViews() {
+    this._svg = d3.select(this._element).append('svg:svg');
+
+    // Creates the view for area
+    this._areaViews = [];
+    _.each(this.model.areas, (area: Area) => {
+      this._areaViews.push(new AreaView(area, this._svg, this._viewContext, AreaView.className));
+    });
+
+     // HACK HACK: ghetto translate
+    var translate = 0;
+
+    _.each(this._areaViews, function(area: AreaView) {
+      area.totalSelection.attr("x", translate);
+      translate += area.node.get("width") + 90;
+    });
+ 
+    this._markViews = [];
+    _.each(this.model.marks, (mark: Mark) => {
+      this._markViews.push(MarkView.createView(mark, 
+        this._viewContext.getNode(AreaView.className, mark.area.name).graphSelection, this._viewContext));
+    });
+  }
+
+  private setUpLayout() {
+    var window_width: number = $(window).width();
+    var curX = 0, curY = Lyra.AREA_SPACE, maxY = 0;
+
+    _.each(this._areaViews, (areaView) => {
+      var areaWidth = parseFloat(areaView.totalSelection.attr("width"));
+      var areaHeight = parseFloat(areaView.totalSelection.attr("height"));
+      if ((curX + areaWidth) >= window_width) {
+        curX = 0;
+        curY = maxY + Lyra.AREA_SPACE;
+        maxY = 0;
+      }
+      areaView.totalSelection.attr("x", curX).attr("y", curY);
+      curX += areaWidth + Lyra.AREA_SPACE;
+      if (areaHeight > maxY) {
+          maxY = areaHeight;
+        }
+    });
+    
   }
 }
