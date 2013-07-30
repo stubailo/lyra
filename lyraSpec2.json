@@ -121,34 +121,6 @@
           "value": "red"
         }
       }
-    },
-    {
-      "name": "symbol2",
-      "type": "line",
-      "source": "table",
-      "area": "area1",
-      "properties": {
-        "x": {
-          "value": "x",
-          "scale": "x"
-        },
-        "y": {
-          "value": "z",
-          "scale": "z"
-        },
-        "interpolate": {
-          "value" : "linear"
-        },
-        "stroke-width" : {
-          "value" : 3
-        },
-        "stroke" : {
-          "value" : "blue"
-        },
-        "fill" : {
-          "value" : "none"
-        }
-      }
     }
   ],
   "axes": [
@@ -217,14 +189,6 @@
       "scale": "z",
       "axis": "z",
       "direction": "n"
-    },
-    {
-      "type": "clickPrint",
-      "mark": "symbol2"
-    },
-    {
-      "type" : "colorHover",
-      "mark": "symbol2"
     },
     {
       "type": "zoom",

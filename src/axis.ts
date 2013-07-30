@@ -35,13 +35,13 @@ class AxisView extends ContextView {
     this._axis = d3.svg.axis()
     this._xOffset = 0;
     this._yOffset = 0;
-    
+
     var totalSvg = this.element
       .append("g");
 
     var rectSvg = totalSvg
       .append("svg:rect")
-      .attr("fill", "white");
+      .attr("fill-opacity", 0);
 
     var axisSvg = totalSvg.append("g")
       .attr("class", AxisView.className)
