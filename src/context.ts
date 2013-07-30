@@ -9,7 +9,21 @@
  * There is one Context object for the model, and one for the view, so that access can be
  * restricted to only model nodes or only view nodes.
  */
-class Context extends Backbone.Model {
+class Context {
+  // A dictionary to hold everything
+  private nodes: any;
+
+  public get(key: string): any {
+    return this.nodes[key];
+  }
+
+  public set(key: string, value: any): void {
+    this.nodes[key] = value;
+  }
+
+  constructor () {
+    this.nodes = {};
+  }
 
   /* Gets a node in the Context stored with a key of the form "className:nodeName".
    *

@@ -7,7 +7,7 @@ Fix all of the if spec[key] shit, maybe make a function that tests the spec for 
 
 Context
 
-Does context need to be a backbone model?
+// Does context need to be a backbone model?
 How to have only one var for classname that is used in parsing, and in the Context?
 How does all of this overloading stuff work in TypeScript?
 Make so things can be added incrementally
