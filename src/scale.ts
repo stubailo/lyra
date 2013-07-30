@@ -45,7 +45,7 @@ class LinearScale extends Scale {
 
   public load() {
     this._dirty = true;
-    this.on("change", () => {
+    this.on("change:domainBegin change:domainEnd change:rangeBegin change:rangeEnd", () => {
       this._dirty = true;
     });
   }
