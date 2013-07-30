@@ -27,11 +27,6 @@
       "name": "area1",
       "height": 300,
       "width": 400
-    },
-    {
-      "name": "area2",
-      "height": 300,
-      "width": 400
     }
   ],
   "scales": [
@@ -39,7 +34,7 @@
       "name": "x",
       "type": "linear",
       "rangeBegin": 0,
-      "rangeEnd": "areas:area1.width",
+      "rangeEnd": "areas:area1.height",
       "domainBegin": 0,
       "domainEnd": 20
     },
@@ -47,17 +42,9 @@
       "name": "y",
       "type": "linear",
       "rangeBegin": 0,
-      "rangeEnd": "areas:area1.height",
-      "domainBegin": 100,
-      "domainEnd": 0
-    },
-    {
-      "name": "z",
-      "type": "linear",
-      "rangeBegin": 0,
-      "rangeEnd": "areas:area1.height",
-      "domainBegin": 1000,
-      "domainEnd": 2000
+      "rangeEnd": "areas:area1.width",
+      "domainBegin": 0,
+      "domainEnd": 100
     },
     {
       "name": "opacityY",
@@ -69,25 +56,25 @@
     }
   ],
   "marks": [
-  {
+    {
       "name": "symbol3",
       "type": "rect",
       "source": "barData",
       "area": "area1",
       "properties": {
-        "x": {
+        "y": {
           "value": "barDomain",
           "scale": "x"
         },
-        "y": {
+        "x2": {
           "value": "y",
           "scale": "y"
         },
-        "x2": {
+        "y2": {
           "value": "barDomain2",
           "scale": "x"
         },
-        "y2": {
+        "x": {
           "value": "barBase",
           "scale": "y"
         },
@@ -99,31 +86,6 @@
           "scale": "opacityY"
         }
       }
-    },
-    {
-      "name": "symbol",
-      "type": "circle",
-      "source": "table",
-      "area": "area2",
-      "properties": {
-        "cx": {
-          "value": "x",
-          "scale": "x"
-        },
-        "cy": {
-          "value": "y",
-          "scale": "y"
-        },
-        "r": {
-          "value": 5
-        },
-        "fill": {
-          "value": "yellow"
-        },
-        "stroke": {
-          "value": "red"
-        }
-      }
     }
   ],
   "axes": [
@@ -131,67 +93,32 @@
     "name": "x",
     "area": "areas:area1",
     "scale": "scales:x",
-    "orient": "bottom",
+    "orient": "left",
     "ticks": 20,
-    "location": "bottom"
+    "location": "left"
     },
     {
     "name": "y",
     "area": "areas:area1",
     "scale": "scales:y",
-    "orient": "left",
-    "ticks": 10,
-    "location": "left",
-    "gridline": "#aaaaff"
-    },
-    {
-    "name": "z",
-    "area": "areas:area1",
-    "scale": "scales:z",
-    "orient": "left",
-    "ticks": 10,
-    "location": "left"
-    },
-    {
-    "name": "x2",
-    "area": "areas:area2",
-    "scale": "scales:x",
     "orient": "bottom",
-    "ticks": 20,
-    "location": "bottom"
-    },
-    {
-    "name": "y2",
-    "area": "areas:area2",
-    "scale": "scales:y",
-    "orient": "left",
     "ticks": 10,
-    "location": "left",
+    "location": "bottom",
     "gridline": "#aaaaff"
     }
   ],
   "interactions": [
     {
-      "type": "clickPrint",
-      "mark": "symbol"
-    },
-    {
       "type": "pan",
       "scale": "x",
       "axis": "x",
-      "direction": "e"
+      "direction": "n"
     },
     {
       "type": "pan",
       "scale": "y",
       "axis": "y",
-      "direction": "n"
-    },
-    {
-      "type": "pan",
-      "scale": "z",
-      "axis": "z",
-      "direction": "n"
+      "direction": "e"
     },
     {
       "type": "zoom",

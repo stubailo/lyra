@@ -1,9 +1,9 @@
-/* ContextNode is a generalized class that represents a node in the
- * graph context.
+/**
+ * ContextNode is a generalized class that represents a node in the
+ * model or view context.
  */
 class ContextNode extends Backbone.Model {
-  // Private references to the className, context, and name
-  public static className: string;
+  // Private references to the context, and name
   private _context: Context;
   private _name: string;
 
@@ -26,7 +26,7 @@ class ContextNode extends Backbone.Model {
   /* Creates a ContextNode, setting up the name, context, and properties from the specification
    * passed to it.
    *
-   * This method should not be overriden. Instead, override the intialize method to perform additional
+   * This method should not be overriden. Instead, override the load method to perform additional
    * operations before the contextNode is rendered.
    */
   constructor (spec: any, context: Context, className: string) {
@@ -40,6 +40,7 @@ class ContextNode extends Backbone.Model {
     this.parseProperties(spec);
 
     // Event to be removed
+    // TODO: this shit is not good
     this.refresh();
     this.on("change", () => {
       this.refresh();
@@ -62,7 +63,7 @@ class ContextNode extends Backbone.Model {
    * This method parses three type of property values.
    * 1) Static numerical values
    * 2) Objects
-   * 3) Property References (e.g. Set the property width of the contextNode to be the width of another contextNode)
+   * 3) Property References (e.g. Set the property "width" of the contextNode to be the width of another contextNode)
    */
   public parseProperties(properties: any): void {
     for(var key in properties) {

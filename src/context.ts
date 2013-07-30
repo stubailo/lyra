@@ -1,10 +1,13 @@
-/* The context is a global object created by the Lyra model that contains a
+/* The context is an object created by the Lyra model that contains a
  * reference to every contextNode in the model. The context has several overloaded
  * methods to get nodes stored in it and their properties to make it easier to access.
  *
  * The context also supports a simple string syntax to access its elements of the form
  * "className:nodeName" or "className:nodeName.property". Failure to follow this form
  * will throw an error.
+ *
+ * There is one Context object for the model, and one for the view, so that access can be
+ * restricted to only model nodes or only view nodes.
  */
 class Context extends Backbone.Model {
 
@@ -27,6 +30,7 @@ class Context extends Backbone.Model {
 
     // Get the node associated with the key
     var result = this.get(path);
+
     if (result) {
       return result;
     } else {
