@@ -41,52 +41,55 @@ class Scale extends ContextNode {
 class LinearScale extends Scale {
 
   private _scale;
+  private _dirty: boolean; // does the scale need to be recalculated?
+
+  public load() {
+    this._dirty = true;
+    this.on("change", () => {
+      this._dirty = true;
+    });
+  }
 
   public apply(input) {
-    return this._scale(input);
+    return this.scaleRepresentation(input);
   }
 
   public get scaleRepresentation() {
+    if(this._dirty) {
+      // create new scale object
+      var domain = [this.get("domainBegin"), this.get("domainEnd")];
+      var range = [this.get("rangeBegin"), this.get("rangeEnd")];
+      this._scale = d3.scale.linear().domain(domain).range(range);
+      this._dirty = false;
+    }
     return this._scale;
   }
 
   public inverse(input) {
-    return this._scale.invert(input);
+    return this.scaleRepresentation.invert(input);
   }
 
   public pan(pixels) {
-    var domain = _.clone(this._scale.domain());
     var dx = this.inverse(pixels) - this.inverse(0);
-    domain[0] -= dx;
-    domain[1] -= dx;
-    this._scale.domain(domain);
 
     this.set({
-      domainBegin: domain[0],
-      domainEnd: domain[1]
+      domainBegin: this.get("domainBegin") - dx,
+      domainEnd: this.get("domainEnd") - dx
     });
   }
 
   public zoom(zoomFactor: number) {
-    var domain = _.clone(this._scale.domain());
+    var domain = [this.get("domainBegin"), this.get("domainEnd")];
     var mean = (domain[0] + domain[1]) / 2;
     var domainLength = domain[1] - domain[0];
 
     domain[0] = mean - (domainLength * zoomFactor / 2);
     domain[1] = mean + (domainLength * zoomFactor / 2);
-    this._scale.domain(domain);
 
     this.set({
       domainBegin: domain[0],
       domainEnd: domain[1]
     });
-  }
-
-  public recalculate(callback) {
-    var domain = [this.get("domainBegin"), this.get("domainEnd")];
-    var range = [this.get("rangeBegin"), this.get("rangeEnd")];
-    this._scale = d3.scale.linear().domain(domain).range(range);
-    callback();
   }
 }
 
