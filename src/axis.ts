@@ -4,8 +4,8 @@ class Axis extends ContextNode {
    * Each property is a function of one item that specifies that property of an SVG element.
    * So for example a circle would have one function for "cx", one for "cy", etc.
    */
-  public static AXIS_WIDTH: string = "axis_width";
-  public static AXIS_PADDING: string = "axis_padding";
+  public static AXIS_WIDTH: string = "axisWidth";
+  public static AXIS_PADDING: string = "axisPadding";
 
   public static parse(spec: any, context: Context) {
       return new Axis(spec, context, Axis.className);
