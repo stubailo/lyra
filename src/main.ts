@@ -21,7 +21,6 @@ class LyraModel {
     // Initialize
     this._context = new Context();
 
-    var axisArray = [];
     // Parse all of the models
     for(var key in spec) {
       var value = spec[key];
@@ -37,17 +36,13 @@ class LyraModel {
           ContextNode.parseAll(value, context, Mark);
           break;
 		    case "axes":
-          axisArray = ContextNode.parseAll(value, context, Axis);
+          ContextNode.parseAll(value, context, Axis);
         break;
         case "areas":
           ContextNode.parseAll(value, context, Area);
         break;
       }
     }
-
-    _.each(axisArray, (axis: Axis) => {
-      axis.get("area").addAxis(axis);
-    });
   }
 
   public get context(): Context {

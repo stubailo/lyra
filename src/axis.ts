@@ -14,6 +14,8 @@ class Axis extends ContextNode {
   public load() {
     this.set(Axis.AXIS_PADDING, 2);
     this.set(Axis.AXIS_WIDTH, 45);
+
+    this.get("area").addAxis(this);
   }
 }
 
