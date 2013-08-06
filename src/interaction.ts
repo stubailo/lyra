@@ -102,7 +102,7 @@ class PanInteraction extends Interaction {
 
   constructor(spec: any, modelContext: Context, viewContext: Context, id: number) {
     super(modelContext, viewContext, id);
-
+    console.log(spec);
     if(spec["area"]) {
       this._element = this.viewContext.getNode(AreaView.className, spec["area"]).graphSelection;
     } else if(spec["axis"]) {
@@ -110,6 +110,8 @@ class PanInteraction extends Interaction {
     } else {
       throw new Error("No axis or area specified in PanInteraction.");
     }
+
+    console.log(this.viewContext);
 
     if(spec["scale"]) {
       this._scale = this.modelContext.getNode(Scale.className, spec["scale"]);

@@ -6,7 +6,11 @@ class Area extends ContextNode {
   public defaults() {
     return _(super.defaults()).extend({
       "height": 300,
-      "width": 400
+      "width": 400,
+      "paddingTop": 10,
+      "paddingRight": 10,
+      "paddingBottom": 10,
+      "paddingLeft": 10
     });
   }
 
@@ -52,6 +56,7 @@ class AreaView extends ContextView {
     var createAxisView = (axis: Axis) => {
       var axisView = new AxisView(axis, this._totalSelection, this.context, Axis.className);
       this._axisViews.push(axisView);
+      console.log("creating axis");
     }
     createAxisView = $.proxy(createAxisView, this);
 
@@ -60,18 +65,18 @@ class AreaView extends ContextView {
   }
 
 	public render() {
-    var axisInfo = this.renderAxis();
+    this.renderAxis();
     this._graphSelection
-      .attr("x", axisInfo["left"])
-      .attr("y",  axisInfo["top"])
-      .attr("width",  this.node.get("width"))
-      .attr("height",  this.node.get("height"));
+      .attr("x", this.getProperty("paddingLeft"))
+      .attr("y",  this.getProperty("paddingTop"))
+      .attr("width",  this.getProperty("width"))
+      .attr("height",  this.getProperty("height"));
 
     for (var property in this.node.attributes) {
       if (property == "height") {
-        this._totalSelection.attr(property, (this.getProperty(property) + axisInfo["x"]));
+        this._totalSelection.attr(property, this.getProperty("height") + this.getProperty("paddingTop") + this.getProperty("paddingBottom"));
       } else if (property == "width") {
-        this._totalSelection.attr(property, (this.getProperty(property) + axisInfo["y"]));
+        this._totalSelection.attr(property, this.getProperty("width") + this.getProperty("paddingLeft") + this.getProperty("paddingRight"));
       } else {
         this._totalSelection.attr(property, this.getProperty(property));
       }
@@ -88,48 +93,35 @@ class AreaView extends ContextView {
 	}
 
   private renderAxis() {
-    var axisInfo = [];
-    axisInfo["left"] = 0, axisInfo["top"] = 0, axisInfo["x"] = 0, axisInfo["y"] = 0;
+    var currentDistances: { left: number; right: number; top: number; bottom: number }
+      = { left: 0, right: 0, top: 0, bottom: 0 };
 
-		_.each(this.node.axes, (axis: Axis) => {
-			switch(axis.get("location")) {
+		_.each(this._axisViews, (axisView: AxisView) => {
+			switch(axisView.getProperty("location")) {
 				case "left":
-					axisInfo["left"] += axis.get(Axis.AXIS_WIDTH);
+					currentDistances.left += axisView.getProperty(Axis.AXIS_WIDTH);
+          axisView.setOffsets(this.getProperty("paddingLeft") - currentDistances.left, this.getProperty("paddingTop"));
+          break;
 				case "right":
-					axisInfo["y"] += axis.get(Axis.AXIS_WIDTH);
+          currentDistances.right += axisView.getProperty(Axis.AXIS_WIDTH);
+          axisView.setOffsets(this.getProperty("paddingLeft") + this.getProperty("width") + currentDistances.right, this.getProperty("paddingTop"));
 					break;
 				case "top":
-					axisInfo["top"] += axis.get(Axis.AXIS_WIDTH);
+          currentDistances.top += axisView.getProperty(Axis.AXIS_WIDTH);
+          axisView.render();
+          break;
 				case "bottom":
-					axisInfo["x"] += axis.get(Axis.AXIS_WIDTH);
+          currentDistances.bottom += axisView.getProperty(Axis.AXIS_WIDTH);
+          axisView.setOffsets(this.getProperty("paddingLeft"), this.getProperty("paddingTop") + currentDistances.bottom - axisView.getProperty(Axis.AXIS_WIDTH));
 					break;
 				default:
-					throw new Error("Unknown axis location: " + axis.get("location"));
+					throw new Error("Unknown axis location: " + axisView.getProperty("location"));
 			}
+
+      console.log("setting offset..");
 		});
 
-    var numLeft = 0, numRight = 0, numTop = 0, numBottom = 0;
-    _.each(this._axisViews, (axisView: AxisView) => {
-      switch (axisView.node.get("location")) {
-        case "left":
-          axisView.setOffsets(numLeft, axisInfo["top"]);
-          numLeft += axisView.node.get(Axis.AXIS_WIDTH);
-          break;
-        case "right":
-          axisView.setOffsets((axisInfo["left"] + numRight), axisInfo["top"]);
-          numRight += axisView.node.get(Axis.AXIS_WIDTH);;
-          break;
-        case "top":
-          axisView.setOffsets(axisInfo["left"], numTop);
-          numTop += axisView.node.get(Axis.AXIS_WIDTH);;
-          break;
-        case "bottom":
-          axisView.setOffsets(axisInfo["left"], axisInfo["top"] + numBottom);
-          numTop += axisView.node.get(Axis.AXIS_WIDTH);
-          break;
-        }
-    });
-    return axisInfo;
+
 	}
 
 	public get graphSelection() {

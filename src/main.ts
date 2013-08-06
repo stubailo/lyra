@@ -128,18 +128,18 @@ class Lyra {
 
   private setUpLayout() {
     var window_width: number = $(window).width();
-    var curX = 0, curY = Lyra.AREA_SPACE+10, maxY = 0, yBound = 0, xBound = 0;
+    var curX = 0, curY = 0, maxY = 0, yBound = 0, xBound = 0;
 
     _.each(<AreaView[]> this._viewContext.getNodesOfClass(Area.className), (areaView) => {
       var areaWidth = parseFloat(areaView.totalSelection.attr("width"));
       var areaHeight = parseFloat(areaView.totalSelection.attr("height"));
       if ((curX + areaWidth) >= window_width) {
         curX = 0;
-        curY = maxY + Lyra.AREA_SPACE;
+        curY = maxY;
         maxY = 0;
       }
       areaView.totalSelection.attr("x", curX).attr("y", curY);
-      curX += areaWidth + Lyra.AREA_SPACE;
+      curX += areaWidth;
       if (areaHeight > maxY) {
           maxY = areaHeight;
         }

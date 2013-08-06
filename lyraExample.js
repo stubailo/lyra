@@ -27,7 +27,9 @@ $(function() {
       {
         "name": "area1",
         "height": 300,
-        "width": 400
+        "width": 400,
+        "paddingLeft": 100,
+        "paddingBottom": 50
       }
     ],
     "scales": [
