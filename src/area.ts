@@ -3,6 +3,13 @@ class Area extends ContextNode {
 
 	private _axes: Axis[];
 
+  public defaults() {
+    return _(super.defaults()).extend({
+      "height": 300,
+      "width": 400
+    });
+  }
+
   public static parse(spec: any, context: Context) {
     return new Area(spec, context, Area.className);
   }
@@ -21,7 +28,7 @@ class Area extends ContextNode {
 }
 
 class AreaView extends ContextView {
-	public static className: string = "AreaView";
+	public static className: string = "areas";
 	public static EVENT_RENDER: string = "render";
 
 	private _totalSelection: D3.Selection;
@@ -31,6 +38,12 @@ class AreaView extends ContextView {
 	private _axisViews: AxisView[];
 
   public load() {
+    this.buildViews();
+
+    this.node.on(ContextNode.EVENT_READY, () => {this.render()});
+  }
+
+  public buildViews() {
     this._totalSelection = this.element.append("svg").attr("class", AreaView.className).attr("name", this.node.name);
     this._graphSelection = this._totalSelection.append("svg").attr("class", "graph");
     this._background = this._graphSelection.append("rect");
@@ -44,10 +57,7 @@ class AreaView extends ContextView {
 
     this._axisViews = [];
     _.each(this.node.axes, createAxisView);
-
-    this.node.on(ContextNode.EVENT_READY, () => {this.render()});
   }
-
 
 	public render() {
     var axisInfo = this.renderAxis();
@@ -80,7 +90,7 @@ class AreaView extends ContextView {
   private renderAxis() {
     var axisInfo = [];
     axisInfo["left"] = 0, axisInfo["top"] = 0, axisInfo["x"] = 0, axisInfo["y"] = 0;
-    
+
 		_.each(this.node.axes, (axis: Axis) => {
 			switch(axis.get("location")) {
 				case "left":

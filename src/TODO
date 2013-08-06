@@ -36,7 +36,7 @@ AreaView needs to be refactored it seems, a lot of the view code in general is p
 
 Scale
 
-Remove recalculate and move that stuff to the getter
+// Remove recalculate and move that stuff to the getter
 Create a date scale to test if it makes sense
 Comment the stuff
 Should zoom and pan and stuff like that be part of the class?
@@ -53,6 +53,7 @@ Fix mark parsing
 Fix mark events, this is the main issue right now
 Create mark API, look at jchart or something
 Consistent styling?
+Maybe specifying scales and stuff should use the same syntax as everywhere else
 
 Interaction
 

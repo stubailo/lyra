@@ -7,6 +7,10 @@ class ContextNode extends Backbone.Model {
   private _context: Context;
   private _name: string;
 
+  public defaults() {
+    return {};
+  }
+
   // This event is triggered when a context node has finished rendering.
   public static EVENT_READY: string = "EVENT_READY";
 
@@ -31,6 +35,8 @@ class ContextNode extends Backbone.Model {
    */
   constructor (spec: any, context: Context, className: string) {
     super();
+    Backbone.Model.apply(this, arguments);
+
     // Setup instance variables
     this._name = spec["name"];
     this._context = context;
@@ -61,9 +67,9 @@ class ContextNode extends Backbone.Model {
   /* Given a hash of properties, attaches the properties to the contextNode.
    *
    * This method parses three type of property values.
-   * 1) Static numerical values
-   * 2) Objects
-   * 3) Property References (e.g. Set the property "width" of the contextNode to be the width of another contextNode)
+   * 1) Objects
+   * 2) Property References (e.g. Set the property "width" of the contextNode to be the width of another contextNode)
+   * 3) If the property isn't either of the above it is set as-is
    */
   public parseProperties(properties: any): void {
     for(var key in properties) {
