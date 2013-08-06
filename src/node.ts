@@ -6,6 +6,7 @@ class ContextNode extends Backbone.Model {
   // Private references to the context, and name
   private _context: Context;
   private _name: string;
+  private _className: string;
 
   public defaults() {
     return {};
@@ -40,8 +41,11 @@ class ContextNode extends Backbone.Model {
     // Setup instance variables
     this._name = spec["name"];
     this._context = context;
+    this._className = className;
+
     // Save this ContextNode in the context
     this._context.set(className + ":" + this.name, this);
+
     // Parse the properties of this node from the specification
     this.parseProperties(spec);
 
@@ -97,6 +101,10 @@ class ContextNode extends Backbone.Model {
 
   public get context(): Context {
     return this._context;
+  }
+
+  public get className(): string {
+    return this._className;
   }
 
   public recalculate(callback) {

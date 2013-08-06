@@ -15,13 +15,6 @@
 
 // Model class, should not be exposed as API eventually
 class LyraModel {
-
-  private _dataSets: DataSet[];
-  private _scales: Scale[];
-  private _marks: Mark[];
-  private _interactions: Interaction[];
-  private _areas: Area[];
-
   private _context: Context;
 
   constructor(spec: any) {
@@ -35,19 +28,19 @@ class LyraModel {
       var context = this.context;
       switch(key) {
         case "data":
-          this._dataSets = ContextNode.parseAll(value, context, DataSet);
+          ContextNode.parseAll(value, context, DataSet);
         break;
         case "scales":
-          this._scales = ContextNode.parseAll(value, context, Scale);
+          ContextNode.parseAll(value, context, Scale);
         break;
         case "marks":
-          this._marks = ContextNode.parseAll(value, context, Mark);
+          ContextNode.parseAll(value, context, Mark);
           break;
 		    case "axes":
           axisArray = ContextNode.parseAll(value, context, Axis);
         break;
         case "areas":
-          this._areas = ContextNode.parseAll(value, context, Area);
+          ContextNode.parseAll(value, context, Area);
         break;
       }
     }
@@ -55,14 +48,6 @@ class LyraModel {
     _.each(axisArray, (axis: Axis) => {
       axis.get("area").addAxis(axis);
     });
-  }
-
-  public get marks(): Mark[] {
-    return this._marks;
-  }
-
-  public get areas(): Area[] {
-    return this._areas;
   }
 
   public get context(): Context {
@@ -133,14 +118,14 @@ class Lyra {
 
     // Creates the view for area
     this._areaViews = [];
-    _.each(this.model.areas, (area: Area) => {
+    _.each(this.model.context.getNodesOfClass(Area.className), (area: Area) => {
       this._areaViews.push(new AreaView(area, this._svg, this._viewContext, AreaView.className));
 
     });
- 
+
     this._markViews = [];
-    _.each(this.model.marks, (mark: Mark) => {
-      this._markViews.push(MarkView.createView(mark, 
+    _.each(this.model.context.getNodesOfClass(Mark.className), (mark: Mark) => {
+      this._markViews.push(MarkView.createView(mark,
         this._viewContext.getNode(AreaView.className, mark.area.name).graphSelection, this._viewContext));
     });
   }

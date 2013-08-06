@@ -11,7 +11,7 @@
  */
 class Context {
   // A dictionary to hold everything
-  private nodes: any;
+  private nodes: Object;
 
   public get(key: string): any {
     return this.nodes[key];
@@ -100,6 +100,11 @@ class Context {
     var property = Context.getProp(argument)
     var node = this.getNode(argument);
     node.on("change:" + property, listener);
+  }
+
+  /* Get all ContextNodes of a certain className */
+  public getNodesOfClass(className: string): ContextNode[] {
+    return _.filter(_.values(this.nodes), (node) => {return node.className === className});
   }
 
   /* Private method to get the path of the form "className:nodeName" given an
