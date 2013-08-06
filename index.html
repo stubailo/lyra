@@ -72,7 +72,9 @@
           var el = $("#window" + windowNum).get(0);
           $.getJSON(fileName, function (spec) {
             lyra = new Lyra(spec, el);
-            lyra.render();
+            //lyra.render();
+
+            lyra.model.context.getNode("data:table").items = [{x: 1, y:3}];
 
             if (windowNum == 1) {
               lyra1 = lyra;

@@ -3,16 +3,6 @@
       {
         "name": "table",
         "items": [
-          {"x": 1,  "y": 28, "z": 1200}, {"x": 2,  "y": 55, "z": 1230},
-          {"x": 3,  "y": 43, "z": 1100}, {"x": 4,  "y": 91, "z": 1120},
-          {"x": 5,  "y": 81, "z": 1300}, {"x": 6,  "y": 53, "z": 1350},
-          {"x": 7,  "y": 19, "z": 1400}, {"x": 8,  "y": 87, "z": 1560},
-          {"x": 9,  "y": 52, "z": 1500}, {"x": 10, "y": 48, "z": 1460},
-          {"x": 11, "y": 24, "z": 1700}, {"x": 12, "y": 49, "z": 1680},
-          {"x": 13, "y": 87, "z": 1600}, {"x": 14, "y": 66, "z": 1660},
-          {"x": 15, "y": 17, "z": 1900}, {"x": 16, "y": 27, "z": 1990},
-          {"x": 17, "y": 68, "z": 1800}, {"x": 18, "y": 16, "z": 1880},
-          {"x": 19, "y": 49, "z": 1000}, {"x": 20, "y": 15, "z": 1200}
         ]
       },
       {
@@ -75,34 +65,6 @@
             "value": "red"
           }
         }
-      },
-      {
-        "name": "symbol2",
-        "type": "line",
-        "source": "table",
-        "area": "area1",
-        "properties": {
-          "x": {
-            "value": "x",
-            "scale": "x"
-          },
-          "y": {
-            "value": "z",
-            "scale": "z"
-          },
-          "interpolate": {
-            "value" : "linear"
-          },
-          "stroke-width" : {
-            "value" : 3
-          },
-          "stroke" : {
-            "value" : "blue"
-          },
-          "fill" : {
-            "value" : "none"
-          }
-        }
       }
     ],
     "axes": [
@@ -155,14 +117,6 @@
         "direction": "n"
       },
       {
-        "type": "clickPrint",
-        "mark": "symbol2"
-      },
-      {
-        "type" : "colorHover",
-        "mark": "symbol2"
-      },
-      {
         "type": "zoom",
         "axis": "x",
         "scale": "x",
@@ -173,6 +127,22 @@
         "axis": "y",
         "scale": "y",
         "zoomFactor": 0.01
+      }
+      ,
+      {
+        "type": "zoom",
+        "area": "area1",
+        "scale": "z",
+        "zoomFactor": 0.01
+      },
+      {
+        "type": "addPoint",
+        "mark": "symbol",
+        "area": "area1",
+        "domain": "x",
+        "range": "y",
+        "domainScale": "x",
+        "rangeScale": "y"
       }
     ]
   }

@@ -17,30 +17,35 @@
 class LyraModel {
   private _context: Context;
 
+  private static _classNameToClass: Object = {};
+
   constructor(spec: any) {
     // Initialize
     this._context = new Context();
 
-    var classNameToClass: Object = {
-      "data": DataSet,
-      "scales": Scale,
-      "marks": Mark,
-      "axes": Axis,
-      "areas": Area
-    };
-
     // Parse all of the models
     for(var className in spec) {
-      if (classNameToClass[className] !== undefined) {
-        ContextNode.parseAll(spec[className], this.context, classNameToClass[className]);
+      if (LyraModel._classNameToClass[className] !== undefined) {
+        ContextNode.parseAll(spec[className], this.context, LyraModel._classNameToClass[className]);
       }
     }
+  }
+
+  // Method for adding new types of model nodes
+  public static addClass(specKey: string, classReference): void {
+    LyraModel._classNameToClass[specKey] = classReference;
   }
 
   public get context(): Context {
     return this._context;
   }
 }
+
+LyraModel.addClass("data", DataSet);
+LyraModel.addClass("scales", Scale);
+LyraModel.addClass("marks", Mark);
+LyraModel.addClass("axes", Axis);
+LyraModel.addClass("areas", Area);
 
 // Entry point into library
 class Lyra {
