@@ -21,26 +21,18 @@ class LyraModel {
     // Initialize
     this._context = new Context();
 
+    var classNameToClass: Object = {
+      "data": DataSet,
+      "scales": Scale,
+      "marks": Mark,
+      "axes": Axis,
+      "areas": Area
+    };
+
     // Parse all of the models
-    for(var key in spec) {
-      var value = spec[key];
-      var context = this.context;
-      switch(key) {
-        case "data":
-          ContextNode.parseAll(value, context, DataSet);
-        break;
-        case "scales":
-          ContextNode.parseAll(value, context, Scale);
-        break;
-        case "marks":
-          ContextNode.parseAll(value, context, Mark);
-          break;
-		    case "axes":
-          ContextNode.parseAll(value, context, Axis);
-        break;
-        case "areas":
-          ContextNode.parseAll(value, context, Area);
-        break;
+    for(var className in spec) {
+      if (classNameToClass[className] !== undefined) {
+        ContextNode.parseAll(spec[className], this.context, classNameToClass[className]);
       }
     }
   }
