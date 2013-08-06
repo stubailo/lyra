@@ -101,12 +101,11 @@ class Lyra {
   }
 
   public render() {
-    _.each(<ContextView[]> this._viewContext.getNodesOfClass(Area.className), function(areaView) {
-      areaView.render();
-    });
-    _.each(<ContextView[]> this._viewContext.getNodesOfClass(Mark.className), function(markView) {
-      markView.render();
-    });
+    for(var specKey in Lyra._classNameToClass) {
+      _.each(<ContextView[]> this._viewContext.getNodesOfClass(specKey), function(view) {
+        view.render();
+      });
+    }
   }
 
   private generateViews() {
