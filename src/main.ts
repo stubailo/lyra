@@ -31,13 +31,13 @@ class LyraModel {
     }
   }
 
+  public get context(): Context {
+    return this._context;
+  }
+
   // Method for adding new types of model nodes
   public static addClass(specKey: string, classReference): void {
     LyraModel._classNameToClass[specKey] = classReference;
-  }
-
-  public get context(): Context {
-    return this._context;
   }
 }
 
@@ -55,13 +55,17 @@ class Lyra {
   private _viewContext: Context;
 
   // Spec-produced objects
-  private _markViews: MarkView[];
   private _interactions: Interaction[];
-  private _areaViews : AreaView[];
 
   // DOM elements and such
   private _element: HTMLElement;
   private _svg: D3.Selection;
+
+  private static _classNameToClass: Object = {};
+
+  public static addClass(specKey: string, classReference): void {
+    Lyra._classNameToClass[specKey] = classReference;
+  }
 
   constructor(spec: any, element: HTMLElement) {
     // Initialize
@@ -97,10 +101,10 @@ class Lyra {
   }
 
   public render() {
-    _.each(this._areaViews, function(areaView) {
+    _.each(<ContextView[]> this._viewContext.getNodesOfClass(Area.className), function(areaView) {
       areaView.render();
     });
-    _.each(this._markViews, function(markView) {
+    _.each(<ContextView[]> this._viewContext.getNodesOfClass(Mark.className), function(markView) {
       markView.render();
     });
   }
@@ -108,17 +112,18 @@ class Lyra {
   private generateViews() {
     this._svg = d3.select(this._element).append('svg:svg');
 
+    for(var specKey in Lyra._classNameToClass) {
+      console.log("generating views for: " + specKey);
+    }
     // Creates the view for area
-    this._areaViews = [];
     _.each(this.model.context.getNodesOfClass(Area.className), (area: Area) => {
-      this._areaViews.push(new AreaView(area, this._svg, this._viewContext, AreaView.className));
+      new AreaView(area, this._svg, this._viewContext, AreaView.className);
 
     });
 
-    this._markViews = [];
     _.each(this.model.context.getNodesOfClass(Mark.className), (mark: Mark) => {
-      this._markViews.push(MarkView.createView(mark,
-        this._viewContext.getNode(AreaView.className, mark.area.name).graphSelection, this._viewContext));
+      MarkView.createView(mark,
+        this._viewContext.getNode(AreaView.className, mark.area.name).graphSelection, this._viewContext);
     });
   }
 
@@ -126,7 +131,7 @@ class Lyra {
     var window_width: number = $(window).width();
     var curX = 0, curY = Lyra.AREA_SPACE+10, maxY = 0, yBound = 0, xBound = 0;
 
-    _.each(this._areaViews, (areaView) => {
+    _.each(<AreaView[]> this._viewContext.getNodesOfClass(Area.className), (areaView) => {
       var areaWidth = parseFloat(areaView.totalSelection.attr("width"));
       var areaHeight = parseFloat(areaView.totalSelection.attr("height"));
       if ((curX + areaWidth) >= window_width) {
@@ -149,3 +154,6 @@ class Lyra {
     return [xBound, yBound];
   }
 }
+
+Lyra.addClass("areas", AreaView);
+Lyra.addClass("marks", MarkView);
