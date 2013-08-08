@@ -2,6 +2,8 @@
   "name": "Lyra",
   "version": "0.0.1",
   "devDependencies": {
-    "grunt": "~0.4.1"
+    "grunt": "~0.4.1",
+    "typescript": "~0.9.1",
+    "grunt-tslint": "~0.1.1"
   }
 }

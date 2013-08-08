@@ -145,7 +145,7 @@ module Lyra {
         private static AREA_KEY: string = "area";
         private static AXIS_KEY: string = "axis";
         private static SCALE_KEY: string = "scale";
-        private static ZOOM_FACTOR_KEY: string = "scale";
+        private static ZOOM_FACTOR_KEY: string = "zoomFactor";
 
         private _element: D3.Selection;
         private _scale: Scale;
