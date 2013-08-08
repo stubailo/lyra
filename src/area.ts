@@ -23,6 +23,14 @@ class Area extends ContextNode {
   public load() {
 
   }
+
+  public calculatedWidth(): number {
+    return this.get("paddingLeft") + this.get("width") + this.get("paddingRight");
+  }
+
+  public calculatedHeight(): number {
+    return this.get("paddingTop") + this.get("height") + this.get("paddingBottom");
+  }
 }
 
 class AreaView extends ContextView {
@@ -34,7 +42,9 @@ class AreaView extends ContextView {
 
   public load() {
     this.buildViews();
-    this.renderSubviews();
+    this.buildSubviews();
+
+    this.node.on("change", $.proxy(this.render, this));
   }
 
   public buildViews() {
@@ -44,7 +54,6 @@ class AreaView extends ContextView {
   }
 
 	public render() {
-
     this._graphSelection
       .attr("x", this.get("paddingLeft"))
       .attr("y",  this.get("paddingTop"))
@@ -68,46 +77,53 @@ class AreaView extends ContextView {
       .attr("height", this.node.get("height"))
       .attr("fill", "white");
 
-    this.trigger(AreaView.EVENT_RENDER);
-	}
-
-  private renderSubviews() {
     var currentDistances: { left: number; right: number; top: number; bottom: number }
       = { left: 0, right: 0, top: 0, bottom: 0 };
 
     _.each(this.node.getAttachmentPoints(), (attachmentPoint: string) => {
-  		_.each(this.node.subViewModels[attachmentPoint], (subViewModel: ContextNode) => {
-        var axisGroup: D3.Selection = this._totalSelection.append("g");
+      _.each(this.subViews[attachmentPoint], (subView: ContextView) => {
+        var subViewGroup: D3.Selection = subView.element;
 
         var x: number = 0;
         var y: number = 0;
 
-  			switch(attachmentPoint) {
-  				case "left":
-  					currentDistances.left += subViewModel.calculatedWidth();
+        console.log(subView);
+        switch(attachmentPoint) {
+          case "left":
+            currentDistances.left += subView.calculatedWidth();
             x = this.get("paddingLeft") - currentDistances.left;
             y = this.get("paddingTop");
             break;
-  				case "right":
-            currentDistances.right += subViewModel.calculatedWidth();
-            x = currentDistances.right + this.get("paddingLeft") - subViewModel.calculatedWidth();
+          case "right":
+            currentDistances.right += subView.calculatedWidth();
+            x = currentDistances.right + this.get("paddingLeft") - subView.calculatedWidth();
             y = this.get("paddingTop");
-  					break;
-  				case "top":
-            currentDistances.top += subViewModel.calculatedHeight();
+            break;
+          case "top":
+            currentDistances.top += subView.calculatedHeight();
             x = this.get("paddingLeft");
             y = this.get("paddingTop") - currentDistances.top;
             break;
-  				case "bottom":
-            currentDistances.bottom += subViewModel.calculatedHeight();
+          case "bottom":
+            currentDistances.bottom += subView.calculatedHeight();
             x = this.get("paddingLeft");
-            y = this.get("paddingTop") + currentDistances.bottom - subViewModel.calculatedWidth();
-  					break;
-  			}
+            y = this.get("paddingTop") + currentDistances.bottom - subView.calculatedHeight();
+            break;
+        }
 
-        axisGroup.attr("transform", "translate(" + x + ", " + y + ")");
+        subViewGroup.attr("transform", "translate(" + x + ", " + y + ")");
+      });
+    });
 
-        Lyra.createViewForModel(subViewModel, axisGroup, this.context);
+    this.trigger(AreaView.EVENT_RENDER);
+	}
+
+  private buildSubviews() {
+    _.each(this.node.getAttachmentPoints(), (attachmentPoint: string) => {
+  		_.each(this.node.subViewModels[attachmentPoint], (subViewModel: ContextNode) => {
+        var subViewGroup: D3.Selection = this._totalSelection.append("g");
+
+        this.addSubView(Lyra.createViewForModel(subViewModel, subViewGroup, this.context), attachmentPoint);
   		});
     });
 

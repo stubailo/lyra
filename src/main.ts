@@ -13,6 +13,7 @@
 /// <reference path="axis.ts" />
 /// <reference path="interaction.ts" />
 /// <reference path="area.ts" />
+/// <reference path="label.ts" />
 
 // Model class, should not be exposed as API eventually
 class LyraModel {
@@ -40,6 +41,9 @@ class LyraModel {
 // Entry point into library
 class Lyra {
 
+  /**
+  Static variables and methods to register plugins
+  */
   private static _classNameToView: Object = {};
   private static _classNameToModel: Object = {};
   // Method for adding new types of model nodes
@@ -62,8 +66,13 @@ class Lyra {
   }
 
   public static createViewForModel(model: ContextNode, element: D3.Selection, viewContext: Context) {
+    console.log("create view");
+    console.log(model);
     return new (Lyra.getView(model.className))(model, element, viewContext);
   }
+
+  ///////////////////////////////
+
 
   // Necessary properties
   private _model: LyraModel;
@@ -86,14 +95,9 @@ class Lyra {
 
     // Generate all the views for this model
     this.generateViews();
-
     this.render();
 
-    // Set up the layout for the chart areas
-    var bounds = this.setUpLayout();
-
-    this._svg.attr("width", bounds[0]).attr("height", bounds[1]);
-    // Parse new nodes that don't have models already (should potentially be refactored into new method)
+    // Parse interactions
     for(var key in spec) {
       var value = spec[key];
       switch(key) {
@@ -102,7 +106,6 @@ class Lyra {
         break;
       }
     }
-
   }
 
   public get model(): LyraModel {
@@ -120,9 +123,6 @@ class Lyra {
   private generateViews() {
     this._svg = d3.select(this._element).append('svg:svg');
 
-    for(var specKey in Lyra._classNameToView) {
-      console.log("generating views for: " + specKey);
-    }
     // Creates the view for area
     _.each(this.model.context.getNodesOfClass(Area.className), (area: Area) => {
       new AreaView(area, this._svg, this._viewContext);
@@ -166,9 +166,11 @@ class Lyra {
 Lyra.addView("areas", AreaView);
 Lyra.addView("marks", MarkView);
 Lyra.addView("axes", AxisView);
+Lyra.addView("labels", LabelView);
 
 Lyra.addModel("data", DataSet);
 Lyra.addModel("scales", Scale);
 Lyra.addModel("marks", Mark);
 Lyra.addModel("axes", Axis);
 Lyra.addModel("areas", Area);
+Lyra.addModel("labels", Label);

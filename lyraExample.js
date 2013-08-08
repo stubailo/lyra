@@ -4,16 +4,16 @@ $(function() {
       {
         "name": "table",
         "items": [
-          {"x": 1,  "y": 28, "z": 1200}, {"x": 2,  "y": 55, "z": 1230},
-          {"x": 3,  "y": 43, "z": 1100}, {"x": 4,  "y": 91, "z": 1120},
-          {"x": 5,  "y": 81, "z": 1300}, {"x": 6,  "y": 53, "z": 1350},
-          {"x": 7,  "y": 19, "z": 1400}, {"x": 8,  "y": 87, "z": 1560},
-          {"x": 9,  "y": 52, "z": 1500}, {"x": 10, "y": 48, "z": 1460},
-          {"x": 11, "y": 24, "z": 1700}, {"x": 12, "y": 49, "z": 1680},
-          {"x": 13, "y": 87, "z": 1600}, {"x": 14, "y": 66, "z": 1660},
-          {"x": 15, "y": 17, "z": 1900}, {"x": 16, "y": 27, "z": 1990},
-          {"x": 17, "y": 68, "z": 1800}, {"x": 18, "y": 16, "z": 1880},
-          {"x": 19, "y": 49, "z": 1000}, {"x": 20, "y": 15, "z": 1200}
+          {"x": 1,  "y": 28, "z": new Date("July 1, 2013")}, {"x": 2,  "y": 55, "z": new Date("July 3, 2013")},
+          {"x": 3,  "y": 43, "z": new Date("July 4, 2013")}, {"x": 4,  "y": 91, "z": new Date("July 5, 2013")},
+          {"x": 5,  "y": 81, "z": new Date("July 6, 2013")}, {"x": 6,  "y": 53, "z": new Date("July 7, 2013")},
+          {"x": 7,  "y": 19, "z": new Date("July 8, 2013")}, {"x": 8,  "y": 87, "z": new Date("July 9, 2013")},
+          {"x": 9,  "y": 52, "z": new Date("July 10, 2013")}, {"x": 10, "y": 48, "z": new Date("July 11, 2013")},
+          {"x": 11, "y": 24, "z": new Date("July 12, 2013")}, {"x": 12, "y": 49, "z": new Date("July 14, 2013")},
+          {"x": 13, "y": 87, "z": new Date("July 16, 2013")}, {"x": 14, "y": 66, "z": new Date("July 17, 2013")},
+          {"x": 15, "y": 17, "z": new Date("July 18, 2013")}, {"x": 16, "y": 27, "z": new Date("July 19, 2013")},
+          {"x": 17, "y": 68, "z": new Date("July 21, 2013")}, {"x": 18, "y": 16, "z": new Date("July 23, 2013")},
+          {"x": 19, "y": 49, "z": new Date("July 26, 2013")}, {"x": 20, "y": 15, "z": new Date("July 31, 2013")}
         ]
       },
       {
@@ -28,9 +28,9 @@ $(function() {
         "name": "area1",
         "height": 300,
         "width": 400,
-        "paddingLeft": 50,
         "paddingRight": 50,
-        "paddingTop": 50
+        "paddingTop": 100,
+        "paddingBottom": 50
       }
     ],
     "scales": [
@@ -52,11 +52,11 @@ $(function() {
       },
       {
         "name": "z",
-        "type": "linear",
+        "type": "time",
         "rangeBegin": 0,
-        "rangeEnd": "areas:area1.height",
-        "domainBegin": 1000,
-        "domainEnd": 2000
+        "rangeEnd": "areas:area1.width",
+        "domainBegin": new Date("July 1, 2013"),
+        "domainEnd": new Date("July 31, 2013")
       }
     ],
     "marks": [
@@ -89,12 +89,12 @@ $(function() {
         "area": "area1",
         "properties": {
           "x": {
-            "value": "x",
-            "scale": "x"
-          },
-          "y": {
             "value": "z",
             "scale": "z"
+          },
+          "y": {
+            "value": "x",
+            "scale": "y"
           },
           "interpolate": {
             "value" : "linear"
@@ -134,9 +134,9 @@ $(function() {
       "name": "z",
       "area": "areas:area1",
       "scale": "scales:z",
-      "orient": "left",
-      "ticks": 10,
-      "location": "left",
+      "orient": "bottom",
+      "ticks": 5,
+      "location": "bottom",
       "gridline": "#aaaaff"
       }
     ],
@@ -161,7 +161,7 @@ $(function() {
         "type": "pan",
         "scale": "z",
         "axis": "z",
-        "direction": "n"
+        "direction": "e"
       },
       {
         "type": "clickPrint",
@@ -173,15 +173,33 @@ $(function() {
       },
       {
         "type": "zoom",
-        "axis": "x",
-        "scale": "x",
-        "zoomFactor": 0.01
+        "axis": "z",
+        "scale": "z",
+        "zoomFactor": 0.05
       }
     ]
   }
 
   el = $("#container").get(0);
   lyra = new Lyra(spec, el);
-  lyra.render();
-  //lyra.model.context.getNode("Area", "area1").set("height", 100);
+/*
+  setInterval(function() {
+    lyra.model.context.getNode("areas", "area1").set({
+      "width": 400 + 200 * Math.sin((new Date()).getTime() / 1000),
+      "height": 300 + 150 * Math.sin((new Date()).getTime() / 900)
+    });
+
+    lyra.model.context.getNode("axes", "x").set({
+      "ticks": Math.floor(20 + 10 * Math.sin((new Date()).getTime() / 1000))
+    });
+  }, 10);
+
+  setInterval(function() {
+    var fill = '#'+Math.floor(Math.random()*16777215).toString(16);
+    lyra._viewContext.getNode("marks", "symbol").set({
+      "fill": function() {return fill}
+    });
+  }, 1000);
+*/
+
 });

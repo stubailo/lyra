@@ -7,14 +7,11 @@ class ContextNode extends Backbone.Model {
   private _context: Context;
   private _name: string;
   private _className: string;
-  private _subViews: Object;
+  private _subViewModels: Object;
 
   public defaults() {
     return {};
   }
-
-  // This event is triggered when a context node has finished rendering.
-  public static EVENT_READY: string = "EVENT_READY";
 
   /* Utility method that returns an array of ContextNodes of a certain type.
    *
@@ -46,20 +43,14 @@ class ContextNode extends Backbone.Model {
 
     // Save this ContextNode in the context
     this._context.set(className + ":" + this.name, this);
- this._subViews = {};
+
+    this._subViewModels = {};
     _.each(this.getAttachmentPoints(), (attachmentPoint) => {
-      this._subViews[attachmentPoint] = [];
+      this._subViewModels[attachmentPoint] = [];
     });
 
     // Parse the properties of this node from the specification
     this.parseProperties(spec);
-
-    // Event to be removed
-    // TODO: this shit is not good
-    this.refresh();
-    this.on("change", () => {
-      this.refresh();
-    });
 
     // Additional initialization
     this.load();
@@ -83,16 +74,18 @@ class ContextNode extends Backbone.Model {
   public parseProperties(properties: any): void {
     for(var key in properties) {
       var value = properties[key];
+
       if(ContextNode.isPropertyReference(value)) {
         var propertyFunction = this.context.getPropertyFunction(value);
-        var updateProperty = () => {this.set(key, propertyFunction())}
+        var updateProperty = ((currentKey) => {return () => {
+          this.set(currentKey, propertyFunction())
+        }})(key);
         updateProperty()
-        this.context.getNode(value).on(ContextNode.EVENT_READY, updateProperty)
+        this.context.getNode(value).on("change", updateProperty)
       } else if (ContextNode.isObjectReference(value)) {
         this.set(key, this.context.getNode(value));
-        this.get(key).on(ContextNode.EVENT_READY, () => {
-          // REFACTOR THIS SHIT <- Eventing needs to be cleaned up.
-          this.refresh();
+        this.get(key).on("change", () => {
+          this.trigger("change");
         });
       } else {
         this.set(key, value);
@@ -111,11 +104,6 @@ class ContextNode extends Backbone.Model {
   public get className(): string {
     return this._className;
   }
-
-  public recalculate(callback) {
-    callback();
-  }
-
   /* Private method to check if a property string is a property reference.
    *
    * This method checks if the string is of the form: <className>:<name>.<property>
@@ -134,33 +122,21 @@ class ContextNode extends Backbone.Model {
     return objectRegex.test(obj);
   }
 
-  private refresh() {
-    this.recalculate(() => {
-      this.trigger(ContextNode.EVENT_READY);
-    });
-  }
-
-  public addSubView(axis: ContextNode, attachmentPoint: string) {
+  public addSubViewModel(model: ContextNode, attachmentPoint: string) {
     if(_.contains(this.getAttachmentPoints(), attachmentPoint)) {
-      this._subViews[attachmentPoint].push(axis);
+      this._subViewModels[attachmentPoint].push(model);
     } else {
       throw new Error("Attachment point " + attachmentPoint + " doesn't exist on " + this.className + ".");
     }
   }
 
   public get subViewModels(): Object {
-    return this._subViews;
+    return this._subViewModels;
   }
 
   public getAttachmentPoints(): string[] {
     return [];
   }
 
-  public calculatedWidth(): number {
-    throw new Error("View for " + this.className + " did not specify its width.");
-  }
 
-  public calculatedHeight(): number {
-    throw new Error("View for " + this.className + " did not specify its height.");
-  }
 }

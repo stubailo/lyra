@@ -43,7 +43,7 @@ class Mark extends ContextNode {
 
     this._area = context.getNode(Area.className, this.get("area"));
     this._source = context.getNode(DataSet.className, this.get("source"));
-    this._source.on(DataSet.EVENT_READY, $.proxy(this.dataSetChanged, this));
+    this._source.on("change", $.proxy(this.dataSetChanged, this));
     this.dataSetChanged();
   }
 
@@ -63,7 +63,7 @@ class Mark extends ContextNode {
 
 
     // HACKHACK we need real event handling
-    scale.on(ContextNode.EVENT_READY, () => {
+    scale.on("change", () => {
       this.dataSetChanged();
     });
 
@@ -123,7 +123,7 @@ class MarkView extends ContextView {
 
   public load() {
     var render = $.proxy(this.render, this);
-    this.node.on(ContextNode.EVENT_READY, render);
+    this.node.on("change", render);
     this.on("change", render);
   }
 

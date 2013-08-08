@@ -11,27 +11,15 @@ class Axis extends ContextNode {
       return new Axis(spec, context, Axis.className);
   }
 
+  public defaults() {
+    return _(super.defaults()).extend({
+      "axisPadding": 2,
+      "axisWidth": 45
+    });
+  }
+
   public load() {
-    this.set(Axis.AXIS_PADDING, 2);
-    this.set(Axis.AXIS_WIDTH, 45);
-
-    this.get("area").addSubView(this, this.get("location"));
-  }
-
-  public calculatedWidth(): number {
-    if(this.get("orient") === "left" || this.get("orient") === "right") {
-      return this.get(Axis.AXIS_WIDTH);
-    } else {
-      throw new Error("Axis got asked about its undetermined length.");
-    }
-  }
-
-  public calculatedHeight(): number {
-    if(this.get("orient") === "top" || this.get("orient") === "bottom") {
-      return this.get(Axis.AXIS_WIDTH);
-    } else {
-      throw new Error("Axis got asked about its undetermined length.");
-    }
+    this.get("area").addSubViewModel(this, this.get("location"));
   }
 }
 
@@ -71,7 +59,7 @@ class AxisView extends ContextView {
       .attr("name", this.node.name);
 
     if (this.node.get("gridline")) {
-      var gridSvg = this.element.selectAll("svg.graph")
+      var gridSvg = this.context.getNode(Area.className, this.node.get("area").name).graphSelection
         .append("g")
         .attr("class", "grid")
     }
@@ -154,6 +142,23 @@ class AxisView extends ContextView {
       transformFunction(axisSvg, areaHeight, areaWidth);
       this.trigger(AxisView.EVENT_RENDER);
     }
-    this.node.on(ContextNode.EVENT_READY, this.render);
+
+    this.node.on("change", this.render);
+  }
+
+  public calculatedWidth(): number {
+    if(this.get("orient") === "left" || this.get("orient") === "right") {
+      return this.get(Axis.AXIS_WIDTH);
+    } else {
+      throw new Error("Axis got asked about its undetermined length.");
+    }
+  }
+
+  public calculatedHeight(): number {
+    if(this.get("orient") === "top" || this.get("orient") === "bottom") {
+      return this.get(Axis.AXIS_WIDTH);
+    } else {
+      throw new Error("Axis got asked about its undetermined length.");
+    }
   }
 }
