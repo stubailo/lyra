@@ -15,7 +15,23 @@ class Axis extends ContextNode {
     this.set(Axis.AXIS_PADDING, 2);
     this.set(Axis.AXIS_WIDTH, 45);
 
-    this.get("area").addAxis(this, this.get("location"));
+    this.get("area").addSubView(this, this.get("location"));
+  }
+
+  public calculatedWidth(): number {
+    if(this.get("orient") === "left" || this.get("orient") === "right") {
+      return this.get(Axis.AXIS_WIDTH);
+    } else {
+      throw new Error("Axis got asked about its undetermined length.");
+    }
+  }
+
+  public calculatedHeight(): number {
+    if(this.get("orient") === "top" || this.get("orient") === "bottom") {
+      return this.get(Axis.AXIS_WIDTH);
+    } else {
+      throw new Error("Axis got asked about its undetermined length.");
+    }
   }
 }
 
@@ -36,6 +52,12 @@ class AxisView extends ContextView {
     this._axis = d3.svg.axis()
     this._xOffset = 0;
     this._yOffset = 0;
+    if (this.node.get("orient") == "left") {
+      this._xOffset += this.node.get(Axis.AXIS_WIDTH);
+    }
+    if (this.node.get("orient") == "top") {
+       this._yOffset += this.node.get(Axis.AXIS_WIDTH);
+    }
 
     var totalSvg = this.element
       .append("g");
@@ -133,33 +155,5 @@ class AxisView extends ContextView {
       this.trigger(AxisView.EVENT_RENDER);
     }
     this.node.on(ContextNode.EVENT_READY, this.render);
-  }
-
-  public setOffsets(x: number, y: number) {
-    this._xOffset = x;
-    this._yOffset = y;
-    if (this.node.get("orient") == "left") {
-      this._xOffset += this.node.get(Axis.AXIS_WIDTH);
-    }
-    if (this.node.get("orient") == "top") {
-       this._yOffset += this.node.get(Axis.AXIS_WIDTH);
-    }
-    this.render();
-  }
-
-  public calculatedWidth(): number {
-    if(this.get("orient") === "left" || this.get("orient") === "right") {
-      return this.get(Axis.AXIS_WIDTH);
-    } else {
-      throw new Error("Axis got asked about its undetermined length.");
-    }
-  }
-
-  public calculatedHeight(): number {
-    if(this.get("orient") === "top" || this.get("orient") === "bottom") {
-      return this.get(Axis.AXIS_WIDTH);
-    } else {
-      throw new Error("Axis got asked about its undetermined length.");
-    }
   }
 }

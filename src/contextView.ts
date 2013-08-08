@@ -1,15 +1,12 @@
 // Only one view per model please
 class ContextView extends ContextNode {
-  private _node: any;
+  private _node: ContextNode;
   private _element: D3.Selection;
 
-  constructor (node: any, element: D3.Selection, viewContext: Context) {
+
+  constructor (node: ContextNode, element: D3.Selection, viewContext: Context) {
     this._node = node;
     this._element = element;
-
-    _.each(this.getAttachmentPoints(), (pointName: string) => {
-
-    });
 
     super({"name": node.name}, viewContext, node.className);
   }
@@ -21,7 +18,6 @@ class ContextView extends ContextNode {
       return this._node.get(key);
     }
   }
-
   public get node() {
     return this._node;
   }
@@ -38,7 +34,5 @@ class ContextView extends ContextNode {
     throw new Error("View for " + this.className + " did not specify its height.");
   }
 
-  public getAttachmentPoints(): string[] {
-    return [];
-  }
+
 }

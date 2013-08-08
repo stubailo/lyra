@@ -5,8 +5,6 @@ class Area extends ContextNode {
     return ["top", "right", "bottom", "left"];
   }
 
-	private _axes: Object;
-
   public defaults() {
     return _(super.defaults()).extend({
       "height": 300,
@@ -23,23 +21,8 @@ class Area extends ContextNode {
   }
 
   public load() {
-    this._axes = {};
-    _.each(this.getAttachmentPoints(), (attachmentPoint) => {
-      this._axes[attachmentPoint] = [];
-    });
+
   }
-
-	public addAxis(axis: ContextNode, attachmentPoint: string) {
-    if(_.contains(this.getAttachmentPoints(), attachmentPoint)) {
-		  this._axes[attachmentPoint].push(axis);
-    } else {
-      throw new Error("Attachment point " + attachmentPoint + " doesn't exist on " + this.className + ".");
-    }
-	}
-
-	public get subViewModels(): ContextNode[] {
-		return _.flatten(_.values(this._axes));
-	}
 }
 
 class AreaView extends ContextView {
@@ -58,7 +41,6 @@ class AreaView extends ContextView {
     this._totalSelection = this.element.append("svg").attr("class", Area.className).attr("name", this.node.name);
     this._graphSelection = this._totalSelection.append("svg").attr("class", "graph");
     this._background = this._graphSelection.append("rect");
-    // Create views for existing nodes (should potentially be refactored into new method)
   }
 
 	public render() {
@@ -93,30 +75,41 @@ class AreaView extends ContextView {
     var currentDistances: { left: number; right: number; top: number; bottom: number }
       = { left: 0, right: 0, top: 0, bottom: 0 };
 
-		_.each(this.node.subViewModels, (subViewModel: ContextNode) => {
-      var subView: ContextView = Lyra.createViewForModel(subViewModel, this._totalSelection, this.context);
-			switch(subView.get("location")) {
-				case "left":
-					currentDistances.left += subView.calculatedWidth();
-          subView.setOffsets(this.get("paddingLeft") - currentDistances.left, this.get("paddingTop"));
-          break;
-				case "right":
-          currentDistances.right += subView.calculatedWidth();
-          subView.setOffsets(currentDistances.right + this.get("paddingLeft") - subView.calculatedWidth(), this.get("paddingTop"));
-					break;
-				case "top":
-          currentDistances.top += subView.calculatedHeight();
-          subView.setOffsets(this.get("paddingLeft"), this.get("paddingTop") - currentDistances.top);
-          break;
-				case "bottom":
-          currentDistances.bottom += subView.calculatedHeight();
-          subView.setOffsets(this.get("paddingLeft"), this.get("paddingTop") + currentDistances.bottom - subView.get(Axis.AXIS_WIDTH));
-					break;
-				default:
-					throw new Error("Unknown axis location: " + subView.get("location"));
-			}
-		});
+    _.each(this.node.getAttachmentPoints(), (attachmentPoint: string) => {
+  		_.each(this.node.subViewModels[attachmentPoint], (subViewModel: ContextNode) => {
+        var axisGroup: D3.Selection = this._totalSelection.append("g");
 
+        var x: number = 0;
+        var y: number = 0;
+
+  			switch(attachmentPoint) {
+  				case "left":
+  					currentDistances.left += subViewModel.calculatedWidth();
+            x = this.get("paddingLeft") - currentDistances.left;
+            y = this.get("paddingTop");
+            break;
+  				case "right":
+            currentDistances.right += subViewModel.calculatedWidth();
+            x = currentDistances.right + this.get("paddingLeft") - subViewModel.calculatedWidth();
+            y = this.get("paddingTop");
+  					break;
+  				case "top":
+            currentDistances.top += subViewModel.calculatedHeight();
+            x = this.get("paddingLeft");
+            y = this.get("paddingTop") - currentDistances.top;
+            break;
+  				case "bottom":
+            currentDistances.bottom += subViewModel.calculatedHeight();
+            x = this.get("paddingLeft");
+            y = this.get("paddingTop") + currentDistances.bottom - subViewModel.calculatedWidth();
+  					break;
+  			}
+
+        axisGroup.attr("transform", "translate(" + x + ", " + y + ")");
+
+        Lyra.createViewForModel(subViewModel, axisGroup, this.context);
+  		});
+    });
 
 	}
 

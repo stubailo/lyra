@@ -7,6 +7,7 @@ class ContextNode extends Backbone.Model {
   private _context: Context;
   private _name: string;
   private _className: string;
+  private _subViews: Object;
 
   public defaults() {
     return {};
@@ -45,6 +46,10 @@ class ContextNode extends Backbone.Model {
 
     // Save this ContextNode in the context
     this._context.set(className + ":" + this.name, this);
+ this._subViews = {};
+    _.each(this.getAttachmentPoints(), (attachmentPoint) => {
+      this._subViews[attachmentPoint] = [];
+    });
 
     // Parse the properties of this node from the specification
     this.parseProperties(spec);
@@ -133,5 +138,29 @@ class ContextNode extends Backbone.Model {
     this.recalculate(() => {
       this.trigger(ContextNode.EVENT_READY);
     });
+  }
+
+  public addSubView(axis: ContextNode, attachmentPoint: string) {
+    if(_.contains(this.getAttachmentPoints(), attachmentPoint)) {
+      this._subViews[attachmentPoint].push(axis);
+    } else {
+      throw new Error("Attachment point " + attachmentPoint + " doesn't exist on " + this.className + ".");
+    }
+  }
+
+  public get subViewModels(): Object {
+    return this._subViews;
+  }
+
+  public getAttachmentPoints(): string[] {
+    return [];
+  }
+
+  public calculatedWidth(): number {
+    throw new Error("View for " + this.className + " did not specify its width.");
+  }
+
+  public calculatedHeight(): number {
+    throw new Error("View for " + this.className + " did not specify its height.");
   }
 }
