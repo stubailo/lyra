@@ -1,3 +1,5 @@
+Test
+
 To compile, just run the following command:
 
 tsc -w --out lyra.js --target ES5 src/main.ts
