@@ -63,8 +63,8 @@ $(function() {
       {
         "name": "symbol",
         "type": "circle",
-        "source": "table",
-        "area": "area1",
+        "source": "data:table",
+        "area": "areas:area1",
         "properties": {
           "cx": {
             "value": "x",
@@ -85,8 +85,8 @@ $(function() {
       {
         "name": "symbol2",
         "type": "line",
-        "source": "table",
-        "area": "area1",
+        "source": "data:table",
+        "area": "areas:area1",
         "properties": {
           "x": {
             "value": "z",

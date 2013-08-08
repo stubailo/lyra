@@ -130,8 +130,9 @@ class Lyra {
     });
 
     _.each(this.model.context.getNodesOfClass(Mark.className), (mark: Mark) => {
+      console.log(mark);
       MarkView.createView(mark,
-        this._viewContext.getNode(Area.className, mark.area.name).graphSelection, this._viewContext);
+        this._viewContext.getNode(Area.className, mark.get("area").name).graphSelection, this._viewContext);
     });
   }
 

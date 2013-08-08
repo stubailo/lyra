@@ -15,8 +15,6 @@ class Mark extends ContextNode {
   /* Each property is a function of one item that specifies that property of an SVG element.
    * So for example a circle would have one function for "cx", one for "cy", etc.
    */
-  private _source: DataSet;
-  private _area: Area;
   private _type: MarkType;
   private _markProperties;
 
@@ -40,11 +38,6 @@ class Mark extends ContextNode {
         throw new Error("Unsupported mark type: " + this.get("type"));
     }
     this.parseMarkProperties(this.get("properties"));
-
-    this._area = context.getNode(Area.className, this.get("area"));
-    this._source = context.getNode(DataSet.className, this.get("source"));
-    this._source.on("change", $.proxy(this.dataSetChanged, this));
-    this.dataSetChanged();
   }
 
   private parseProperty(name: string, spec: any) {
@@ -99,14 +92,6 @@ class Mark extends ContextNode {
     this.trigger("change");
   }
 
-  public get source() {
-    return this._source;
-  }
-
-  public get area() {
-    return this._area;
-  }
-
   public get type() {
     return this._type;
   }
@@ -153,7 +138,7 @@ class MarkView extends ContextView {
 class CircleMarkView extends MarkView {
   public render() {
     this.markSelection
-      .data(this.node.source.items)
+      .data(this.node.get("source").items)
       .enter()
       .append("circle")
       .attr("class", this.node.name);
@@ -171,7 +156,7 @@ class CircleMarkView extends MarkView {
 class LineMarkView extends MarkView {
   public render() {
      this.markSelection
-      .data([this.node.source.items])
+      .data([this.node.get("source").items])
       .enter()
       .append("path")
       .attr("class", this.node.name);
@@ -210,7 +195,7 @@ class RectMarkView extends MarkView {
 
     public render() {
       this.markSelection
-        .data(this.node.source.items)
+        .data(this.node.get("source").items)
         .enter()
         .append("rect")
         .attr("class", this.node.name);

@@ -50,4 +50,8 @@ class ContextView extends ContextNode {
   public calculatedHeight(): number {
     throw new Error("View for " + this.className + " did not specify its height.");
   }
+
+  public render(): void {
+    // no-op
+  }
 }

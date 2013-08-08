@@ -28,7 +28,7 @@ class AxisView extends ContextView {
   private _axis;
   private _xOffset: number;
   private _yOffset: number;
-  public render;
+  private renderHelper;
 
   public static EVENT_RENDER: string = "render";
 
@@ -112,7 +112,7 @@ class AxisView extends ContextView {
       default:
     }
 
-    this.render = () => {
+    this.renderHelper = () => {
       var curScale = this.node.get("scale").scaleRepresentation;
       var areaHeight = this.node.get("area").get("height");
       var areaWidth =  this.node.get("area").get("width");
@@ -143,7 +143,11 @@ class AxisView extends ContextView {
       this.trigger(AxisView.EVENT_RENDER);
     }
 
-    this.node.on("change", this.render);
+    this.node.on("change", $.proxy(this.render, this));
+  }
+
+  public render() {
+    this.renderHelper();
   }
 
   public calculatedWidth(): number {
