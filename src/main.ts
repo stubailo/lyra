@@ -3,6 +3,7 @@
 /// <reference path="../typings/backbone.d.ts" />
 /// <reference path="../typings/d3.d.ts" />
 /// <reference path="../typings/Q.d.ts" />
+/// <reference path="../typings/jquery-mousewheel.d.ts" />
 
 /// <reference path="contextNode.ts" />
 /// <reference path="contextView.ts" />
@@ -13,7 +14,6 @@
 /// <reference path="axis.ts" />
 /// <reference path="interaction.ts" />
 /// <reference path="area.ts" />
-/// <reference path="label.ts" />
 
 module Lyra {
     // Model class, should not be exposed as API eventually

@@ -139,7 +139,7 @@ module Lyra {
         }
 
         public get markSelection() {
-            return this.element.selectAll(this.node.type.name + "." + this.node.name);
+            return this.element.selectAll((<Mark> this.node).type.name + "." + this.node.name);
         }
     }
 
@@ -151,7 +151,7 @@ module Lyra {
                 .append("circle")
                 .attr("class", this.node.name);
 
-            _.each(this.node.markProperties, (key) => {
+            _.each((<Mark> this.node).markProperties, (key) => {
                 this.markSelection.attr(key, (item) => {
                     return this.get(key)(item);
                 });
@@ -170,7 +170,7 @@ module Lyra {
                 .attr("class", this.name);
 
             var line = d3.svg.line();
-            _.each(this.node.markProperties, (key) => {
+            _.each((<Mark> this.node).markProperties, (key) => {
                 switch (key) {
                     case "x":
                         line.x((item) => {
@@ -215,7 +215,7 @@ module Lyra {
                 return this.get("y2")(item) - this.get("y")(item);
             });
 
-            _.each(this.node.markProperties, (key) => {
+            _.each((<Mark> this.node).markProperties, (key) => {
                 this.markSelection.attr(key, (item) => {
                     return this.get(key)(item);
                 });
