@@ -170,7 +170,6 @@ class LineMarkView extends MarkView {
 
         var line = d3.svg.line();
         _.each(this.node.markProperties, (key) => {
-            console.log(this);
             switch (key) {
                 case "x":
                     line.x((item) => {

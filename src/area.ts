@@ -98,7 +98,6 @@ class AreaView extends ContextView {
                 var x: number = 0;
                 var y: number = 0;
 
-                console.log(subView);
                 switch (attachmentPoint) {
                     case "left":
                         currentDistances.left += subView.calculatedWidth();

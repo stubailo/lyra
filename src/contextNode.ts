@@ -88,7 +88,6 @@ class ContextNode extends Backbone.Model {
                     updateProperty();
                     this.context.getNode(value).on("change", updateProperty);
                 } else if (ContextNode.isObjectReference(value)) {
-                    console.log("object ref: " + value);
                     ((currentKey) => {
                         this.set(currentKey, this.context.getNode(value));
                         this.get(currentKey).on("change", () => {

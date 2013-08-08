@@ -64,8 +64,6 @@ class Lyra {
     }
 
     public static createViewForModel(model: ContextNode, element: D3.Selection, viewContext: Context) {
-        console.log("create view");
-        console.log(model);
         return new (Lyra.getView(model.className))(model, element, viewContext);
     }
 
@@ -132,7 +130,6 @@ class Lyra {
         });
 
         _.each(this.model.context.getNodesOfClass(Mark.className), (mark: Mark) => {
-            console.log(mark);
             MarkView.createView(mark,
                 this._viewContext.getNode(Area.className, mark.get("area").name).graphSelection, this._viewContext);
         });

@@ -62,8 +62,6 @@ class LinearScale extends Scale {
             // create new scale object
             var domain = [this.get("domainBegin"), this.get("domainEnd")];
             var range = [this.get("rangeBegin"), this.get("rangeEnd")];
-            console.log("getting scale representation...");
-            console.log(d3.scale);
             this._scale = d3.scale.linear().domain(domain).range(range);
             this._dirty = false;
         }
