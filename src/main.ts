@@ -166,11 +166,9 @@ class Lyra {
 Lyra.addView("areas", AreaView);
 Lyra.addView("marks", MarkView);
 Lyra.addView("axes", AxisView);
-Lyra.addView("labels", LabelView);
 
 Lyra.addModel("data", DataSet);
 Lyra.addModel("scales", Scale);
 Lyra.addModel("marks", Mark);
 Lyra.addModel("axes", Axis);
 Lyra.addModel("areas", Area);
-Lyra.addModel("labels", Label);
