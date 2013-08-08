@@ -142,10 +142,6 @@ $(function() {
     ],
     "interactions": [
       {
-        "type": "clickPrint",
-        "mark": "symbol"
-      },
-      {
         "type": "pan",
         "scale": "x",
         "axis": "x",
@@ -162,10 +158,6 @@ $(function() {
         "scale": "z",
         "axis": "z",
         "direction": "e"
-      },
-      {
-        "type": "clickPrint",
-        "mark": "symbol2"
       },
       {
         "type": "zoom",

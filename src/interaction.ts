@@ -8,11 +8,8 @@ class Interaction {
 
     public static className: string = "Interaction";
 
-    public static TYPE_CLICK_PRINT: string = "clickPrint";
     public static TYPE_PAN: string = "pan";
-    public static TYPE_COLOR_HOVER: string = "colorHover";
     public static TYPE_ZOOM: string = "zoom";
-    public static TYPE_ADD_POINT: string = "addPoint";
 
     private _modelContext: Context;
     private _viewContext: Context;
@@ -34,16 +31,10 @@ class Interaction {
 
     public static parse(spec: any, modelContext: Context, viewContext: Context, i: number): Interaction {
         switch (spec[Interaction.SPEC_TYPE_KEY]) {
-            case Interaction.TYPE_CLICK_PRINT:
-                return new ClickPrintInteraction(spec, modelContext, viewContext, i);
             case Interaction.TYPE_PAN:
                 return new PanInteraction(spec, modelContext, viewContext, i);
-            case Interaction.TYPE_COLOR_HOVER:
-                return new ColorHoverInteraction(spec, modelContext, viewContext, i);
             case Interaction.TYPE_ZOOM:
                 return new ZoomInteraction(spec, modelContext, viewContext, i);
-            case Interaction.TYPE_ADD_POINT:
-                return new AddPointInteraction(spec, modelContext, viewContext, i);
             default:
                 throw new Error("Unsupported interaction type: " + spec[Interaction.SPEC_TYPE_KEY]);
         }
@@ -60,33 +51,6 @@ class Interaction {
 
     public get id(): number {
         return this._id;
-    }
-}
-
-class ClickPrintInteraction extends Interaction {
-    private static MARK_KEY: string = "mark";
-
-    private _markView: MarkView;
-
-    constructor(spec: any, modelContext: Context, viewContext: Context, id: number) {
-        super(modelContext, viewContext, id);
-
-        if (spec[ClickPrintInteraction.MARK_KEY]) {
-            this._markView = this.viewContext.getNode(Mark.className, spec[ClickPrintInteraction.MARK_KEY]);
-        } else {
-            throw new Error("No " + ClickPrintInteraction.MARK_KEY + " specified in ClickPrintInteraction.");
-        }
-
-        this.addEvents();
-        this._markView.on(MarkView.EVENT_RENDER, $.proxy(this.addEvents, this));
-    }
-
-    private addEvents() {
-        this._markView.markSelection.on("click.ClickPrintInteraction", $.proxy(this.onClick, this));
-    }
-
-    private onClick(d, i) {
-        console.log(d3.event);
     }
 }
 

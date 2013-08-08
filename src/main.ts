@@ -1,8 +1,8 @@
-/// <reference path="../defs/jquery.d.ts" />
-/// <reference path="../defs/underscore-typed.d.ts" />
-/// <reference path="../defs/backbone.d.ts" />
-/// <reference path="../defs/d3.d.ts" />
-/// <reference path="../defs/Q.d.ts" />
+/// <reference path="../typings/jquery.d.ts" />
+/// <reference path="../typings/underscore-typed.d.ts" />
+/// <reference path="../typings/backbone.d.ts" />
+/// <reference path="../typings/d3.d.ts" />
+/// <reference path="../typings/Q.d.ts" />
 
 /// <reference path="contextNode.ts" />
 /// <reference path="contextView.ts" />
