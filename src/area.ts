@@ -21,7 +21,7 @@ class Area extends ContextNode {
     }
 
     public load() {
-
+		// Nothing to do!
     }
 
     public calculatedWidth(): number {
@@ -61,9 +61,9 @@ class AreaView extends ContextView {
             .attr("height", this.get("height"));
 
         for (var property in this.node.attributes) {
-            if (property == "height") {
+            if (property === "height") {
                 this._totalSelection.attr(property, this.get("height") + this.get("paddingTop") + this.get("paddingBottom"));
-            } else if (property == "width") {
+            } else if (property === "width") {
                 this._totalSelection.attr(property, this.get("width") + this.get("paddingLeft") + this.get("paddingRight"));
             } else {
                 this._totalSelection.attr(property, this.get(property));
@@ -77,8 +77,19 @@ class AreaView extends ContextView {
             .attr("height", this.node.get("height"))
             .attr("fill", "white");
 
-        var currentDistances: { left: number; right: number; top: number; bottom: number }
-            = { left: 0, right: 0, top: 0, bottom: 0 };
+        var currentDistances: {
+            left: number;
+            right: number;
+            top: number;
+            bottom: number
+        };
+
+        currentDistances = {
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0
+        };
 
         _.each(this.node.getAttachmentPoints(), (attachmentPoint: string) => {
             _.each(this.subViews[attachmentPoint], (subView: ContextView) => {

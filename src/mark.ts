@@ -10,7 +10,10 @@ class MarkType {
 }
 
 class Mark extends ContextNode {
-    public static className: string = "marks";
+    private static SCALE_KEY: string = "scale";
+    private static VALUE_KEY: string = "value";
+
+    public static className: string;
 
     /* Each property is a function of one item that specifies that property of an SVG element.
      * So for example a circle would have one function for "cx", one for "cy", etc.
@@ -47,10 +50,12 @@ class Mark extends ContextNode {
         }
 
         var scale;
-        if (spec["scale"]) {
-            scale = this.context.getNode(Scale.className, spec["scale"]);
+        if (spec[Mark.SCALE_KEY]) {
+            scale = this.context.getNode(Scale.className, spec[Mark.SCALE_KEY]);
         } else {
-            scale = Scale.parse({ type: "identity" }, new Context());
+            scale = Scale.parse({
+                type: "identity"
+            }, new Context());
         }
 
 
@@ -62,19 +67,19 @@ class Mark extends ContextNode {
 
         var valueFunc;
 
-        if (typeof (spec["value"]) === "string") {
+        if (typeof (spec[Mark.VALUE_KEY]) === "string") {
             valueFunc = function(dataItem) {
-                if (dataItem !== undefined && dataItem[spec["value"]] !== undefined) {
-                    return scale.apply(dataItem[spec["value"]]);
+                if (dataItem !== undefined && dataItem[spec[Mark.VALUE_KEY]] !== undefined) {
+                    return scale.apply(dataItem[spec[Mark.VALUE_KEY]]);
                 } else {
-                    return scale.apply(spec["value"]);
+                    return scale.apply(spec[Mark.VALUE_KEY]);
                 }
-            }
-	    } else {
+            };
+        } else {
             valueFunc = function(dataItem) {
-                return scale.apply(spec["value"]);
-            }
-	    }
+                return scale.apply(spec[Mark.VALUE_KEY]);
+            };
+        }
 
         this.set(name, valueFunc);
         this._markProperties.push(name);
@@ -84,7 +89,9 @@ class Mark extends ContextNode {
         this._markProperties = [];
 
         for (var key in properties) {
-            this.parseProperty(key, properties[key]);
+            if (properties.hasOwnProperty(key)) {
+                this.parseProperty(key, properties[key]);
+            }
         }
     }
 

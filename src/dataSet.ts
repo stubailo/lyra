@@ -3,17 +3,19 @@
 */
 
 class DataSet extends ContextNode {
+    private static SPEC_TYPE_KEY: string = "type";
+
     public static className: string = "data";
     public static EVENT_CHANGE: string = "change";
 
     public static parse(spec: any, context: Context) {
-        if (spec["type"]) {
-            switch (spec["type"]) {
+        if (spec[DataSet.SPEC_TYPE_KEY]) {
+            switch (spec[DataSet.SPEC_TYPE_KEY]) {
                 case "bar":
                     return new BarDataSetTransform(spec, context, DataSet.className);
                     break;
                 default:
-                    throw new Error("Unsupported transform type: " + spec["type"]);
+                    throw new Error("Unsupported transform type: " + spec[DataSet.SPEC_TYPE_KEY]);
             }
         } else {
             return new DataSet(spec, context, DataSet.className);
@@ -31,6 +33,11 @@ class DataSet extends ContextNode {
 }
 
 class BarDataSetTransform extends DataSet {
+    private static BAR_WIDTH_KEY: string = "barWidth";
+    private static BAR_DOMAIN_KEY: string = "barDomain";
+    private static BAR_DOMAIN2_KEY: string = "barDomain2";
+    private static BAR_BASE_KEY: string = "barBase";
+
     get items(): any[] {
         var barWidth: number = Infinity;
         var domain: string = this.get("domain");
@@ -49,10 +56,10 @@ class BarDataSetTransform extends DataSet {
 
         return _.map(prevItems, (item) => {
             item = _.clone(item);
-            item["barWidth"] = barWidth;
-            item["barDomain"] = item[domain] - barWidth / 2;
-            item["barDomain2"] = item[domain] + barWidth / 2;
-            item["barBase"] = 0;
+            item[BarDataSetTransform.BAR_WIDTH_KEY] = barWidth;
+            item[BarDataSetTransform.BAR_DOMAIN_KEY] = item[domain] - barWidth / 2;
+            item[BarDataSetTransform.BAR_DOMAIN2_KEY] = item[domain] + barWidth / 2;
+            item[BarDataSetTransform.BAR_BASE_KEY] = 0;
             return item;
         });
     }

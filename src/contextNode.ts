@@ -3,6 +3,8 @@
  * model or view context.
  */
 class ContextNode extends Backbone.Model {
+    private static SPEC_NAME_KEY: string = "name";
+
     // Private references to the context, and name
     private _context: Context;
     private _name: string;
@@ -22,8 +24,8 @@ class ContextNode extends Backbone.Model {
      */
     public static parseAll(specList: any[], context: Context, classType: any): any[] {
         return _.map(specList, function(spec) {
-      return classType.parse(spec, context)
-    });
+            return classType.parse(spec, context);
+        });
     }
 
     /* Creates a ContextNode, setting up the name, context, and properties from the specification
@@ -37,7 +39,7 @@ class ContextNode extends Backbone.Model {
         Backbone.Model.apply(this, arguments);
 
         // Setup instance variables
-        this._name = spec["name"];
+        this._name = spec[ContextNode.SPEC_NAME_KEY];
         this._context = context;
         this._className = className;
 
@@ -73,26 +75,29 @@ class ContextNode extends Backbone.Model {
      */
     public parseProperties(properties: any): void {
         for (var key in properties) {
-            var value = properties[key];
+            if (properties.hasOwnProperty(key)) {
+                var value = properties[key];
 
-            if (ContextNode.isPropertyReference(value)) {
-                var propertyFunction = this.context.getPropertyFunction(value);
-                var updateProperty = ((currentKey) => {return () => {
-                    this.set(currentKey, propertyFunction())
-        }
-                })(key);
-                updateProperty()
-        this.context.getNode(value).on("change", updateProperty)
-      } else if (ContextNode.isObjectReference(value)) {
-                console.log("object ref: " + value);
-                ((currentKey) => {
-                    this.set(currentKey, this.context.getNode(value));
-                    this.get(currentKey).on("change", () => {
-                        this.trigger("change");
-                    });
-                })(key);
-            } else {
-                this.set(key, value);
+                if (ContextNode.isPropertyReference(value)) {
+                    var propertyFunction = this.context.getPropertyFunction(value);
+                    var updateProperty = ((currentKey) => {
+                        return () => {
+                            this.set(currentKey, propertyFunction());
+                        };
+                    })(key);
+                    updateProperty();
+                    this.context.getNode(value).on("change", updateProperty);
+                } else if (ContextNode.isObjectReference(value)) {
+                    console.log("object ref: " + value);
+                    ((currentKey) => {
+                        this.set(currentKey, this.context.getNode(value));
+                        this.get(currentKey).on("change", () => {
+                            this.trigger("change");
+                        });
+                    })(key);
+                } else {
+                    this.set(key, value);
+                }
             }
         }
     }

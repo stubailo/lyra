@@ -4,6 +4,8 @@
 */
 
 class Interaction {
+    private static SPEC_TYPE_KEY: string = "type";
+
     public static className: string = "Interaction";
 
     public static TYPE_CLICK_PRINT: string = "clickPrint";
@@ -31,7 +33,7 @@ class Interaction {
     }
 
     public static parse(spec: any, modelContext: Context, viewContext: Context, i: number): Interaction {
-        switch (spec["type"]) {
+        switch (spec[Interaction.SPEC_TYPE_KEY]) {
             case Interaction.TYPE_CLICK_PRINT:
                 return new ClickPrintInteraction(spec, modelContext, viewContext, i);
             case Interaction.TYPE_PAN:
@@ -43,7 +45,7 @@ class Interaction {
             case Interaction.TYPE_ADD_POINT:
                 return new AddPointInteraction(spec, modelContext, viewContext, i);
             default:
-                throw new Error("Unsupported interaction type: " + spec["type"]);
+                throw new Error("Unsupported interaction type: " + spec[Interaction.SPEC_TYPE_KEY]);
         }
         return null;
     }
@@ -62,15 +64,17 @@ class Interaction {
 }
 
 class ClickPrintInteraction extends Interaction {
+    private static MARK_KEY: string = "mark";
+
     private _markView: MarkView;
 
     constructor(spec: any, modelContext: Context, viewContext: Context, id: number) {
         super(modelContext, viewContext, id);
 
-        if (spec["mark"]) {
-            this._markView = this.viewContext.getNode(Mark.className, spec["mark"]);
+        if (spec[ClickPrintInteraction.MARK_KEY]) {
+            this._markView = this.viewContext.getNode(Mark.className, spec[ClickPrintInteraction.MARK_KEY]);
         } else {
-            throw new Error("No mark specified in ClickPrintInteraction.");
+            throw new Error("No " + ClickPrintInteraction.MARK_KEY + " specified in ClickPrintInteraction.");
         }
 
         this.addEvents();
@@ -87,6 +91,11 @@ class ClickPrintInteraction extends Interaction {
 }
 
 class PanInteraction extends Interaction {
+    private static AREA_KEY: string = "area";
+    private static AXIS_KEY: string = "axis";
+    private static SCALE_KEY: string = "scale";
+    private static DIRECTION_KEY: string = "direction";
+
     private _element: D3.Selection;
     private _scale: Scale;
     private _direction: string;
@@ -103,22 +112,22 @@ class PanInteraction extends Interaction {
     constructor(spec: any, modelContext: Context, viewContext: Context, id: number) {
         super(modelContext, viewContext, id);
 
-        if (spec["area"]) {
-            this._element = this.viewContext.getNode(Area.className, spec["area"]).graphSelection;
-        } else if (spec["axis"]) {
-            this._element = this.viewContext.getNode(Axis.className, spec["axis"]).axisSelection;
+        if (spec[PanInteraction.AREA_KEY]) {
+            this._element = this.viewContext.getNode(Area.className, spec[PanInteraction.AREA_KEY]).graphSelection;
+        } else if (spec[PanInteraction.AXIS_KEY]) {
+            this._element = this.viewContext.getNode(Axis.className, spec[PanInteraction.AXIS_KEY]).axisSelection;
         } else {
-            throw new Error("No axis or area specified in PanInteraction.");
+            throw new Error("No " + PanInteraction.AXIS_KEY + " or " + PanInteraction.AREA_KEY + " specified in PanInteraction.");
         }
 
-        if (spec["scale"]) {
-            this._scale = this.modelContext.getNode(Scale.className, spec["scale"]);
+        if (spec[PanInteraction.SCALE_KEY]) {
+            this._scale = this.modelContext.getNode(Scale.className, spec[PanInteraction.SCALE_KEY]);
         } else {
-            throw new Error("No scale specified in PanInteraction.");
+            throw new Error("No " + PanInteraction.SCALE_KEY + " specified in PanInteraction.");
         }
 
-        if (spec["direction"]) {
-            this._direction = spec["direction"];
+        if (spec[PanInteraction.DIRECTION_KEY]) {
+            this._direction = spec[PanInteraction.DIRECTION_KEY];
         } else {
             this._direction = "e";
         }
@@ -167,40 +176,12 @@ class PanInteraction extends Interaction {
     }
 }
 
-// TODO: completely broken
-class ColorHoverInteraction extends Interaction {
-    private _markView: MarkView;
-    private _properties: any;
-    private _oldColor: string;
-
-    constructor(spec: any, modelContext: Context, viewContext: Context, id: number) {
-        super(modelContext, viewContext, id);
-        if (spec["mark"]) {
-            this._markView = this.viewContext.getNode(Mark.className, spec["mark"]);
-        } else {
-            throw new Error("No mark specified in ClickPrintInteraction.");
-        }
-
-        this.addEvents();
-        this._markView.on(MarkView.EVENT_RENDER, $.proxy(this.addEvents, this));
-    }
-
-    private addEvents() {
-        this._markView.markSelection.on("mouseover", $.proxy(this.onHoverIn, this));
-        this._markView.markSelection.on("mouseout", $.proxy(this.onHoverOut, this));
-    }
-
-    private onHoverIn(d, i) {
-        this._markView.set("stroke", () => {return "green" });
-        this._markView.trigger("change:stroke");
-    }
-
-    private onHoverOut(d, i) {
-        this._markView.set("stroke", null);
-    }
-}
-
 class ZoomInteraction extends Interaction {
+    private static AREA_KEY: string = "area";
+    private static AXIS_KEY: string = "axis";
+    private static SCALE_KEY: string = "scale";
+    private static ZOOM_FACTOR_KEY: string = "scale";
+
     private _element: D3.Selection;
     private _scale: Scale;
     private _properties: any;
@@ -213,22 +194,22 @@ class ZoomInteraction extends Interaction {
     constructor(spec: any, modelContext: Context, viewContext: Context, id: number) {
         super(modelContext, viewContext, id);
 
-        if (spec["area"]) {
-            this._element = this.viewContext.getNode(Area.className, spec["area"]).graphSelection;
-        } else if (spec["axis"]) {
-            this._element = this.viewContext.getNode(Axis.className, spec["axis"]).axisSelection;
+        if (spec[ZoomInteraction.AREA_KEY]) {
+            this._element = this.viewContext.getNode(Area.className, spec[ZoomInteraction.AREA_KEY]).graphSelection;
+        } else if (spec[ZoomInteraction.AXIS_KEY]) {
+            this._element = this.viewContext.getNode(Axis.className, spec[ZoomInteraction.AXIS_KEY]).axisSelection;
         } else {
-            throw new Error("No axis or area specified in PanInteraction.");
+            throw new Error("No " + ZoomInteraction.AXIS_KEY + " or " + ZoomInteraction.AREA_KEY + " specified in PanInteraction.");
         }
 
-        if (spec["scale"]) {
-            this._scale = this.modelContext.getNode(Scale.className, spec["scale"]);
+        if (spec[ZoomInteraction.SCALE_KEY]) {
+            this._scale = this.modelContext.getNode(Scale.className, spec[ZoomInteraction.SCALE_KEY]);
         } else {
             throw new Error("No scale specified for ZoomInteraction");
         }
 
-        if (spec["zoomFactor"]) {
-            this._zoomFactor = spec["zoomFactor"];
+        if (spec[ZoomInteraction.ZOOM_FACTOR_KEY]) {
+            this._zoomFactor = spec[ZoomInteraction.ZOOM_FACTOR_KEY];
         } else {
             this._zoomFactor = ZoomInteraction.DEFAULT_ZOOM_FACTOR;
         }
@@ -244,84 +225,4 @@ class ZoomInteraction extends Interaction {
         this._scale.zoom(1 + ((deltaY < 0) ? 1 : -1) * this._zoomFactor);
         return false;
     }
-}
-
-class AddPointInteraction extends Interaction {
-    private _markView: MarkView;
-    private _areaView: AreaView;
-    private _domainScale: Scale;
-    private _rangeScale: Scale;
-    private _properties: any;
-    private _dataSetName: string;
-    private _domain: string;
-    private _range: string;
-
-    private addPoint;
-    private addEvents;
-
-    constructor(spec: any, modelContext: Context, viewContext: Context, id: number) {
-        super(modelContext, viewContext, id);
-
-        if (spec["mark"]) {
-            this._markView = this.viewContext.getNode(Mark.className, spec["mark"]);
-            this._dataSetName = this._markView.node.get("source");
-        } else {
-            throw new Error("No mark specified in AddPointInteraction.");
-        }
-
-        if (spec["area"]) {
-            this._areaView = this.viewContext.getNode(Area.className, spec["area"]);
-        } else {
-            throw new Error("No area specified in AddPointInteraction.");
-        }
-
-        if (spec["domain"]) {
-            this._domain = spec["domain"];
-        } else {
-            throw new Error("No domain specified for AddPointInteraction.");
-        }
-
-        if (spec["range"]) {
-            this._range = spec["range"];
-        } else {
-            throw new Error("No range specified for AddPointInteraction.");
-        }
-
-        if (spec["domainScale"]) {
-            this._domainScale = this.modelContext.getNode(Scale.className, spec["domainScale"]);
-        } else {
-            throw new Error("No domain scale specified for AddPointInteraction.");
-        }
-
-        if (spec["rangeScale"]) {
-            this._rangeScale = this.modelContext.getNode(Scale.className, spec["rangeScale"]);
-        } else {
-            throw new Error("No domain range scale specified for AddPointInteraction.");
-        }
-
-        this.addPoint = (d, i) => {
-            var data = this.modelContext.getNode(DataSet.className, this._dataSetName);
-            var items = data.items;
-
-            var clickLocation: number[] = [
-                d.clientX - parseFloat(this._areaView.graphSelection.attr(this._domain)) - parseFloat(this._areaView.totalSelection.attr(this._domain)),
-                d.clientY - parseFloat(this._areaView.graphSelection.attr(this._range)) - parseFloat(this._areaView.totalSelection.attr(this._range))
-            ];
-            var newDataPoint = {};
-            newDataPoint[this._domain] = this._domainScale.inverse(clickLocation[0]);
-            newDataPoint[this._range] = this._rangeScale.inverse(clickLocation[1]);
-
-            items.push(newDataPoint);
-            items = _.sortBy(items, this._domain);
-
-            data.items = items;
-        };
-
-        this.addEvents = () => {
-            $(this._areaView.graphSelection[0][0]).on("dblclick", this.addPoint);
-        };
-
-        this.addEvents();
-    }
-
 }

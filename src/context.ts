@@ -40,8 +40,8 @@ class Context {
         if (nodeName) {
             path = pathOrClassName + ":" + nodeName;
         } else {
-            path = Context.getPath(pathOrClassName)
-    }
+            path = Context.getPath(pathOrClassName);
+        }
 
         // Get the node associated with the key
         var result = this.get(path);
@@ -73,9 +73,9 @@ class Context {
             property = Context.getProp(argumentOrClassName);
         }
 
-    // Get the property of the node associated with the key
-    return this.getNode(path).get(property)
-  }
+        // Get the property of the node associated with the key
+        return this.getNode(path).get(property);
+    }
 
     /* Returns a function that retrieves the value of a property of a node stored in the Context.
      *
@@ -90,22 +90,24 @@ class Context {
         if (nodeName) {
             argument = argumentOrClassName + ":" + nodeName + "." + property;
         }
-    return () => {
-      return this.getProperty(argument)
+        return () => {
+            return this.getProperty(argument);
+        };
     }
-  }
 
     /* Attaches a listener to a property change of a node stored in the Context.
      */
     public addPropertyListener(argument: string, listener) {
-        var property = Context.getProp(argument)
-    var node = this.getNode(argument);
+        var property = Context.getProp(argument);
+        var node = this.getNode(argument);
         node.on("change:" + property, listener);
     }
 
     /* Get all ContextNodes of a certain className */
     public getNodesOfClass(className: string): ContextNode[] {
-        return _.filter(_.values(this.nodes), (node) => {return node.className === className });
+        return _.filter(_.values(this.nodes), (node) => {
+            return node.className === className;
+        });
     }
 
     /* Private method to get the path of the form "className:nodeName" given an
@@ -127,13 +129,13 @@ class Context {
     /* Private method to check if a given argument follows the appropriate formatting detailed above.
      */
     private static checkArgument(argument: string, checkProperty?: bool): void {
-        var argRegex = /^[A-Za-z_\-0-9]+:[A-Za-z_\-0-9]+/
-    var propRegex = /(\.[A-Za-z_\-0-9]+)?$/
-    if (checkProperty) {
-            propRegex = /(\.[A-Za-z_\-0-9]+)$/
-    }
-        argRegex = new RegExp(argRegex.source + propRegex.source)
-    if (!argRegex.test(argument)) {
+        var argRegex = /^[A-Za-z_\-0-9]+:[A-Za-z_\-0-9]+/;
+        var propRegex = /(\.[A-Za-z_\-0-9]+)?$/;
+        if (checkProperty) {
+            propRegex = /(\.[A-Za-z_\-0-9]+)$/;
+        }
+        argRegex = new RegExp(argRegex.source + propRegex.source);
+        if (!argRegex.test(argument)) {
             throw new Error("Context: '" + argument + "' is not a properly formatted argument or path.");
         }
     }

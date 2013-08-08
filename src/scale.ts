@@ -1,10 +1,12 @@
 class Scale extends ContextNode {
+    private static TYPE_KEY: string = "type";
+
     public static className: string = "scales";
 
     public static EVENT_CHANGE: string = "change";
 
     public static parse(spec: any, context: Context): Scale {
-        switch (spec["type"]) {
+        switch (spec[Scale.TYPE_KEY]) {
             case "linear":
                 return new LinearScale(spec, context, Scale.className);
             case "time":
@@ -12,7 +14,7 @@ class Scale extends ContextNode {
             case "identity":
                 return new IdentityScale(spec, context, Scale.className);
             default:
-                throw new Error("Invalid Scale type: " + spec["type"]);
+                throw new Error("Invalid Scale type: " + spec[Scale.TYPE_KEY]);
         }
     }
     // Main method for any scale, delegates to D3 most of the time

@@ -168,10 +168,6 @@ $(function() {
         "mark": "symbol2"
       },
       {
-        "type" : "colorHover",
-        "mark": "symbol2"
-      },
-      {
         "type": "zoom",
         "axis": "z",
         "scale": "z",

@@ -37,13 +37,13 @@ class AxisView extends ContextView {
     }
 
     public load() {
-        this._axis = d3.svg.axis()
-    this._xOffset = 0;
+        this._axis = d3.svg.axis();
+        this._xOffset = 0;
         this._yOffset = 0;
-        if (this.node.get("orient") == "left") {
+        if (this.node.get("orient") === "left") {
             this._xOffset += this.node.get(Axis.AXIS_WIDTH);
         }
-        if (this.node.get("orient") == "top") {
+        if (this.node.get("orient") === "top") {
             this._yOffset += this.node.get(Axis.AXIS_WIDTH);
         }
 
@@ -61,23 +61,23 @@ class AxisView extends ContextView {
         if (this.node.get("gridline")) {
             var gridSvg = this.context.getNode(Area.className, this.node.get("area").name).graphSelection
                 .append("g")
-                .attr("class", "grid")
+                .attr("class", "grid");
     }
 
         var gridFunction;
-        if (this.node.get("location") == "bottom" || this.node.get("location") == "top") {
+        if (this.node.get("location") === "bottom" || this.node.get("location") === "top") {
             gridFunction = (selection, curScale, height: number, width: number) => {
                 selection.attr("d", (d) => {
                     return "M " + curScale(d) + " 0 L" + curScale(d) + " " + height;
                 });
-            }
-    } else {
+            };
+        } else {
             gridFunction = (selection, curScale, height: number, width: number) => {
                 selection.attr("d", (d) => {
                     return "M 0 " + curScale(d) + " L" + width + " " + curScale(d);
                 });
-            }
-    }
+            };
+        }
 
         var transformFunction;
         switch (this.node.get("location")) {
@@ -141,9 +141,9 @@ class AxisView extends ContextView {
 
             transformFunction(axisSvg, areaHeight, areaWidth);
             this.trigger(AxisView.EVENT_RENDER);
-        }
+        };
 
-    this.node.on("change", $.proxy(this.render, this));
+        this.node.on("change", $.proxy(this.render, this));
     }
 
     public render() {

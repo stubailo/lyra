@@ -13,7 +13,12 @@ class ContextView extends ContextNode {
             this._subViews[attachmentPoint] = [];
         });
 
-        super({ "name": node.name }, viewContext, node.className);
+        // create a spec with a name to initialize the ContextNode, should be replaced
+        var nameOnlySpec: Object = {
+            "name": node.name
+        };
+
+        super(nameOnlySpec, viewContext, node.className);
     }
 
     public get(key: string): any {

@@ -97,11 +97,13 @@ class Lyra {
 
         // Parse interactions
         for (var key in spec) {
-            var value = spec[key];
-            switch (key) {
-                case "interactions":
-                    this._interactions = Interaction.parseAll(value, this.model.context, this._viewContext);
-                    break;
+            if (spec.hasOwnProperty(key)) {
+                var value = spec[key];
+                switch (key) {
+                    case "interactions":
+                        this._interactions = Interaction.parseAll(value, this.model.context, this._viewContext);
+                        break;
+                }
             }
         }
     }
@@ -112,14 +114,16 @@ class Lyra {
 
     public render() {
         for (var specKey in Lyra._classNameToView) {
-            _.each(<ContextView[]> this._viewContext.getNodesOfClass(specKey), function(view) {
-                view.render();
-            });
+            if (Lyra._classNameToView.hasOwnProperty(specKey)) {
+                _.each(<ContextView[]> this._viewContext.getNodesOfClass(specKey), function(view) {
+                    view.render();
+                });
+            }
         }
     }
 
     private generateViews() {
-        this._svg = d3.select(this._element).append('svg:svg');
+        this._svg = d3.select(this._element).append("svg:svg");
 
         // Creates the view for area
         _.each(this.model.context.getNodesOfClass(Area.className), (area: Area) => {
