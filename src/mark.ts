@@ -117,7 +117,6 @@ class Mark extends ContextNode {
 }
 
 class MarkView extends ContextView {
-  public static className: string = Mark.className;
   public static EVENT_RENDER: string = "render";
 
   private _markSelection: D3.Selection;
@@ -131,11 +130,11 @@ class MarkView extends ContextView {
   public static createView(mark: Mark, element: D3.Selection, viewContext: Context) {
     switch(mark.type) {
       case MarkType.CIRCLE:
-        return new CircleMarkView(mark, element, viewContext, MarkView.className);
+        return new CircleMarkView(mark, element, viewContext);
       case MarkType.LINE:
-        return new LineMarkView(mark, element, viewContext, MarkView.className);
+        return new LineMarkView(mark, element, viewContext);
       case MarkType.RECTANGLE:
-        return new RectMarkView(mark, element, viewContext, MarkView.className);
+        return new RectMarkView(mark, element, viewContext);
       default:
         throw new Error("Invalid MarkView type: " + mark.type);
 
@@ -161,7 +160,7 @@ class CircleMarkView extends MarkView {
 
     _.each(this.node.markProperties, (key) => {
       this.markSelection.attr(key, (item) => {
-        return this.getProperty(key)(item);
+        return this.get(key)(item);
       });
     });
 
@@ -182,20 +181,20 @@ class LineMarkView extends MarkView {
       switch(key) {
         case "x" :
           line.x((item) => {
-            return this.getProperty("x")(item);
+            return this.get("x")(item);
           });
           break;
         case "y" :
           line.y((item) => {
-            return this.getProperty("y")(item);
+            return this.get("y")(item);
           });
           break;
         case "interpolate":
-          line.interpolate(this.getProperty("interpolate")());
+          line.interpolate(this.get("interpolate")());
           break;
         default:
           this.markSelection.attr(key, (item) => {
-           return this.getProperty(key)(item);
+           return this.get(key)(item);
           });
           break;
       }
@@ -217,16 +216,16 @@ class RectMarkView extends MarkView {
         .attr("class", this.node.name);
 
       this.markSelection.attr("width", (item) => {
-        return this.getProperty("x2")(item) - this.getProperty("x")(item);
+        return this.get("x2")(item) - this.get("x")(item);
       });
 
       this.markSelection.attr("height", (item) => {
-        return this.getProperty("y2")(item) - this.getProperty("y")(item);
+        return this.get("y2")(item) - this.get("y")(item);
       });
 
       _.each(this.node.markProperties, (key) => {
         this.markSelection.attr(key, (item) => {
-          return this.getProperty(key)(item);
+          return this.get(key)(item);
         });
       });
 

@@ -68,7 +68,7 @@ class ClickPrintInteraction extends Interaction {
     super(modelContext, viewContext, id);
 
     if(spec["mark"]) {
-      this._markView = this.viewContext.getNode(MarkView.className, spec["mark"]);
+      this._markView = this.viewContext.getNode(Mark.className, spec["mark"]);
     } else {
       throw new Error("No mark specified in ClickPrintInteraction.");
     }
@@ -104,9 +104,9 @@ class PanInteraction extends Interaction {
     super(modelContext, viewContext, id);
     console.log(spec);
     if(spec["area"]) {
-      this._element = this.viewContext.getNode(AreaView.className, spec["area"]).graphSelection;
+      this._element = this.viewContext.getNode(Area.className, spec["area"]).graphSelection;
     } else if(spec["axis"]) {
-      this._element = this.viewContext.getNode(AxisView.className, spec["axis"]).axisSelection;
+      this._element = this.viewContext.getNode(Axis.className, spec["axis"]).axisSelection;
     } else {
       throw new Error("No axis or area specified in PanInteraction.");
     }
@@ -169,7 +169,7 @@ class PanInteraction extends Interaction {
   }
 }
 
-
+// TODO: completely broken
 class ColorHoverInteraction extends Interaction {
   private _markView: MarkView;
   private _properties: any;
@@ -178,7 +178,7 @@ class ColorHoverInteraction extends Interaction {
   constructor(spec: any, modelContext: Context, viewContext: Context, id: number) {
     super(modelContext, viewContext, id);
     if (spec["mark"]){
-       this._markView = this.viewContext.getNode(MarkView.className, spec["mark"]);
+       this._markView = this.viewContext.getNode(Mark.className, spec["mark"]);
     } else {
       throw new Error("No mark specified in ClickPrintInteraction.");
     }
@@ -216,9 +216,9 @@ class ZoomInteraction extends Interaction {
     super(modelContext, viewContext, id);
 
     if(spec["area"]) {
-      this._element = this.viewContext.getNode(AreaView.className, spec["area"]).graphSelection;
+      this._element = this.viewContext.getNode(Area.className, spec["area"]).graphSelection;
     } else if(spec["axis"]) {
-      this._element = this.viewContext.getNode(AxisView.className, spec["axis"]).axisSelection;
+      this._element = this.viewContext.getNode(Axis.className, spec["axis"]).axisSelection;
     } else {
       throw new Error("No axis or area specified in PanInteraction.");
     }
@@ -265,14 +265,14 @@ class AddPointInteraction extends Interaction {
     super(modelContext, viewContext, id);
 
     if (spec["mark"]) {
-      this._markView = this.viewContext.getNode(MarkView.className, spec["mark"]);
+      this._markView = this.viewContext.getNode(Mark.className, spec["mark"]);
       this._dataSetName = this._markView.node.get("source");
     } else {
       throw new Error("No mark specified in AddPointInteraction.");
     }
 
     if (spec["area"]) {
-      this._areaView = this.viewContext.getNode(AreaView.className, spec["area"]);
+      this._areaView = this.viewContext.getNode(Area.className, spec["area"]);
     } else {
       throw new Error("No area specified in AddPointInteraction.");
     }

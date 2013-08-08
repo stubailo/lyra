@@ -135,31 +135,3 @@ class ContextNode extends Backbone.Model {
     });
   }
 }
-
-// Only one view per model please
-class ContextView extends ContextNode {
-  private _node: any;
-  private _element: D3.Selection;
-
-  constructor (node: any, element: D3.Selection, viewContext: Context, className: string) {
-    this._node = node;
-    this._element = element;
-    super({"name": node.name}, viewContext, className);
-  }
-
-  public getProperty(key: string): any {
-    if(this.has(key)){
-      return this.get(key);
-    } else {
-      return this._node.get(key);
-    }
-  }
-
-  public get node() {
-    return this._node;
-  }
-
-  public get element() {
-    return this._element;
-  }
-}

@@ -15,7 +15,7 @@ class Axis extends ContextNode {
     this.set(Axis.AXIS_PADDING, 2);
     this.set(Axis.AXIS_WIDTH, 45);
 
-    this.get("area").addAxis(this);
+    this.get("area").addAxis(this, this.get("location"));
   }
 }
 
@@ -26,7 +26,6 @@ class AxisView extends ContextView {
   private _yOffset: number;
   public render;
 
-  public static className: string = Axis.className;
   public static EVENT_RENDER: string = "render";
 
   public get axisSelection () {
@@ -46,7 +45,7 @@ class AxisView extends ContextView {
       .attr("fill-opacity", 0);
 
     var axisSvg = totalSvg.append("g")
-      .attr("class", AxisView.className)
+      .attr("class", Axis.className)
       .attr("name", this.node.name);
 
     if (this.node.get("gridline")) {
@@ -146,5 +145,21 @@ class AxisView extends ContextView {
        this._yOffset += this.node.get(Axis.AXIS_WIDTH);
     }
     this.render();
+  }
+
+  public calculatedWidth(): number {
+    if(this.get("orient") === "left" || this.get("orient") === "right") {
+      return this.get(Axis.AXIS_WIDTH);
+    } else {
+      throw new Error("Axis got asked about its undetermined length.");
+    }
+  }
+
+  public calculatedHeight(): number {
+    if(this.get("orient") === "top" || this.get("orient") === "bottom") {
+      return this.get(Axis.AXIS_WIDTH);
+    } else {
+      throw new Error("Axis got asked about its undetermined length.");
+    }
   }
 }

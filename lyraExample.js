@@ -28,8 +28,9 @@ $(function() {
         "name": "area1",
         "height": 300,
         "width": 400,
-        "paddingLeft": 100,
-        "paddingBottom": 50
+        "paddingLeft": 50,
+        "paddingRight": 50,
+        "paddingTop": 50
       }
     ],
     "scales": [
@@ -115,18 +116,18 @@ $(function() {
       "name": "x",
       "area": "areas:area1",
       "scale": "scales:x",
-      "orient": "bottom",
+      "orient": "top",
       "ticks": 20,
-      "location": "bottom",
+      "location": "top",
       "gridline": "lightgray"
       },
       {
       "name": "y",
       "area": "areas:area1",
       "scale": "scales:y",
-      "orient": "left",
+      "orient": "right",
       "ticks": 10,
-      "location": "left",
+      "location": "right",
       "gridline": "#ffaaaa"
       },
       {

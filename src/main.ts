@@ -4,7 +4,8 @@
 /// <reference path="../defs/d3.d.ts" />
 /// <reference path="../defs/Q.d.ts" />
 
-/// <reference path="node.ts" />
+/// <reference path="contextNode.ts" />
+/// <reference path="contextView.ts" />
 /// <reference path="context.ts" />
 /// <reference path="dataSet.ts" />
 /// <reference path="scale.ts" />
@@ -17,16 +18,14 @@
 class LyraModel {
   private _context: Context;
 
-  private static _classNameToClass: Object = {};
-
   constructor(spec: any) {
     // Initialize
     this._context = new Context();
 
     // Parse all of the models
     for(var className in spec) {
-      if (LyraModel._classNameToClass[className] !== undefined) {
-        ContextNode.parseAll(spec[className], this.context, LyraModel._classNameToClass[className]);
+      if (Lyra.getModel(className) !== undefined) {
+        ContextNode.parseAll(spec[className], this.context, Lyra.getModel(className));
       }
     }
   }
@@ -35,21 +34,37 @@ class LyraModel {
     return this._context;
   }
 
-  // Method for adding new types of model nodes
-  public static addClass(specKey: string, classReference): void {
-    LyraModel._classNameToClass[specKey] = classReference;
-  }
-}
 
-LyraModel.addClass("data", DataSet);
-LyraModel.addClass("scales", Scale);
-LyraModel.addClass("marks", Mark);
-LyraModel.addClass("axes", Axis);
-LyraModel.addClass("areas", Area);
+}
 
 // Entry point into library
 class Lyra {
-  private static AREA_SPACE = 25;
+
+  private static _classNameToView: Object = {};
+  private static _classNameToModel: Object = {};
+  // Method for adding new types of model nodes
+  public static addModel(specKey: string, classReference): void {
+    classReference.className = specKey;
+    Lyra._classNameToModel[specKey] = classReference;
+  }
+
+  public static addView(specKey: string, classReference): void {
+    classReference.className = specKey;
+    Lyra._classNameToView[specKey] = classReference;
+  }
+
+  public static getModel(specKey: string) {
+    return Lyra._classNameToModel[specKey];
+  }
+
+  public static getView(specKey: string) {
+    return Lyra._classNameToView[specKey];
+  }
+
+  public static createViewForModel(model: ContextNode, element: D3.Selection, viewContext: Context) {
+    return new (Lyra.getView(model.className))(model, element, viewContext);
+  }
+
   // Necessary properties
   private _model: LyraModel;
   private _viewContext: Context;
@@ -60,12 +75,6 @@ class Lyra {
   // DOM elements and such
   private _element: HTMLElement;
   private _svg: D3.Selection;
-
-  private static _classNameToClass: Object = {};
-
-  public static addClass(specKey: string, classReference): void {
-    Lyra._classNameToClass[specKey] = classReference;
-  }
 
   constructor(spec: any, element: HTMLElement) {
     // Initialize
@@ -101,7 +110,7 @@ class Lyra {
   }
 
   public render() {
-    for(var specKey in Lyra._classNameToClass) {
+    for(var specKey in Lyra._classNameToView) {
       _.each(<ContextView[]> this._viewContext.getNodesOfClass(specKey), function(view) {
         view.render();
       });
@@ -111,18 +120,18 @@ class Lyra {
   private generateViews() {
     this._svg = d3.select(this._element).append('svg:svg');
 
-    for(var specKey in Lyra._classNameToClass) {
+    for(var specKey in Lyra._classNameToView) {
       console.log("generating views for: " + specKey);
     }
     // Creates the view for area
     _.each(this.model.context.getNodesOfClass(Area.className), (area: Area) => {
-      new AreaView(area, this._svg, this._viewContext, AreaView.className);
+      new AreaView(area, this._svg, this._viewContext);
 
     });
 
     _.each(this.model.context.getNodesOfClass(Mark.className), (mark: Mark) => {
       MarkView.createView(mark,
-        this._viewContext.getNode(AreaView.className, mark.area.name).graphSelection, this._viewContext);
+        this._viewContext.getNode(Area.className, mark.area.name).graphSelection, this._viewContext);
     });
   }
 
@@ -154,5 +163,12 @@ class Lyra {
   }
 }
 
-Lyra.addClass("areas", AreaView);
-Lyra.addClass("marks", MarkView);
+Lyra.addView("areas", AreaView);
+Lyra.addView("marks", MarkView);
+Lyra.addView("axes", AxisView);
+
+Lyra.addModel("data", DataSet);
+Lyra.addModel("scales", Scale);
+Lyra.addModel("marks", Mark);
+Lyra.addModel("axes", Axis);
+Lyra.addModel("areas", Area);

@@ -10,6 +10,7 @@
  * restricted to only model nodes or only view nodes.
  */
 class Context {
+
   // A dictionary to hold everything
   private nodes: Object;
 
