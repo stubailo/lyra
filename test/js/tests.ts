@@ -3,6 +3,7 @@
 /// <reference path="../../typings/mocha.d.ts" />
 
 /// <reference path="../../src/main.ts" />
+
 module Lyra {
     (function() {
         var assert = chai.assert;
@@ -46,5 +47,4 @@ module Lyra {
             });
         });
     })();
-
 }
