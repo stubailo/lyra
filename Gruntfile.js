@@ -14,13 +14,30 @@ module.exports = function(grunt) {
           comments: true,
           declaration: true
         }
+      },
+      test: {
+        src: ['test/js/tests.ts'],
+        dest: 'test/js/tests.js',
+        options: {
+          module: 'amd', //or commonjs
+          target: "ES5",
+          comments: true,
+          declaration: false
+        }
       }
+    },
+
+    mocha: {
+      index: ['test/index.html']
     },
 
   });
 
   grunt.loadNpmTasks('grunt-typescript');
 
+  grunt.loadNpmTasks('grunt-mocha');
+
   grunt.registerTask("default", ["typescript"]);
+  grunt.registerTask("test", ["typescript", "mocha"]);
 
 };
