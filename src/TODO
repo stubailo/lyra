@@ -8,8 +8,8 @@ Fix all of the if spec[key] shit, maybe make a function that tests the spec for 
 Context
 
 // Does context need to be a backbone model?
-How to have only one var for classname that is used in parsing, and in the Context?
-How does all of this overloading stuff work in TypeScript?
+// How to have only one var for classname that is used in parsing, and in the Context?
+// How does all of this overloading stuff work in TypeScript?
 Make so things can be added incrementally
 
 Node
@@ -18,7 +18,7 @@ Figure out how to simplify the parsing decision tree
 Fix the event shit in the constructor of ContextNode
 Fix the event shit in the parseProperties of ContextNode where it listens to objects
 Checkargument in context and ispropertyreference in node overlap a little, refactor to one method in context
-Get rid of refresh :[
+// Get rid of refresh :[
 Add some more features to contextview, comment it, do something about view classnames
 Also make explicit what elements are which
 
@@ -30,20 +30,20 @@ How would data series be represented?
 
 Area
 
-Somehow delegate layout to this shit?
-Figure out how to lay out axes and do padding in a nice way
-AreaView needs to be refactored it seems, a lot of the view code in general is pretty ghetto
+// Somehow delegate layout to this shit?
+// Figure out how to lay out axes and do padding in a nice way
+// AreaView needs to be refactored it seems, a lot of the view code in general is pretty ghetto
 
 Scale
 
 // Remove recalculate and move that stuff to the getter
-Create a date scale to test if it makes sense
+// Create a date scale to test if it makes sense
 Comment the stuff
-Should zoom and pan and stuff like that be part of the class?
+// Should zoom and pan and stuff like that be part of the class? (yes it should)
 
 Axis
 
-Axis rendering is totally jacked up
+// Axis rendering is totally jacked up
 Styling options?
 Events and stuff are janky
 
