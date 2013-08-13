@@ -7,8 +7,6 @@ module Lyra {
     export class Interaction {
         private static SPEC_TYPE_KEY: string = "type";
 
-        public static className: string = "Interaction";
-
         public static TYPE_PAN: string = "pan";
         public static TYPE_ZOOM: string = "zoom";
 
@@ -23,10 +21,9 @@ module Lyra {
         }
 
         public static parseAll(specList: any[], modelContext: Context, viewContext: Context): Interaction[] {
-            var count = -1;
+            var count = 0;
             return _.map(specList, function(spec) {
-                count++;
-                return Interaction.parse(spec, modelContext, viewContext, count);
+                return Interaction.parse(spec, modelContext, viewContext, count++);
             });
         }
 

@@ -78,7 +78,7 @@ module Lyra {
         // Spec-produced objects
         private _interactions: Interaction[];
 
-        // DOM elements and such
+        // View elements
         private _element: HTMLElement;
         private _svg: D3.Selection;
 

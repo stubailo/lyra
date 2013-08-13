@@ -12,7 +12,7 @@ module.exports = function(grunt) {
           module: 'amd', //or commonjs
           target: "ES5",
           comments: true,
-          declaration: true
+          declaration: false
         }
       },
       test: {

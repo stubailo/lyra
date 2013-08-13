@@ -38,7 +38,6 @@ module Lyra {
          */
         constructor(spec: any, context: Context, className: string) {
             super();
-            Backbone.Model.apply(this, arguments);
 
             // Setup instance variables
             this._name = spec[ContextNode.SPEC_NAME_KEY];
@@ -147,7 +146,5 @@ module Lyra {
         public getAttachmentPoints(): string[] {
             return [];
         }
-
-
     }
 }
