@@ -29,11 +29,11 @@ module Lyra {
                 return this._node.get(key);
             }
         }
-        public get node() {
+        public get node(): ContextNode {
             return this._node;
         }
 
-        public get element() {
+        public get element(): D3.Selection {
             return this._element;
         }
 

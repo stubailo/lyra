@@ -140,11 +140,11 @@ module Lyra {
 
         }
 
-        public get graphSelection() {
+        public get graphSelection(): D3.Selection {
             return this._graphSelection;
         }
 
-        public get totalSelection() {
+        public get totalSelection(): D3.Selection {
             return this._totalSelection;
         }
     }

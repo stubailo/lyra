@@ -31,13 +31,23 @@ module.exports = function(grunt) {
       index: ['test/index.html']
     },
 
+    tslint: {
+      options: {
+        configuration: grunt.file.readJSON(".tslintrc")
+      },
+      files: {
+        src: ['src/main.ts', 'src/tests.ts']
+      }
+    }
+
   });
 
   grunt.loadNpmTasks('grunt-typescript');
+  grunt.loadNpmTasks('grunt-tslint');
 
   grunt.loadNpmTasks('grunt-mocha');
 
-  grunt.registerTask("default", ["typescript"]);
-  grunt.registerTask("test", ["typescript", "mocha"]);
+  grunt.registerTask("default", ["tslint", "typescript"]);
+  grunt.registerTask("test", ["default", "mocha"]);
 
 };

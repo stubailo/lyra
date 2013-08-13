@@ -93,11 +93,11 @@ module Lyra {
             this.trigger("change");
         }
 
-        public get type() {
+        public get type(): string {
             return this._type;
         }
 
-        public get markProperties() {
+        public get markProperties(): Object {
             return this._markProperties;
         }
     }
@@ -131,7 +131,7 @@ module Lyra {
             throw new Error("This method is abstract, derived mark views must implement this method");
         }
 
-        public get markSelection() {
+        public get markSelection(): D3.Selection {
             return this.element.selectAll((<Mark> this.node).type + "." + this.node.name);
         }
     }

@@ -33,7 +33,7 @@ module Lyra {
 
         public static EVENT_RENDER: string = "render";
 
-        public get axisSelection() {
+        public get axisSelection(): D3.Selection {
             return this._axisSelection;
         }
 

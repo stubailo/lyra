@@ -35,8 +35,9 @@ module Lyra {
             throw new Error("Zoom method not overridden for scale.");
         }
 
-        public get scaleRepresentation() {
-            throw new Error("Get scale not overridden for scale.");
+        // This is return type any because the D3 type definitions don't define a real scale type
+        public get scaleRepresentation(): any {
+            throw new Error("ScaleRepresentation not overridden for scale.");
         }
     }
 
@@ -58,7 +59,7 @@ module Lyra {
             return this.scaleRepresentation(input);
         }
 
-        public get scaleRepresentation() {
+        public get scaleRepresentation(): any {
             if (this._dirty) {
                 // create new scale object
                 var domain = [this.get("domainBegin"), this.get("domainEnd")];
@@ -116,7 +117,7 @@ module Lyra {
             return this.scaleRepresentation(input);
         }
 
-        public get scaleRepresentation() {
+        public get scaleRepresentation(): any {
             if (this._dirty) {
                 // create new scale object
                 var domain = [this.get("domainBegin"), this.get("domainEnd")];
@@ -168,6 +169,10 @@ module Lyra {
         }
 
         public pan(pixels) {
+            // does nothing
+        }
+
+        public zoom(pixels) {
             // does nothing
         }
     }
