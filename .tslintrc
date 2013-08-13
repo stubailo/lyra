@@ -10,7 +10,7 @@
   "evil": true,
   "eofline": true,
   "classname": true,
-  "varname": true,
+  "varname": false,
   "noarg": true,
   "noconsole": "debug, info, log, time, timeEnd, trace",
   "sub": true,
