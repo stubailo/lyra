@@ -129,7 +129,7 @@ module Lyra {
 
         /* Private method to check if a given argument follows the appropriate formatting detailed above.
          */
-        private static checkArgument(argument: string, checkProperty?: bool): void {
+        private static checkArgument(argument: string, checkProperty?: boolean): void {
             var argRegex = /^[A-Za-z_\-0-9]+:[A-Za-z_\-0-9]+/;
             var propRegex = /(\.[A-Za-z_\-0-9]+)?$/;
             if (checkProperty) {
