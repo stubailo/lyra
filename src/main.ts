@@ -1,5 +1,5 @@
 /// <reference path="../typings/jquery.d.ts" />
-/// <reference path="../typings/underscore-typed.d.ts" />
+/// <reference path="../typings/underscore.d.ts" />
 /// <reference path="../typings/backbone.d.ts" />
 /// <reference path="../typings/d3.d.ts" />
 /// <reference path="../typings/Q.d.ts" />

@@ -1,25 +1,18 @@
 module Lyra {
-    export class MarkType {
-        constructor(private _name: string) { }
-
-        public get name() {
-            return this._name;
-        }
-        public static LINE = new MarkType("path");
-        public static CIRCLE = new MarkType("circle");
-        public static RECTANGLE = new MarkType("rect");
-    }
-
     export class Mark extends ContextNode {
         private static SCALE_KEY: string = "scale";
         private static VALUE_KEY: string = "value";
+
+        public static LINE_TYPE = "path";
+        public static CIRCLE_TYPE = "circle";
+        public static RECTANGLE_TYPE = "rect";
 
         public static className: string;
 
         /* Each property is a function of one item that specifies that property of an SVG element.
          * So for example a circle would have one function for "cx", one for "cy", etc.
          */
-        private _type: MarkType;
+        private _type: string;
         private _markProperties;
 
         public static parse(spec: any, context: Context) {
@@ -30,13 +23,13 @@ module Lyra {
             var context = this.context;
             switch (this.get("type")) {
                 case "circle":
-                    this._type = MarkType.CIRCLE;
+                    this._type = Mark.CIRCLE_TYPE;
                     break;
                 case "line":
-                    this._type = MarkType.LINE;
+                    this._type = Mark.LINE_TYPE;
                     break;
                 case "rect":
-                    this._type = MarkType.RECTANGLE;
+                    this._type = Mark.RECTANGLE_TYPE;
                     break;
                 default:
                     throw new Error("Unsupported mark type: " + this.get("type"));
@@ -122,11 +115,11 @@ module Lyra {
 
         public static createView(mark: Mark, element: D3.Selection, viewContext: Context) {
             switch (mark.type) {
-                case MarkType.CIRCLE:
+                case Mark.CIRCLE_TYPE:
                     return new CircleMarkView(mark, element, viewContext);
-                case MarkType.LINE:
+                case Mark.LINE_TYPE:
                     return new LineMarkView(mark, element, viewContext);
-                case MarkType.RECTANGLE:
+                case Mark.RECTANGLE_TYPE:
                     return new RectMarkView(mark, element, viewContext);
                 default:
                     throw new Error("Invalid MarkView type: " + mark.type);
@@ -139,7 +132,7 @@ module Lyra {
         }
 
         public get markSelection() {
-            return this.element.selectAll((<Mark> this.node).type.name + "." + this.node.name);
+            return this.element.selectAll((<Mark> this.node).type + "." + this.node.name);
         }
     }
 

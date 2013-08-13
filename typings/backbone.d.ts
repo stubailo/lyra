@@ -5,7 +5,7 @@
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
 
-/// <reference path="jquery.d.ts" />
+/// <reference path="../jquery/jquery.d.ts" />
 
 declare module Backbone {
 
@@ -93,6 +93,7 @@ declare module Backbone {
         attributes: any;
         changed: any[];
         cid: string;
+        defaults: any;
         id: any;
         idAttribute: string;
         validationError: any;
@@ -111,7 +112,6 @@ declare module Backbone {
         changedAttributes(attributes?: any): any[];
         clear(options?: Silenceable);
         clone(): Model;
-        defaults(): any;
         destroy(options?: ModelDestroyOptions);
         escape(attribute: string);
         has(attribute: string): boolean;
@@ -151,8 +151,7 @@ declare module Backbone {
 
         fetch(options?: CollectionFetchOptions): JQueryXHR;
 
-        comparator(element: Model): number;
-        comparator(element: Model): string;
+        comparator(element: Model): any;
         comparator(compare: Model, to?: Model): number;
 
         add(model: Model, options?: AddOptions);
