@@ -93,7 +93,6 @@ declare module Backbone {
         attributes: any;
         changed: any[];
         cid: string;
-        defaults: any;
         id: any;
         idAttribute: string;
         validationError: any;
