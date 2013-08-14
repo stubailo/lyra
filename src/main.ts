@@ -95,7 +95,7 @@ module Lyra {
             });
 
             _.each(this.model.context.getNodesOfClass(Mark.className), (mark: Mark) => {
-                MarkView.createView(mark,
+                Lyra.createViewForModel(mark,
                     this._viewContext.getNode(Area.className, mark.get("area").name).graphSelection, this._viewContext);
             });
         }
