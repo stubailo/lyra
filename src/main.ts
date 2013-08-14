@@ -91,7 +91,8 @@ module Lyra {
 
             // Creates the view for area
             _.each(this.model.getContext().getNodesOfClass(Area.className), (area: Area) => {
-                Lyra.createViewForModel(area, this.svg, this.viewContext);
+                var areaGroup = this.svg.append("g");
+                Lyra.createViewForModel(area, areaGroup, this.viewContext);
             });
         }
 
@@ -100,14 +101,14 @@ module Lyra {
             var curX = 0, curY = 0, maxY = 0, yBound = 0, xBound = 0;
 
             _.each(<AreaView[]> this.viewContext.getNodesOfClass(Area.className), (areaView) => {
-                var areaWidth = parseFloat(areaView.totalSelection.attr("width"));
-                var areaHeight = parseFloat(areaView.totalSelection.attr("height"));
+                var areaWidth = areaView.calculatedWidth();
+                var areaHeight = areaView.calculatedHeight();
                 if ((curX + areaWidth) >= window_width) {
                     curX = 0;
                     curY = maxY;
                     maxY = 0;
                 }
-                areaView.totalSelection.attr("x", curX).attr("y", curY);
+                areaView.getElement().attr("x", curX).attr("y", curY);
                 curX += areaWidth;
                 if (areaHeight > maxY) {
                     maxY = areaHeight;

@@ -26,22 +26,14 @@ module Lyra {
         public load() {
             // Nothing to do!
         }
-
-        public calculatedWidth(): number {
-            return this.get("paddingLeft") + this.get("width") + this.get("paddingRight");
-        }
-
-        public calculatedHeight(): number {
-            return this.get("paddingTop") + this.get("height") + this.get("paddingBottom");
-        }
     }
 
     export class AreaView extends ContextView {
         public static EVENT_RENDER: string = "render";
 
-        private _totalSelection: D3.Selection;
-        private _graphSelection: D3.Selection;
-        private _background: D3.Selection;
+        private totalSelection: D3.Selection;
+        private graphSelection: D3.Selection;
+        private background: D3.Selection;
 
         public static createView(area: Area, element: D3.Selection, viewContext: Context): AreaView {
             return new AreaView(area, element, viewContext);
@@ -54,12 +46,19 @@ module Lyra {
             this.getModel().on("change", $.proxy(this.render, this));
         }
 
-        public buildViews() {
-            this._totalSelection = this.getElement().append("svg").attr("class", Area.className).attr("name", this.getModel().getName());
-            this._graphSelection = this._totalSelection.append("svg").attr("class", "graph");
-            this._background = this._graphSelection.append("rect");
+        public calculatedWidth(): number {
+            return this.get("paddingLeft") + this.get("width") + this.get("paddingRight");
         }
 
+        public calculatedHeight(): number {
+            return this.get("paddingTop") + this.get("height") + this.get("paddingBottom");
+        }
+
+        public buildViews() {
+            this.totalSelection = this.getElement().append("svg").attr("class", Area.className).attr("name", this.getModel().getName());
+            this.graphSelection = this.totalSelection.append("svg").attr("class", "graph");
+            this.background = this.graphSelection.append("rect");
+        }
 
         private buildSubviews() {
             _.each(this.getModel().getAttachmentPoints(), (attachmentPoint: string) => {
@@ -67,9 +66,9 @@ module Lyra {
                     var subViewGroup: D3.Selection;
 
                     if(attachmentPoint === Area.ATTACH_INSIDE) {
-                        subViewGroup = this._graphSelection.append("g");
+                        subViewGroup = this.graphSelection.append("g");
                     } else {
-                        subViewGroup = this._totalSelection.append("g");
+                        subViewGroup = this.totalSelection.append("g");
                     }
 
                     this.addSubView(Lyra.createViewForModel(subViewModel, subViewGroup, this.getContext()), attachmentPoint);
@@ -79,7 +78,7 @@ module Lyra {
         }
 
         public render() {
-            this._graphSelection
+            this.graphSelection
                 .attr("x", this.get("paddingLeft"))
                 .attr("y", this.get("paddingTop"))
                 .attr("width", this.get("width"))
@@ -87,15 +86,15 @@ module Lyra {
 
             for (var property in this.getModel().attributes) {
                 if (property === "height") {
-                    this._totalSelection.attr(property, this.get("height") + this.get("paddingTop") + this.get("paddingBottom"));
+                    this.totalSelection.attr(property, this.get("height") + this.get("paddingTop") + this.get("paddingBottom"));
                 } else if (property === "width") {
-                    this._totalSelection.attr(property, this.get("width") + this.get("paddingLeft") + this.get("paddingRight"));
+                    this.totalSelection.attr(property, this.get("width") + this.get("paddingLeft") + this.get("paddingRight"));
                 } else {
-                    this._totalSelection.attr(property, this.get(property));
+                    this.totalSelection.attr(property, this.get(property));
                 }
             }
 
-            this._background
+            this.background
                 .attr("x", 0)
                 .attr("y", 0)
                 .attr("width", this.getModel().get("width"))
@@ -154,15 +153,6 @@ module Lyra {
             });
 
             this.trigger(AreaView.EVENT_RENDER);
-        }
-
-
-        public get graphSelection(): D3.Selection {
-            return this._graphSelection;
-        }
-
-        public get totalSelection(): D3.Selection {
-            return this._totalSelection;
         }
     }
 }
