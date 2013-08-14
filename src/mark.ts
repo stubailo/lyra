@@ -137,8 +137,10 @@ module Lyra {
 
     class CircleMarkView extends MarkView {
         public render() {
+            var data: DataSet = <DataSet> this.getModel().get("source");
+
             this.getMarkSelection()
-                .data(this.getModel().get("source").items)
+                .data(data.getItems())
                 .enter()
                 .append("circle")
                 .attr("class", this.getModel().getName());
@@ -155,8 +157,10 @@ module Lyra {
 
     class LineMarkView extends MarkView {
         public render() {
+            var data: DataSet = <DataSet> this.getModel().get("source");
+
             this.getMarkSelection()
-                .data([this.get("source").items])
+                .data([data.getItems()])
                 .enter()
                 .append("path")
                 .attr("class", this.getName());
@@ -193,8 +197,10 @@ module Lyra {
     class RectMarkView extends MarkView {
 
         public render() {
+            var data: DataSet = <DataSet> this.getModel().get("source");
+
             this.getMarkSelection()
-                .data(this.getModel().get("source").items)
+                .data(data.getItems())
                 .enter()
                 .append("rect")
                 .attr("class", this.getModel().getName());

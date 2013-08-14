@@ -23,11 +23,11 @@ module Lyra {
             }
         }
 
-        get items(): any[] {
+        public getItems(): any[] {
             return _.clone(this.get("items"));
         }
 
-        set items(items: any[]) {
+        public setItems(items: any[]) {
             this.set("items", _.clone(items));
             this.trigger(DataSet.EVENT_CHANGE);
         }
@@ -39,7 +39,7 @@ module Lyra {
         private static BAR_DOMAIN2_KEY: string = "barDomain2";
         private static BAR_BASE_KEY: string = "barBase";
 
-        get items(): any[] {
+        public getItems(): any[] {
             var barWidth: number = Infinity;
             var domain: string = this.get("domain");
             var prevItems = this.get("source").items;
@@ -63,6 +63,10 @@ module Lyra {
                 item[BarDataSetTransform.BAR_BASE_KEY] = 0;
                 return item;
             });
+        }
+
+        public setItems(items: any[]) {
+            throw new Error("Setting items not supported by data transforms.");
         }
     }
 }
