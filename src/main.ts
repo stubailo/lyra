@@ -162,7 +162,7 @@ module Lyra {
     }
 
     export function createViewForModel(model: ContextNode, element: D3.Selection, viewContext: Context) {
-        return new (Lyra.getView(model.className)).createView(model, element, viewContext);
+        return new (Lyra.getView(model.getClassName())).createView(model, element, viewContext);
     }
 
     Lyra.addView("areas", AreaView);

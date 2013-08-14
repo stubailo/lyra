@@ -20,7 +20,7 @@ module Lyra {
         }
 
         public load() {
-            var context = this.context;
+            var context = this.getContext();
             switch (this.get("type")) {
                 case "circle":
                     this._type = Mark.CIRCLE_TYPE;
@@ -34,6 +34,7 @@ module Lyra {
                 default:
                     throw new Error("Unsupported mark type: " + this.get("type"));
             }
+
             this.parseMarkProperties(this.get("properties"));
 
             this.get("area").addSubViewModel(this, Area.ATTACH_INSIDE);
@@ -47,14 +48,12 @@ module Lyra {
 
             var scale;
             if (spec[Mark.SCALE_KEY]) {
-                scale = this.context.getNode(Scale.className, spec[Mark.SCALE_KEY]);
+                scale = this.getContext().getNode(Scale.className, spec[Mark.SCALE_KEY]);
             } else {
                 scale = Scale.parse({
                     type: "identity"
                 }, new Context());
             }
-
-
 
             // HACKHACK we need real event handling
             scale.on("change", () => {
@@ -134,7 +133,7 @@ module Lyra {
         }
 
         public get markSelection(): D3.Selection {
-            return this.element.selectAll((<Mark> this.model).type + "." + this.model.name);
+            return this.element.selectAll((<Mark> this.model).type + "." + this.model.getName());
         }
     }
 
@@ -144,7 +143,7 @@ module Lyra {
                 .data(this.model.get("source").items)
                 .enter()
                 .append("circle")
-                .attr("class", this.model.name);
+                .attr("class", this.model.getName());
 
             _.each((<Mark> this.model).markProperties, (key) => {
                 this.markSelection.attr(key, (item) => {
@@ -162,7 +161,7 @@ module Lyra {
                 .data([this.get("source").items])
                 .enter()
                 .append("path")
-                .attr("class", this.name);
+                .attr("class", this.getName());
 
             var line = d3.svg.line();
             _.each((<Mark> this.model).markProperties, (key) => {
@@ -200,7 +199,7 @@ module Lyra {
                 .data(this.model.get("source").items)
                 .enter()
                 .append("rect")
-                .attr("class", this.model.name);
+                .attr("class", this.model.getName());
 
             this.markSelection.attr("width", (item) => {
                 return this.get("x2")(item) - this.get("x")(item);

@@ -62,10 +62,10 @@ module Lyra {
 
             var axisSvg = totalSvg.append("g")
                 .attr("class", Axis.className)
-                .attr("name", this.model.name);
+                .attr("name", this.model.getName());
 
             if (this.model.get("gridline")) {
-                var gridSvg = this.context.getNode(Area.className, this.model.get("area").name).graphSelection
+                var gridSvg = this.getContext().getNode(Area.className, this.model.get("area").getName()).graphSelection
                     .append("g")
                     .attr("class", "grid");
             }
@@ -130,12 +130,12 @@ module Lyra {
                 axisSvg.call(this._axis);
 
                 if (gridSvg) {
-                    var gridSelection = gridSvg.selectAll("path." + this.model.name)
+                    var gridSelection = gridSvg.selectAll("path." + this.model.getName())
                         .data(curScale.ticks(this.model.get("ticks")));
 
                     gridSelection.enter()
                         .append("path")
-                        .attr("class", this.model.name)
+                        .attr("class", this.model.getName())
                         .attr("stroke", this.model.get("gridline"));
 
                     gridFunction(gridSelection, curScale, areaHeight, areaWidth);

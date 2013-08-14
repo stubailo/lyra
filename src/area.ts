@@ -55,7 +55,7 @@ module Lyra {
         }
 
         public buildViews() {
-            this._totalSelection = this.element.append("svg").attr("class", Area.className).attr("name", this.model.name);
+            this._totalSelection = this.element.append("svg").attr("class", Area.className).attr("name", this.model.getName());
             this._graphSelection = this._totalSelection.append("svg").attr("class", "graph");
             this._background = this._graphSelection.append("rect");
         }
@@ -72,7 +72,7 @@ module Lyra {
                         subViewGroup = this._totalSelection.append("g");
                     }
 
-                    this.addSubView(Lyra.createViewForModel(subViewModel, subViewGroup, this.context), attachmentPoint);
+                    this.addSubView(Lyra.createViewForModel(subViewModel, subViewGroup, this.getContext()), attachmentPoint);
                 });
             });
 

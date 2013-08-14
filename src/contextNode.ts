@@ -7,9 +7,9 @@ module Lyra {
     export class ContextNode extends Backbone.Model {
 
         // Private references to the context, and name
-        private _context: Context;
-        private _name: string;
-        private _className: string;
+        private context: Context;
+        private name: string;
+        private className: string;
 
         /* Creates a ContextNode, setting up the name, context, and properties from the specification
          * passed to it.
@@ -21,24 +21,24 @@ module Lyra {
             super();
 
             // Setup instance variables
-            this._name = name;
-            this._context = context;
-            this._className = className;
+            this.name = name;
+            this.context = context;
+            this.className = className;
 
             // Save this ContextNode in the context
-            this._context.set(className + ":" + this.name, this);
+            this.context.set(className + ":" + this.name, this);
         }
 
-        public get name(): string {
-            return this._name;
+        public getName(): string {
+            return this.name;
         }
 
-        public get context(): Context {
-            return this._context;
+        public getContext(): Context {
+            return this.context;
         }
 
-        public get className(): string {
-            return this._className;
+        public getClassName(): string {
+            return this.className;
         }
     }
 }
