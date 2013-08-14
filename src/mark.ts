@@ -35,6 +35,8 @@ module Lyra {
                     throw new Error("Unsupported mark type: " + this.get("type"));
             }
             this.parseMarkProperties(this.get("properties"));
+
+            this.get("area").addSubViewModel(this, Area.ATTACH_INSIDE);
         }
 
         private parseProperty(name: string, spec: any) {

@@ -93,11 +93,6 @@ module Lyra {
             _.each(this.model.context.getNodesOfClass(Area.className), (area: Area) => {
                 Lyra.createViewForModel(area, this._svg, this._viewContext);
             });
-
-            _.each(this.model.context.getNodesOfClass(Mark.className), (mark: Mark) => {
-                Lyra.createViewForModel(mark,
-                    this._viewContext.getNode(Area.className, mark.get("area").name).graphSelection, this._viewContext);
-            });
         }
 
         private setUpLayout() {

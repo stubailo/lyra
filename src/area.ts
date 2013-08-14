@@ -2,8 +2,10 @@ module Lyra {
     export class Area extends ContextModel {
         public static className: string;
 
+        public static ATTACH_INSIDE: string = "inside";
+
         public getAttachmentPoints(): string[] {
-            return ["top", "right", "bottom", "left"];
+            return ["top", "right", "bottom", "left", Area.ATTACH_INSIDE];
         }
 
         public defaults() {
@@ -56,6 +58,24 @@ module Lyra {
             this._totalSelection = this.element.append("svg").attr("class", Area.className).attr("name", this.model.name);
             this._graphSelection = this._totalSelection.append("svg").attr("class", "graph");
             this._background = this._graphSelection.append("rect");
+        }
+
+
+        private buildSubviews() {
+            _.each(this.model.getAttachmentPoints(), (attachmentPoint: string) => {
+                _.each(this.model.subViewModels[attachmentPoint], (subViewModel: ContextModel) => {
+                    var subViewGroup: D3.Selection;
+
+                    if(attachmentPoint === Area.ATTACH_INSIDE) {
+                        subViewGroup = this._graphSelection.append("g");
+                    } else {
+                        subViewGroup = this._totalSelection.append("g");
+                    }
+
+                    this.addSubView(Lyra.createViewForModel(subViewModel, subViewGroup, this.context), attachmentPoint);
+                });
+            });
+
         }
 
         public render() {
@@ -124,6 +144,9 @@ module Lyra {
                             x = this.get("paddingLeft");
                             y = this.get("paddingTop") + currentDistances.bottom - subView.calculatedHeight();
                             break;
+                        case "inside":
+                            // 0, 0 is fine
+                            break;
                     }
 
                     subViewGroup.attr("transform", "translate(" + x + ", " + y + ")");
@@ -133,16 +156,6 @@ module Lyra {
             this.trigger(AreaView.EVENT_RENDER);
         }
 
-        private buildSubviews() {
-            _.each(this.model.getAttachmentPoints(), (attachmentPoint: string) => {
-                _.each(this.model.subViewModels[attachmentPoint], (subViewModel: ContextModel) => {
-                    var subViewGroup: D3.Selection = this._totalSelection.append("g");
-
-                    this.addSubView(Lyra.createViewForModel(subViewModel, subViewGroup, this.context), attachmentPoint);
-                });
-            });
-
-        }
 
         public get graphSelection(): D3.Selection {
             return this._graphSelection;
