@@ -106,7 +106,7 @@ module Lyra {
 
         /* Get all the ContextNodes in the context */
         public get nodes(): Object {
-            return this._nodes;
+            return _.values(this._nodes);
         }
 
         /* Get all ContextNodes of a certain className */

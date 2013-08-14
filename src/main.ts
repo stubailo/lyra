@@ -158,7 +158,7 @@ module Lyra {
 
     // Entry point into library
     export function createChart(spec: any, element: HTMLElement): Object {
-        var chart = {};
+        var chart: any = {};
         chart.lyraView = new LyraView(spec, element);
         return chart;
     }
