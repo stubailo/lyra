@@ -32,7 +32,7 @@ module Lyra {
                     var NODE_CLASSNAME = "node";
 
                     var context: Context = new Context();
-                    var node = new ContextNode({
+                    var node = new ContextModel({
                         name: NAME_PROPERTY
                     }, context, NODE_CLASSNAME);
 
@@ -50,7 +50,7 @@ module Lyra {
                     var STRING_PROPERTY = "string";
                     var DATE_PROPERTY = new Date();
 
-                    var node1 = new ContextNode({
+                    var node1 = new ContextModel({
                         name: NAME_PROPERTY,
                         number: NUMBER_PROPERTY,
                         string: STRING_PROPERTY,
@@ -66,12 +66,12 @@ module Lyra {
                 it("Correctly parses object references", function() {
                     var context: Context = new Context();
 
-                    var node1 = new ContextNode({
+                    var node1 = new ContextModel({
                         name: "node1",
                         prop: 3
                     }, context, "Node");
 
-                    var node2 = new ContextNode({
+                    var node2 = new ContextModel({
                         name: "node2",
                         otherNode: "Node:node1"
                     }, context, "Node");
@@ -82,12 +82,12 @@ module Lyra {
                 it("Correctly parses and updates property references", function() {
                     var context: Context = new Context();
 
-                    var node1 = new ContextNode({
+                    var node1 = new ContextModel({
                         name: "node1",
                         prop: 3
                     }, context, "Node");
 
-                    var node2 = new ContextNode({
+                    var node2 = new ContextModel({
                         name: "node2",
                         prop: "Node:node1.prop"
                     }, context, "Node");
