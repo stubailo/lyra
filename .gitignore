@@ -1,6 +1,13 @@
+# OS_GENERATED OBJECTS #
+########################
 .DS_Store
+
+# COMPILED FILES #
+##################
 lyra.js
-node_modules/
 test/js/tests.js
 lyra.css
 
+# NODE MODULES #
+################
+node_modules/
