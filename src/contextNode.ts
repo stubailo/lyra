@@ -29,14 +29,6 @@ module Lyra {
             this._context.set(className + ":" + this.name, this);
         }
 
-        /* The behavior of load is set as a no-op, but can be overriden to add additional behavior.
-         *
-         * This method is called immediately after a ContextNode is constructed.
-         */
-        public load() {
-            // NO-OP
-        }
-
         public get name(): string {
             return this._name;
         }
