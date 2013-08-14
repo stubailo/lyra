@@ -134,7 +134,7 @@ module Lyra {
                 _.each(this.node.subViewModels[attachmentPoint], (subViewModel: ContextNode) => {
                     var subViewGroup: D3.Selection = this._totalSelection.append("g");
 
-                    this.addSubView(Lyra.LyraView.createViewForModel(subViewModel, subViewGroup, this.context), attachmentPoint);
+                    this.addSubView(Lyra.createViewForModel(subViewModel, subViewGroup, this.context), attachmentPoint);
                 });
             });
 

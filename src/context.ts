@@ -13,7 +13,7 @@ module Lyra {
     export class Context {
 
         // A dictionary to hold everything
-        private nodes: Object;
+        private _nodes: Object;
 
         public get(key: string): any {
             return this.nodes[key];
@@ -24,7 +24,7 @@ module Lyra {
         }
 
         constructor() {
-            this.nodes = {};
+            this._nodes = {};
         }
 
         /* Gets a node in the Context stored with a key of the form "className:nodeName".
@@ -106,7 +106,7 @@ module Lyra {
 
         /* Get all the ContextNodes in the context */
         public get nodes(): Object {
-            return this.nodes;
+            return this._nodes;
         }
 
         /* Get all ContextNodes of a certain className */
