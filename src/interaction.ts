@@ -10,14 +10,14 @@ module Lyra {
         public static TYPE_PAN: string = "pan";
         public static TYPE_ZOOM: string = "zoom";
 
-        private _modelContext: Context;
-        private _viewContext: Context;
-        private _id: number;
+        private modelContext: Context;
+        private viewContext: Context;
+        private id: number;
 
         constructor(modelContext: Context, viewContext: Context, id: number) {
-            this._modelContext = modelContext;
-            this._viewContext = viewContext;
-            this._id = id;
+            this.modelContext = modelContext;
+            this.viewContext = viewContext;
+            this.id = id;
         }
 
         public static parseAll(specList: any[], modelContext: Context, viewContext: Context): Interaction[] {
@@ -39,16 +39,16 @@ module Lyra {
             return null;
         }
 
-        public get modelContext(): Context {
-            return this._modelContext;
+        public getModelContext(): Context {
+            return this.modelContext;
         }
 
-        public get viewContext(): Context {
-            return this._viewContext;
+        public getViewContext(): Context {
+            return this.viewContext;
         }
 
-        public get id(): number {
-            return this._id;
+        public getId(): number {
+            return this.id;
         }
     }
 
@@ -58,13 +58,13 @@ module Lyra {
         private static SCALE_KEY: string = "scale";
         private static DIRECTION_KEY: string = "direction";
 
-        private _element: D3.Selection;
-        private _scale: Scale;
-        private _direction: string;
+        private element: D3.Selection;
+        private scale: Scale;
+        private direction: string;
 
-        private _startPosition: number[];
-        private _currentPosition: number[];
-        private _dragging: boolean;
+        private startPosition: number[];
+        private currentPosition: number[];
+        private dragging: boolean;
 
         private addEvents;
         private startDrag;
@@ -75,57 +75,57 @@ module Lyra {
             super(modelContext, viewContext, id);
 
             if (spec[PanInteraction.AREA_KEY]) {
-                this._element = this.viewContext.getNode(Area.className, spec[PanInteraction.AREA_KEY]).graphSelection;
+                this.element = this.getViewContext().getNode(Area.className, spec[PanInteraction.AREA_KEY]).graphSelection;
             } else if (spec[PanInteraction.AXIS_KEY]) {
-                this._element = this.viewContext.getNode(Axis.className, spec[PanInteraction.AXIS_KEY]).axisSelection;
+                this.element = this.getViewContext().getNode(Axis.className, spec[PanInteraction.AXIS_KEY]).axisSelection;
             } else {
                 throw new Error("No " + PanInteraction.AXIS_KEY + " or " + PanInteraction.AREA_KEY + " specified in PanInteraction.");
             }
 
             if (spec[PanInteraction.SCALE_KEY]) {
-                this._scale = this.modelContext.getNode(Scale.className, spec[PanInteraction.SCALE_KEY]);
+                this.scale = this.getModelContext().getNode(Scale.className, spec[PanInteraction.SCALE_KEY]);
             } else {
                 throw new Error("No " + PanInteraction.SCALE_KEY + " specified in PanInteraction.");
             }
 
             if (spec[PanInteraction.DIRECTION_KEY]) {
-                this._direction = spec[PanInteraction.DIRECTION_KEY];
+                this.direction = spec[PanInteraction.DIRECTION_KEY];
             } else {
-                this._direction = "e";
+                this.direction = "e";
             }
 
             this.addEvents = () => {
-                this._element.on("mousedown." + this.id, this.startDrag);
+                this.element.on("mousedown." + this.getId(), this.startDrag);
             };
 
             this.drag = (event) => {
                 var newPosition: number[] = [event.clientX, event.clientY];
-                var dx = newPosition[0] - this._currentPosition[0];
-                var dy = newPosition[1] - this._currentPosition[1];
-                this._currentPosition = _.clone(newPosition);
+                var dx = newPosition[0] - this.currentPosition[0];
+                var dy = newPosition[1] - this.currentPosition[1];
+                this.currentPosition = _.clone(newPosition);
 
-                switch (this._direction) {
+                switch (this.direction) {
                     case "n":
-                        this._scale.pan(dy);
+                        this.scale.pan(dy);
                         break;
                     case "s":
-                        this._scale.pan(-dy);
+                        this.scale.pan(-dy);
                         break;
                     case "e":
-                        this._scale.pan(dx);
+                        this.scale.pan(dx);
                         break;
                     case "w":
-                        this._scale.pan(-dx);
+                        this.scale.pan(-dx);
                         break;
                     default:
-                        throw new Error("Invalid pan direction: " + this._direction);
+                        throw new Error("Invalid pan direction: " + this.direction);
                 }
             };
 
             this.startDrag = () => {
-                this._startPosition = [d3.event.x, d3.event.y];
-                this._currentPosition = _.clone(this._startPosition);
-                this._dragging = true;
+                this.startPosition = [d3.event.x, d3.event.y];
+                this.currentPosition = _.clone(this.startPosition);
+                this.dragging = true;
                 $(window).on("mousemove", this.drag);
                 $(window).one("mouseup", this.stopDrag);
             };
@@ -144,47 +144,45 @@ module Lyra {
         private static SCALE_KEY: string = "scale";
         private static ZOOM_FACTOR_KEY: string = "zoomFactor";
 
-        private _element: D3.Selection;
-        private _scale: Scale;
-        private _properties: any;
-        private _zoomFactor: number;
+        private element: D3.Selection;
+        private scale: Scale;
+        private properties: any;
+        private zoomFactor: number;
 
         private static DEFAULT_ZOOM_FACTOR: number = 0.02;
-        // TODO : separate horizontal and vertical zoom factors?
-
 
         constructor(spec: any, modelContext: Context, viewContext: Context, id: number) {
             super(modelContext, viewContext, id);
 
             if (spec[ZoomInteraction.AREA_KEY]) {
-                this._element = this.viewContext.getNode(Area.className, spec[ZoomInteraction.AREA_KEY]).graphSelection;
+                this.element = this.getViewContext().getNode(Area.className, spec[ZoomInteraction.AREA_KEY]).graphSelection;
             } else if (spec[ZoomInteraction.AXIS_KEY]) {
-                this._element = this.viewContext.getNode(Axis.className, spec[ZoomInteraction.AXIS_KEY]).axisSelection;
+                this.element = this.getViewContext().getNode(Axis.className, spec[ZoomInteraction.AXIS_KEY]).axisSelection;
             } else {
                 throw new Error("No " + ZoomInteraction.AXIS_KEY + " or " + ZoomInteraction.AREA_KEY + " specified in PanInteraction.");
             }
 
             if (spec[ZoomInteraction.SCALE_KEY]) {
-                this._scale = this.modelContext.getNode(Scale.className, spec[ZoomInteraction.SCALE_KEY]);
+                this.scale = this.getModelContext().getNode(Scale.className, spec[ZoomInteraction.SCALE_KEY]);
             } else {
                 throw new Error("No scale specified for ZoomInteraction");
             }
 
             if (spec[ZoomInteraction.ZOOM_FACTOR_KEY]) {
-                this._zoomFactor = spec[ZoomInteraction.ZOOM_FACTOR_KEY];
+                this.zoomFactor = spec[ZoomInteraction.ZOOM_FACTOR_KEY];
             } else {
-                this._zoomFactor = ZoomInteraction.DEFAULT_ZOOM_FACTOR;
+                this.zoomFactor = ZoomInteraction.DEFAULT_ZOOM_FACTOR;
             }
 
             this.addEvents();
         }
 
         private addEvents() {
-            $(this._element[0][0]).mousewheel($.proxy(this.onZoom, this));
+            $(this.element[0][0]).mousewheel($.proxy(this.onZoom, this));
         }
 
         private onZoom(e, delta, deltaX, deltaY) {
-            this._scale.zoom(1 + ((deltaY < 0) ? 1 : -1) * this._zoomFactor);
+            this.scale.zoom(1 + ((deltaY < 0) ? 1 : -1) * this.zoomFactor);
             return false;
         }
     }
