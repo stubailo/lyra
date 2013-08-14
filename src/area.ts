@@ -39,6 +39,10 @@ module Lyra {
             return new AreaView(area, element, viewContext);
         }
 
+        public getGraphArea(): D3.Selection {
+            return this.graphSelection;
+        }
+
         public load() {
             this.buildViews();
             this.buildSubviews();

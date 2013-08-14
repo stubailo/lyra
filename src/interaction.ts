@@ -75,9 +75,11 @@ module Lyra {
             super(modelContext, viewContext, id);
 
             if (spec[PanInteraction.AREA_KEY]) {
-                this.element = this.getViewContext().getNode(Area.className, spec[PanInteraction.AREA_KEY]).graphSelection;
+                var areaView: AreaView = <AreaView> this.getViewContext().getNode(Area.className, spec[PanInteraction.AREA_KEY]);
+                this.element = areaView.getGraphArea();
             } else if (spec[PanInteraction.AXIS_KEY]) {
-                this.element = this.getViewContext().getNode(Axis.className, spec[PanInteraction.AXIS_KEY]).axisSelection;
+                var axisView: AxisView = <AxisView> this.getViewContext().getNode(Axis.className, spec[PanInteraction.AXIS_KEY]);
+                this.element = axisView.getElement();
             } else {
                 throw new Error("No " + PanInteraction.AXIS_KEY + " or " + PanInteraction.AREA_KEY + " specified in PanInteraction.");
             }
@@ -155,9 +157,11 @@ module Lyra {
             super(modelContext, viewContext, id);
 
             if (spec[ZoomInteraction.AREA_KEY]) {
-                this.element = this.getViewContext().getNode(Area.className, spec[ZoomInteraction.AREA_KEY]).graphSelection;
+                var areaView: AreaView = <AreaView> this.getViewContext().getNode(Area.className, spec[ZoomInteraction.AREA_KEY]);
+                this.element = areaView.getGraphArea();
             } else if (spec[ZoomInteraction.AXIS_KEY]) {
-                this.element = this.getViewContext().getNode(Axis.className, spec[ZoomInteraction.AXIS_KEY]).axisSelection;
+                var axisView: AxisView = <AxisView> this.getViewContext().getNode(Axis.className, spec[ZoomInteraction.AXIS_KEY]);
+                this.element = axisView.getElement();
             } else {
                 throw new Error("No " + ZoomInteraction.AXIS_KEY + " or " + ZoomInteraction.AREA_KEY + " specified in PanInteraction.");
             }
