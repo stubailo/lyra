@@ -110,7 +110,7 @@ module Lyra {
 
         public load() {
             var render = $.proxy(this.render, this);
-            this.model.on("change", render);
+            this.getModel().on("change", render);
             this.on("change", render);
         }
 
@@ -133,19 +133,19 @@ module Lyra {
         }
 
         public get markSelection(): D3.Selection {
-            return this.element.selectAll((<Mark> this.model).type + "." + this.model.getName());
+            return this.getElement().selectAll((<Mark> this.getModel()).type + "." + this.getModel().getName());
         }
     }
 
     class CircleMarkView extends MarkView {
         public render() {
             this.markSelection
-                .data(this.model.get("source").items)
+                .data(this.getModel().get("source").items)
                 .enter()
                 .append("circle")
-                .attr("class", this.model.getName());
+                .attr("class", this.getModel().getName());
 
-            _.each((<Mark> this.model).markProperties, (key) => {
+            _.each((<Mark> this.getModel()).markProperties, (key) => {
                 this.markSelection.attr(key, (item) => {
                     return this.get(key)(item);
                 });
@@ -164,7 +164,7 @@ module Lyra {
                 .attr("class", this.getName());
 
             var line = d3.svg.line();
-            _.each((<Mark> this.model).markProperties, (key) => {
+            _.each((<Mark> this.getModel()).markProperties, (key) => {
                 switch (key) {
                     case "x":
                         line.x((item) => {
@@ -196,10 +196,10 @@ module Lyra {
 
         public render() {
             this.markSelection
-                .data(this.model.get("source").items)
+                .data(this.getModel().get("source").items)
                 .enter()
                 .append("rect")
-                .attr("class", this.model.getName());
+                .attr("class", this.getModel().getName());
 
             this.markSelection.attr("width", (item) => {
                 return this.get("x2")(item) - this.get("x")(item);
@@ -209,7 +209,7 @@ module Lyra {
                 return this.get("y2")(item) - this.get("y")(item);
             });
 
-            _.each((<Mark> this.model).markProperties, (key) => {
+            _.each((<Mark> this.getModel()).markProperties, (key) => {
                 this.markSelection.attr(key, (item) => {
                     return this.get(key)(item);
                 });

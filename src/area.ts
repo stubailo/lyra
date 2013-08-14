@@ -51,19 +51,19 @@ module Lyra {
             this.buildViews();
             this.buildSubviews();
 
-            this.model.on("change", $.proxy(this.render, this));
+            this.getModel().on("change", $.proxy(this.render, this));
         }
 
         public buildViews() {
-            this._totalSelection = this.element.append("svg").attr("class", Area.className).attr("name", this.model.getName());
+            this._totalSelection = this.getElement().append("svg").attr("class", Area.className).attr("name", this.getModel().getName());
             this._graphSelection = this._totalSelection.append("svg").attr("class", "graph");
             this._background = this._graphSelection.append("rect");
         }
 
 
         private buildSubviews() {
-            _.each(this.model.getAttachmentPoints(), (attachmentPoint: string) => {
-                _.each(this.model.getSubViewModels()[attachmentPoint], (subViewModel: ContextModel) => {
+            _.each(this.getModel().getAttachmentPoints(), (attachmentPoint: string) => {
+                _.each(this.getModel().getSubViewModels()[attachmentPoint], (subViewModel: ContextModel) => {
                     var subViewGroup: D3.Selection;
 
                     if(attachmentPoint === Area.ATTACH_INSIDE) {
@@ -85,7 +85,7 @@ module Lyra {
                 .attr("width", this.get("width"))
                 .attr("height", this.get("height"));
 
-            for (var property in this.model.attributes) {
+            for (var property in this.getModel().attributes) {
                 if (property === "height") {
                     this._totalSelection.attr(property, this.get("height") + this.get("paddingTop") + this.get("paddingBottom"));
                 } else if (property === "width") {
@@ -98,8 +98,8 @@ module Lyra {
             this._background
                 .attr("x", 0)
                 .attr("y", 0)
-                .attr("width", this.model.get("width"))
-                .attr("height", this.model.get("height"))
+                .attr("width", this.getModel().get("width"))
+                .attr("height", this.getModel().get("height"))
                 .attr("fill", "white");
 
             var currentDistances: {
@@ -116,9 +116,9 @@ module Lyra {
                 bottom: 0
             };
 
-            _.each(this.model.getAttachmentPoints(), (attachmentPoint: string) => {
-                _.each(this.subViews[attachmentPoint], (subView: ContextView) => {
-                    var subViewGroup: D3.Selection = subView.element;
+            _.each(this.getModel().getAttachmentPoints(), (attachmentPoint: string) => {
+                _.each(this.getSubViews()[attachmentPoint], (subView: ContextView) => {
+                    var subViewGroup: D3.Selection = subView.getElement();
 
                     var x: number = 0;
                     var y: number = 0;
