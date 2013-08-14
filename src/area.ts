@@ -41,6 +41,10 @@ module Lyra {
         private _graphSelection: D3.Selection;
         private _background: D3.Selection;
 
+        public static createView(area: Area, element: D3.Selection, viewContext: Context): AreaView {
+            return new AreaView(area, element, viewContext);
+        }
+
         public load() {
             this.buildViews();
             this.buildSubviews();

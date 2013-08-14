@@ -38,6 +38,10 @@ module Lyra {
             return this._axisSelection;
         }
 
+        public static createView(axis: Axis, element: D3.Selection, viewContext: Context): AxisView {
+            return new AxisView(axis, element, viewContext);
+        }
+
         public load() {
             this._axis = d3.svg.axis();
             this._xOffset = 0;
