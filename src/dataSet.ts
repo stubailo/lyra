@@ -3,7 +3,7 @@ module Lyra {
       This class represents a set of items that can be the basis for marks in the chart area.
     */
 
-    export class DataSet extends ContextNode {
+    export class DataSet extends ContextModel {
         private static SPEC_TYPE_KEY: string = "type";
 
         public static className: string = "data";

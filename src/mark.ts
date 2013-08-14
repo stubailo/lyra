@@ -1,5 +1,5 @@
 module Lyra {
-    export class Mark extends ContextNode {
+    export class Mark extends ContextModel {
         private static SCALE_KEY: string = "scale";
         private static VALUE_KEY: string = "value";
 
@@ -109,7 +109,7 @@ module Lyra {
 
         public load() {
             var render = $.proxy(this.render, this);
-            this.node.on("change", render);
+            this.model.on("change", render);
             this.on("change", render);
         }
 
@@ -132,19 +132,19 @@ module Lyra {
         }
 
         public get markSelection(): D3.Selection {
-            return this.element.selectAll((<Mark> this.node).type + "." + this.node.name);
+            return this.element.selectAll((<Mark> this.model).type + "." + this.model.name);
         }
     }
 
     class CircleMarkView extends MarkView {
         public render() {
             this.markSelection
-                .data(this.node.get("source").items)
+                .data(this.model.get("source").items)
                 .enter()
                 .append("circle")
-                .attr("class", this.node.name);
+                .attr("class", this.model.name);
 
-            _.each((<Mark> this.node).markProperties, (key) => {
+            _.each((<Mark> this.model).markProperties, (key) => {
                 this.markSelection.attr(key, (item) => {
                     return this.get(key)(item);
                 });
@@ -163,7 +163,7 @@ module Lyra {
                 .attr("class", this.name);
 
             var line = d3.svg.line();
-            _.each((<Mark> this.node).markProperties, (key) => {
+            _.each((<Mark> this.model).markProperties, (key) => {
                 switch (key) {
                     case "x":
                         line.x((item) => {
@@ -195,10 +195,10 @@ module Lyra {
 
         public render() {
             this.markSelection
-                .data(this.node.get("source").items)
+                .data(this.model.get("source").items)
                 .enter()
                 .append("rect")
-                .attr("class", this.node.name);
+                .attr("class", this.model.name);
 
             this.markSelection.attr("width", (item) => {
                 return this.get("x2")(item) - this.get("x")(item);
@@ -208,7 +208,7 @@ module Lyra {
                 return this.get("y2")(item) - this.get("y")(item);
             });
 
-            _.each((<Mark> this.node).markProperties, (key) => {
+            _.each((<Mark> this.model).markProperties, (key) => {
                 this.markSelection.attr(key, (item) => {
                     return this.get(key)(item);
                 });

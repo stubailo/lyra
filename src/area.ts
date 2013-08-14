@@ -1,5 +1,5 @@
 module Lyra {
-    export class Area extends ContextNode {
+    export class Area extends ContextModel {
         public static className: string;
 
         public getAttachmentPoints(): string[] {
@@ -45,11 +45,11 @@ module Lyra {
             this.buildViews();
             this.buildSubviews();
 
-            this.node.on("change", $.proxy(this.render, this));
+            this.model.on("change", $.proxy(this.render, this));
         }
 
         public buildViews() {
-            this._totalSelection = this.element.append("svg").attr("class", Area.className).attr("name", this.node.name);
+            this._totalSelection = this.element.append("svg").attr("class", Area.className).attr("name", this.model.name);
             this._graphSelection = this._totalSelection.append("svg").attr("class", "graph");
             this._background = this._graphSelection.append("rect");
         }
@@ -61,7 +61,7 @@ module Lyra {
                 .attr("width", this.get("width"))
                 .attr("height", this.get("height"));
 
-            for (var property in this.node.attributes) {
+            for (var property in this.model.attributes) {
                 if (property === "height") {
                     this._totalSelection.attr(property, this.get("height") + this.get("paddingTop") + this.get("paddingBottom"));
                 } else if (property === "width") {
@@ -74,8 +74,8 @@ module Lyra {
             this._background
                 .attr("x", 0)
                 .attr("y", 0)
-                .attr("width", this.node.get("width"))
-                .attr("height", this.node.get("height"))
+                .attr("width", this.model.get("width"))
+                .attr("height", this.model.get("height"))
                 .attr("fill", "white");
 
             var currentDistances: {
@@ -92,7 +92,7 @@ module Lyra {
                 bottom: 0
             };
 
-            _.each(this.node.getAttachmentPoints(), (attachmentPoint: string) => {
+            _.each(this.model.getAttachmentPoints(), (attachmentPoint: string) => {
                 _.each(this.subViews[attachmentPoint], (subView: ContextView) => {
                     var subViewGroup: D3.Selection = subView.element;
 
@@ -130,8 +130,8 @@ module Lyra {
         }
 
         private buildSubviews() {
-            _.each(this.node.getAttachmentPoints(), (attachmentPoint: string) => {
-                _.each(this.node.subViewModels[attachmentPoint], (subViewModel: ContextNode) => {
+            _.each(this.model.getAttachmentPoints(), (attachmentPoint: string) => {
+                _.each(this.model.subViewModels[attachmentPoint], (subViewModel: ContextModel) => {
                     var subViewGroup: D3.Selection = this._totalSelection.append("g");
 
                     this.addSubView(Lyra.LyraView.createViewForModel(subViewModel, subViewGroup, this.context), attachmentPoint);
