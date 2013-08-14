@@ -119,11 +119,14 @@ module Lyra {
             }
 
             this.renderHelper = () => {
-                var curScale = this.getModel().get("scale").scaleRepresentation;
-                var areaHeight = this.getModel().get("area").get("height");
-                var areaWidth = this.getModel().get("area").get("width");
+                var scale = <Scale> this.getModel().get("scale");
+                var d3Scale = scale.getScaleRepresentation();
+
+                var area: Area = <Area> this.getModel().get("area");
+                var areaHeight = area.get("height");
+                var areaWidth = area.get("width");
                 this._axis
-                    .scale(curScale)
+                    .scale(d3Scale)
                     .orient(this.getModel().get("orient"))
                     .ticks(this.getModel().get("ticks"));
 
@@ -131,14 +134,14 @@ module Lyra {
 
                 if (gridSvg) {
                     var gridSelection = gridSvg.selectAll("path." + this.getModel().getName())
-                        .data(curScale.ticks(this.getModel().get("ticks")));
+                        .data(d3Scale.ticks(this.getModel().get("ticks")));
 
                     gridSelection.enter()
                         .append("path")
                         .attr("class", this.getModel().getName())
                         .attr("stroke", this.getModel().get("gridline"));
 
-                    gridFunction(gridSelection, curScale, areaHeight, areaWidth);
+                    gridFunction(gridSelection, d3Scale, areaHeight, areaWidth);
 
                     gridSelection.exit().remove();
                 }
