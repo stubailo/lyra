@@ -1,36 +1,33 @@
 module Lyra {
     // Only one view per model please
     export class ContextView extends ContextNode {
-        private _node: ContextNode;
+        private _model: ContextModel;
         private _element: D3.Selection;
         private _subViews: Object;
 
-        constructor(node: ContextNode, element: D3.Selection, viewContext: Context) {
-            this._node = node;
+        constructor(model: ContextModel, element: D3.Selection, viewContext: Context) {
+            this._model = model;
             this._element = element;
 
             this._subViews = {};
-            _.each(this.node.getAttachmentPoints(), (attachmentPoint) => {
+            _.each(this.model.getAttachmentPoints(), (attachmentPoint) => {
                 this._subViews[attachmentPoint] = [];
             });
 
-            // create a spec with a name to initialize the ContextNode, should be replaced
-            var nameOnlySpec: Object = {
-                "name": node.name
-            };
+            super(model.name, viewContext, model.className);
 
-            super(nameOnlySpec, viewContext, node.className);
+            this.load();
         }
 
         public get(key: string): any {
             if (super.get(key) !== undefined && super.get(key) !== null) {
                 return super.get(key);
             } else {
-                return this._node.get(key);
+                return this._model.get(key);
             }
         }
-        public get node(): ContextNode {
-            return this._node;
+        public get model(): ContextModel {
+            return this._model;
         }
 
         public get element(): D3.Selection {
@@ -38,7 +35,7 @@ module Lyra {
         }
 
         public addSubView(view: ContextView, attachmentPoint: string) {
-            if (_.contains(this.node.getAttachmentPoints(), attachmentPoint)) {
+            if (_.contains(this.model.getAttachmentPoints(), attachmentPoint)) {
                 this._subViews[attachmentPoint].push(view);
             } else {
                 throw new Error("Attachment point " + attachmentPoint + " doesn't exist on " + this.className + ".");
