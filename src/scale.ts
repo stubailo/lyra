@@ -1,5 +1,5 @@
 module Lyra {
-    export class Scale extends ContextNode {
+    export class Scale extends ContextModel {
         private static TYPE_KEY: string = "type";
 
         public static className: string = "scales";

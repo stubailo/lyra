@@ -6,6 +6,7 @@
 /// <reference path="../typings/jquery-mousewheel.d.ts" />
 
 /// <reference path="contextNode.ts" />
+/// <reference path="contextModel.ts" />
 /// <reference path="contextView.ts" />
 /// <reference path="context.ts" />
 /// <reference path="dataSet.ts" />
@@ -27,7 +28,7 @@ module Lyra {
             // Parse all of the models
             for (var className in spec) {
                 if (LyraView.getModel(className) !== undefined) {
-                    ContextNode.parseAll(spec[className], this.context, LyraView.getModel(className));
+                    ContextModel.parseAll(spec[className], this.context, LyraView.getModel(className));
                 }
             }
         }
@@ -64,7 +65,7 @@ module Lyra {
             return LyraView._classNameToView[specKey];
         }
 
-        public static createViewForModel(model: ContextNode, element: D3.Selection, viewContext: Context) {
+        public static createViewForModel(model: ContextModel, element: D3.Selection, viewContext: Context) {
             return new (LyraView.getView(model.className))(model, element, viewContext);
         }
 
