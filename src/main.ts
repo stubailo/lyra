@@ -91,7 +91,7 @@ module Lyra {
 
             // Creates the view for area
             _.each(this.model.context.getNodesOfClass(Area.className), (area: Area) => {
-                new AreaView(area, this._svg, this._viewContext);
+                Lyra.createViewForModel(area, this._svg, this._viewContext);
             });
 
             _.each(this.model.context.getNodesOfClass(Mark.className), (mark: Mark) => {
