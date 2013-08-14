@@ -1,0 +1,85 @@
+PALANTIR TECHNOLOGIES INC. 
+CONTRIBUTOR AGREEMENT
+
+PLEASE NOTE THAT BY MAKING A CONTRIBUTION (AS DEFINED IN THE 
+APACHE LICENSE V2.0) TO THIS PROJECT YOU CONFIRM THAT YOU HAVE READ
+THIS CONTRIBUTOR AGREEMENT ("AGREEMENT"), THAT YOU UNDERSTAND
+THE TERMS OF THE AGREEMENT, AND THAT YOU AND THE ENTITY THAT YOU
+REPRESENT ALL OTHER ENTITIES THAT CONTROL, ARE CONTROLLED
+BY, OR ARE UNDER COMMON CONTROL WITH THAT ENTITY (COLLECTIVELY, 
+"YOU" OR "YOUR"; FOR THE PURPOSES OF THIS DEFINITION, "CONTROL" 
+MEANS (I) THE POWER, DIRECT OR INDIRECT, TO CAUSE THE DIRECTION OR 
+MANAGEMENT OF SUCH ENTITY, WHETHER BY CONTRACT OR OTHERWISE, OR 
+(II) OWNERSHIP OF FIFTY PERCENT (50%) OR MORE OF THE OUTSTANDING 
+SHARES, OR (III) BENEFICIAL OWNERSHIP OF SUCH ENTITY.) ARE UNCONDITIONALLY
+CONSENTING TO BE BOUND BY AND ARE BECOMING A PARTY TO THIS AGREEMENT.
+IF YOU DO NOT UNCONDITIONALLY AGREE TO ALL OF THE TERMS OF THIS
+AGREEMENT, PLEASE CONTACT THE PROJECT OWNER AND DO NOT SUBMIT YOUR 
+CONTRIBUTION.
+
+ACCEPTANCE OF YOUR CONTRIBUTION INTO THIS PROJECT IS EXPRESSLY
+CONDITIONED UPON YOUR ASSENT TO ALL THE TERMS AND CONDITIONS OF THIS
+AGREEMENT, TO THE EXCLUSION OF ALL OTHER TERMS; IF THESE TERMS ARE
+CONSIDERED AN OFFER, ACCEPTANCE IS EXPRESSLY LIMITED TO THESE TERMS. 
+
+
+1. Grant of Software License. Subject to the terms and conditions of
+   this Agreement, You hereby agree to license your Contribution and
+   any derivative works to Palantir and to recipients of software 
+   distributed through this project under the terms of the Apache License
+   Version 2.0.  
+ 
+
+2. Grant of Copyright License. Subject to the terms and conditions of
+   this Agreement, You hereby grant to Palantir and to
+   recipients of software distributed through this project a perpetual,
+   worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+   copyright license to reproduce, prepare derivative works of,
+   publicly display, publicly perform, sublicense, and distribute Your
+   Contributions and derivative works.
+
+3. Grant of Patent License. Subject to the terms and conditions of
+   this Agreement, You hereby grant to Palantir and to
+   recipients of software distributed through this project a perpetual,
+   worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+   (except as stated in this section) patent license to make, have
+   made, use, offer to sell, sell, import, and otherwise transfer
+   Your Contributions and derivative works, where such license applies 
+   only to those patent claims licensable by You that are necessarily infringed 
+   by Your Contribution(s) alone or by combination of Your Contribution(s)
+   with the Work to which such Contribution(s) was submitted. If any
+   entity institutes patent litigation against You or any other entity
+   (including a cross-claim or counterclaim in a lawsuit) alleging
+   that your Contribution, or the Work to which you have contributed,
+   constitutes direct or contributory patent infringement, then any
+   patent licenses granted to that entity under this Agreement for
+   that Contribution or Work shall terminate as of the date such
+   litigation is filed.
+
+4. You represent that you are legally entitled to grant the above
+   license. If your employer(s) has rights to intellectual property
+   that you create that includes your Contributions, you represent
+   that you have received permission to make Contributions on behalf
+   of that employer, that your employer has waived such rights for
+   your Contribution, or that your employer has
+   executed a separate Agreement with Palantir for this project .
+
+5. You represent that each of Your Contributions is Your original
+   creation (see section 6 for submissions on behalf of others).  You
+   represent that Your Contribution submissions include complete
+   details of any third-party license or other restriction (including,
+   but not limited to, related patents and trademarks) of which you
+   are personally aware and which are associated with any part of Your
+   Contributions.
+
+6. Should You wish to submit work that is not Your original creation,
+   You may submit it to the project separately from any
+   Contribution, identifying the complete details of its source and of
+   any license or other restriction (including, but not limited to,
+   related patents, trademarks, and license agreements) of which you
+   are personally aware, and conspicuously marking the work as
+   "Submitted on behalf of a third-party: [named here]".
+
+7. You agree to notify the project owner of any facts or circumstances of
+   which you become aware that would make these representations
+   inaccurate in any respect.
