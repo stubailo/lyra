@@ -38,16 +38,24 @@ module.exports = function(grunt) {
       files: {
         src: ['src/main.ts', 'src/tests.ts']
       }
+    },
+
+    less: {
+      base: {
+        files: {
+          "lyra.css": "less/lyra.less"
+        }
+      }
     }
 
   });
 
   grunt.loadNpmTasks('grunt-typescript');
   grunt.loadNpmTasks('grunt-tslint');
-
+  grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-mocha');
 
-  grunt.registerTask("default", ["tslint", "typescript"]);
+  grunt.registerTask("default", ["tslint", "typescript", "less"]);
   grunt.registerTask("test", ["default", "mocha"]);
 
 };
