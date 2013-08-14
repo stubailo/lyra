@@ -12,28 +12,29 @@ module Lyra {
         /* Each property is a function of one item that specifies that property of an SVG element.
          * So for example a circle would have one function for "cx", one for "cy", etc.
          */
-        private _type: string;
-        private _markProperties;
+        private type: string;
+        private markProperties;
 
         public static parse(spec: any, context: Context) {
             return new Mark(spec, context, Mark.className);
         }
 
         public load() {
-            var context = this.context;
+            var context = this.getContext();
             switch (this.get("type")) {
                 case "circle":
-                    this._type = Mark.CIRCLE_TYPE;
+                    this.type = Mark.CIRCLE_TYPE;
                     break;
                 case "line":
-                    this._type = Mark.LINE_TYPE;
+                    this.type = Mark.LINE_TYPE;
                     break;
                 case "rect":
-                    this._type = Mark.RECTANGLE_TYPE;
+                    this.type = Mark.RECTANGLE_TYPE;
                     break;
                 default:
                     throw new Error("Unsupported mark type: " + this.get("type"));
             }
+
             this.parseMarkProperties(this.get("properties"));
 
             this.get("area").addSubViewModel(this, Area.ATTACH_INSIDE);
@@ -47,14 +48,12 @@ module Lyra {
 
             var scale;
             if (spec[Mark.SCALE_KEY]) {
-                scale = this.context.getNode(Scale.className, spec[Mark.SCALE_KEY]);
+                scale = this.getContext().getNode(Scale.className, spec[Mark.SCALE_KEY]);
             } else {
                 scale = Scale.parse({
                     type: "identity"
                 }, new Context());
             }
-
-
 
             // HACKHACK we need real event handling
             scale.on("change", () => {
@@ -78,11 +77,11 @@ module Lyra {
             }
 
             this.set(name, valueFunc);
-            this._markProperties.push(name);
+            this.markProperties.push(name);
         }
 
         private parseMarkProperties(properties: any): void {
-            this._markProperties = [];
+            this.markProperties = [];
 
             for (var key in properties) {
                 if (properties.hasOwnProperty(key)) {
@@ -95,28 +94,26 @@ module Lyra {
             this.trigger("change");
         }
 
-        public get type(): string {
-            return this._type;
+        public getType(): string {
+            return this.type;
         }
 
-        public get markProperties(): Object {
-            return this._markProperties;
+        public getMarkProperties(): Object {
+            return this.markProperties;
         }
     }
 
     export class MarkView extends ContextView {
         public static EVENT_RENDER: string = "render";
 
-        private _markSelection: D3.Selection;
-
         public load() {
             var render = $.proxy(this.render, this);
-            this.model.on("change", render);
+            this.getModel().on("change", render);
             this.on("change", render);
         }
 
         public static createView(mark: Mark, element: D3.Selection, viewContext: Context): MarkView {
-            switch (mark.type) {
+            switch (mark.getType()) {
                 case Mark.CIRCLE_TYPE:
                     return new CircleMarkView(mark, element, viewContext);
                 case Mark.LINE_TYPE:
@@ -124,7 +121,7 @@ module Lyra {
                 case Mark.RECTANGLE_TYPE:
                     return new RectMarkView(mark, element, viewContext);
                 default:
-                    throw new Error("Invalid MarkView type: " + mark.type);
+                    throw new Error("Invalid MarkView type: " + mark.getType());
 
             }
         }
@@ -133,21 +130,23 @@ module Lyra {
             throw new Error("This method is abstract, derived mark views must implement this method");
         }
 
-        public get markSelection(): D3.Selection {
-            return this.element.selectAll((<Mark> this.model).type + "." + this.model.name);
+        public getMarkSelection(): D3.Selection {
+            return this.getElement().selectAll((<Mark> this.getModel()).getType() + "." + this.getModel().getName());
         }
     }
 
     class CircleMarkView extends MarkView {
         public render() {
-            this.markSelection
-                .data(this.model.get("source").items)
+            var data: DataSet = <DataSet> this.getModel().get("source");
+
+            this.getMarkSelection()
+                .data(data.getItems())
                 .enter()
                 .append("circle")
-                .attr("class", this.model.name);
+                .attr("class", this.getModel().getName());
 
-            _.each((<Mark> this.model).markProperties, (key) => {
-                this.markSelection.attr(key, (item) => {
+            _.each((<Mark> this.getModel()).getMarkProperties(), (key) => {
+                this.getMarkSelection().attr(key, (item) => {
                     return this.get(key)(item);
                 });
             });
@@ -158,14 +157,16 @@ module Lyra {
 
     class LineMarkView extends MarkView {
         public render() {
-            this.markSelection
-                .data([this.get("source").items])
+            var data: DataSet = <DataSet> this.getModel().get("source");
+
+            this.getMarkSelection()
+                .data([data.getItems()])
                 .enter()
                 .append("path")
-                .attr("class", this.name);
+                .attr("class", this.getName());
 
             var line = d3.svg.line();
-            _.each((<Mark> this.model).markProperties, (key) => {
+            _.each((<Mark> this.getModel()).getMarkProperties(), (key) => {
                 switch (key) {
                     case "x":
                         line.x((item) => {
@@ -178,7 +179,7 @@ module Lyra {
                         });
                         break;
                     default:
-                        this.markSelection.attr(key, (item) => {
+                        this.getMarkSelection().attr(key, (item) => {
                             return this.get(key)(item);
                         });
                         break;
@@ -187,7 +188,7 @@ module Lyra {
 
             line.interpolate("linear");
 
-            this.markSelection.attr("d", line);
+            this.getMarkSelection().attr("d", line);
 
             this.trigger(MarkView.EVENT_RENDER);
         }
@@ -196,22 +197,24 @@ module Lyra {
     class RectMarkView extends MarkView {
 
         public render() {
-            this.markSelection
-                .data(this.model.get("source").items)
+            var data: DataSet = <DataSet> this.getModel().get("source");
+
+            this.getMarkSelection()
+                .data(data.getItems())
                 .enter()
                 .append("rect")
-                .attr("class", this.model.name);
+                .attr("class", this.getModel().getName());
 
-            this.markSelection.attr("width", (item) => {
+            this.getMarkSelection().attr("width", (item) => {
                 return this.get("x2")(item) - this.get("x")(item);
             });
 
-            this.markSelection.attr("height", (item) => {
+            this.getMarkSelection().attr("height", (item) => {
                 return this.get("y2")(item) - this.get("y")(item);
             });
 
-            _.each((<Mark> this.model).markProperties, (key) => {
-                this.markSelection.attr(key, (item) => {
+            _.each((<Mark> this.getModel()).getMarkProperties(), (key) => {
+                this.getMarkSelection().attr(key, (item) => {
                     return this.get(key)(item);
                 });
             });

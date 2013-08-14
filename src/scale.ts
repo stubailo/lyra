@@ -35,9 +35,8 @@ module Lyra {
             throw new Error("Zoom method not overridden for scale.");
         }
 
-        // This is return type any because the D3 type definitions don't define a real scale type
-        public get scaleRepresentation(): any {
-            throw new Error("ScaleRepresentation not overridden for scale.");
+        public getScaleRepresentation(): any {
+            throw new Error("getScaleRepresentation not overridden for scale.");
         }
     }
 
@@ -45,33 +44,22 @@ module Lyra {
       Represents a linear D3 scale.
     */
     class LinearScale extends Scale {
-        private _scale;
-        private _dirty: boolean; // does the scale need to be recalculated?
+        private scale;
+        private dirty: boolean; // does the scale need to be recalculated?
 
         public load() {
-            this._dirty = true;
+            this.dirty = true;
             this.on("change:domainBegin change:domainEnd change:rangeBegin change:rangeEnd", () => {
-                this._dirty = true;
+                this.dirty = true;
             });
         }
 
         public apply(input) {
-            return this.scaleRepresentation(input);
-        }
-
-        public get scaleRepresentation(): any {
-            if (this._dirty) {
-                // create new scale object
-                var domain = [this.get("domainBegin"), this.get("domainEnd")];
-                var range = [this.get("rangeBegin"), this.get("rangeEnd")];
-                this._scale = d3.scale.linear().domain(domain).range(range);
-                this._dirty = false;
-            }
-            return this._scale;
+            return this.getScaleRepresentation()(input);
         }
 
         public inverse(input) {
-            return this.scaleRepresentation.invert(input);
+            return this.getScaleRepresentation().invert(input);
         }
 
         public pan(pixels) {
@@ -96,6 +84,17 @@ module Lyra {
                 domainEnd: domain[1]
             });
         }
+
+        public getScaleRepresentation(): any {
+            if (this.dirty) {
+                // create new scale object
+                var domain = [this.get("domainBegin"), this.get("domainEnd")];
+                var range = [this.get("rangeBegin"), this.get("rangeEnd")];
+                this.scale = d3.scale.linear().domain(domain).range(range);
+                this.dirty = false;
+            }
+            return this.scale;
+        }
     }
 
     /*
@@ -103,33 +102,22 @@ module Lyra {
       */
 
     class TimeScale extends Scale {
-        private _scale;
-        private _dirty: boolean; // does the scale need to be recalculated?
+        private scale;
+        private dirty: boolean; // does the scale need to be recalculated?
 
         public load() {
-            this._dirty = true;
+            this.dirty = true;
             this.on("change:domainBegin change:domainEnd change:rangeBegin change:rangeEnd", () => {
-                this._dirty = true;
+                this.dirty = true;
             });
         }
 
         public apply(input) {
-            return this.scaleRepresentation(input);
-        }
-
-        public get scaleRepresentation(): any {
-            if (this._dirty) {
-                // create new scale object
-                var domain = [this.get("domainBegin"), this.get("domainEnd")];
-                var range = [this.get("rangeBegin"), this.get("rangeEnd")];
-                this._scale = d3.time.scale().domain(domain).range(range);
-                this._dirty = false;
-            }
-            return this._scale;
+            return this.getScaleRepresentation()(input);
         }
 
         public inverse(input) {
-            return this.scaleRepresentation.invert(input);
+            return this.getScaleRepresentation().invert(input);
         }
 
         public pan(pixels) {
@@ -153,6 +141,17 @@ module Lyra {
                 domainBegin: (new Date(domain[0])),
                 domainEnd: (new Date(domain[1]))
             });
+        }
+
+        public getScaleRepresentation(): any {
+            if (this.dirty) {
+                // create new scale object
+                var domain = [this.get("domainBegin"), this.get("domainEnd")];
+                var range = [this.get("rangeBegin"), this.get("rangeEnd")];
+                this.scale = d3.time.scale().domain(domain).range(range);
+                this.dirty = false;
+            }
+            return this.scale;
         }
     }
 

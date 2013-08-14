@@ -1,20 +1,20 @@
 module Lyra {
     // Only one view per model please
     export class ContextView extends ContextNode {
-        private _model: ContextModel;
-        private _element: D3.Selection;
-        private _subViews: Object;
+        private model: ContextModel;
+        private element: D3.Selection;
+        private subViews: Object;
 
         constructor(model: ContextModel, element: D3.Selection, viewContext: Context) {
-            this._model = model;
-            this._element = element;
+            this.model = model;
+            this.element = element;
 
-            this._subViews = {};
+            this.subViews = {};
             _.each(this.model.getAttachmentPoints(), (attachmentPoint) => {
-                this._subViews[attachmentPoint] = [];
+                this.subViews[attachmentPoint] = [];
             });
 
-            super(model.name, viewContext, model.className);
+            super(model.getName(), viewContext, model.getClassName());
 
             this.load();
         }
@@ -23,35 +23,35 @@ module Lyra {
             if (super.get(key) !== undefined && super.get(key) !== null) {
                 return super.get(key);
             } else {
-                return this._model.get(key);
+                return this.model.get(key);
             }
         }
-        public get model(): ContextModel {
-            return this._model;
+        public getModel(): ContextModel {
+            return this.model;
         }
 
-        public get element(): D3.Selection {
-            return this._element;
+        public getElement(): D3.Selection {
+            return this.element;
+        }
+
+        public getSubViews(): Object {
+            return _.clone(this.subViews);
         }
 
         public addSubView(view: ContextView, attachmentPoint: string) {
             if (_.contains(this.model.getAttachmentPoints(), attachmentPoint)) {
-                this._subViews[attachmentPoint].push(view);
+                this.subViews[attachmentPoint].push(view);
             } else {
-                throw new Error("Attachment point " + attachmentPoint + " doesn't exist on " + this.className + ".");
+                throw new Error("Attachment point " + attachmentPoint + " doesn't exist on " + this.getClassName() + ".");
             }
         }
 
-        public get subViews(): Object {
-            return this._subViews;
-        }
-
         public calculatedWidth(): number {
-            throw new Error("View for " + this.className + " did not specify its width.");
+            throw new Error("View for " + this.getClassName() + " did not specify its width.");
         }
 
         public calculatedHeight(): number {
-            throw new Error("View for " + this.className + " did not specify its height.");
+            throw new Error("View for " + this.getClassName() + " did not specify its height.");
         }
 
         public render(): void {

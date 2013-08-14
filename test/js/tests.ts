@@ -57,7 +57,7 @@ module Lyra {
                         date: DATE_PROPERTY
                     }, context, NODE_CLASSNAME);
 
-                    assert.equal(node1.name, NAME_PROPERTY);
+                    assert.equal(node1.getName(), NAME_PROPERTY);
                     assert.equal(node1.get("number"), NUMBER_PROPERTY);
                     assert.equal(node1.get("string"), STRING_PROPERTY);
                     assert.equal(node1.get("date"), DATE_PROPERTY);

@@ -19,11 +19,11 @@
 module Lyra {
     // Model class, should not be exposed as API eventually
     export class LyraModel {
-        private _context: Context;
+        private context: Context;
 
         constructor(spec: any) {
             // Initialize
-            this._context = new Context();
+            this.context = new Context();
 
             // Parse all of the models
             for (var className in spec) {
@@ -33,31 +33,31 @@ module Lyra {
             }
         }
 
-        public get context(): Context {
-            return this._context;
+        public getContext(): Context {
+            return this.context;
         }
     }
 
     // View class, should not be exposed as API eventually
     export class LyraView {
         // Necessary properties
-        private _model: LyraModel;
-        private _viewContext: Context;
+        private model: LyraModel;
+        private viewContext: Context;
 
         // Spec-produced objects
-        private _interactions: Interaction[];
+        private interactions: Interaction[];
 
         // View elements
-        private _element: HTMLElement;
-        private _svg: D3.Selection;
+        private element: HTMLElement;
+        private svg: D3.Selection;
 
         constructor(spec: any, element: HTMLElement) {
             // Initialize
-            this._viewContext = new Context();
-            this._model = new LyraModel(spec);
+            this.viewContext = new Context();
+            this.model = new LyraModel(spec);
 
             // Initialize DOM
-            this._element = element;
+            this.element = element;
 
             // Generate all the views for this model
             this.generateViews();
@@ -69,29 +69,30 @@ module Lyra {
                     var value = spec[key];
                     switch (key) {
                         case "interactions":
-                            this._interactions = Interaction.parseAll(value, this.model.context, this._viewContext);
+                            this.interactions = Interaction.parseAll(value, this.getModel().getContext(), this.viewContext);
                             break;
                     }
                 }
             }
         }
 
-        public get model(): LyraModel {
-            return this._model;
+        public getModel(): LyraModel {
+            return this.model;
         }
 
         public render() {
-            _.each(<ContextView[]> this._viewContext.nodes, function(view) {
+            _.each(<ContextView[]> this.viewContext.getNodes(), function(view) {
                 view.render();
             });
         }
 
         private generateViews() {
-            this._svg = d3.select(this._element).append("svg:svg");
+            this.svg = d3.select(this.element).append("svg:svg");
 
             // Creates the view for area
-            _.each(this.model.context.getNodesOfClass(Area.className), (area: Area) => {
-                Lyra.createViewForModel(area, this._svg, this._viewContext);
+            _.each(this.model.getContext().getNodesOfClass(Area.className), (area: Area) => {
+                var areaGroup = this.svg.append("g");
+                Lyra.createViewForModel(area, areaGroup, this.viewContext);
             });
         }
 
@@ -99,15 +100,15 @@ module Lyra {
             var window_width: number = $(window).width();
             var curX = 0, curY = 0, maxY = 0, yBound = 0, xBound = 0;
 
-            _.each(<AreaView[]> this._viewContext.getNodesOfClass(Area.className), (areaView) => {
-                var areaWidth = parseFloat(areaView.totalSelection.attr("width"));
-                var areaHeight = parseFloat(areaView.totalSelection.attr("height"));
+            _.each(<AreaView[]> this.viewContext.getNodesOfClass(Area.className), (areaView) => {
+                var areaWidth = areaView.calculatedWidth();
+                var areaHeight = areaView.calculatedHeight();
                 if ((curX + areaWidth) >= window_width) {
                     curX = 0;
                     curY = maxY;
                     maxY = 0;
                 }
-                areaView.totalSelection.attr("x", curX).attr("y", curY);
+                areaView.getElement().attr("x", curX).attr("y", curY);
                 curX += areaWidth;
                 if (areaHeight > maxY) {
                     maxY = areaHeight;
@@ -129,28 +130,28 @@ module Lyra {
      * The variables are hidden in the module, but the methods are exported
      * to attach plugins.
      */
-    var _classNameToView: Object = {};
-    var _classNameToModel: Object = {};
+    var classNameToView: Object = {};
+    var classNameToModel: Object = {};
 
     var CONTAINER_CLASS: string = "lyra-chart";
 
     // Method for adding new types of model nodes
     export function addModel(specKey: string, classReference): void {
         classReference.className = specKey;
-        _classNameToModel[specKey] = classReference;
+        classNameToModel[specKey] = classReference;
     }
 
     export function addView(specKey: string, classReference): void {
         classReference.className = specKey;
-        _classNameToView[specKey] = classReference;
+        classNameToView[specKey] = classReference;
     }
 
     export function getModel(specKey: string) {
-        return _classNameToModel[specKey];
+        return classNameToModel[specKey];
     }
 
     export function getView(specKey: string) {
-        return _classNameToView[specKey];
+        return classNameToView[specKey];
     }
 
     // Entry point into library
@@ -162,7 +163,7 @@ module Lyra {
     }
 
     export function createViewForModel(model: ContextNode, element: D3.Selection, viewContext: Context) {
-        return new (Lyra.getView(model.className)).createView(model, element, viewContext);
+        return new (Lyra.getView(model.getClassName())).createView(model, element, viewContext);
     }
 
     Lyra.addView("areas", AreaView);

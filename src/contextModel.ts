@@ -7,7 +7,7 @@ module Lyra {
     export class ContextModel extends ContextNode {
         private static SPEC_NAME_KEY: string = "name";
 
-        private _subViewModels: Object;
+        private subViewModels: Object;
 
         public defaults() {
             return {};
@@ -35,9 +35,9 @@ module Lyra {
         constructor(spec: any, context: Context, className: string) {
             super(spec[ContextModel.SPEC_NAME_KEY], context, className);
 
-            this._subViewModels = {};
+            this.subViewModels = {};
             _.each(this.getAttachmentPoints(), (attachmentPoint) => {
-                this._subViewModels[attachmentPoint] = [];
+                this.subViewModels[attachmentPoint] = [];
             });
 
             // Parse the properties of this node from the specification
@@ -68,17 +68,17 @@ module Lyra {
                     var value = properties[key];
 
                     if (Context.isPropertyReference(value)) {
-                        var propertyFunction = this.context.getPropertyFunction(value);
+                        var propertyFunction = this.getContext().getPropertyFunction(value);
                         var updateProperty = ((currentKey) => {
                             return () => {
                                 this.set(currentKey, propertyFunction());
                             };
                         })(key);
                         updateProperty();
-                        this.context.getNode(value).on("change", updateProperty);
+                        this.getContext().getNode(value).on("change", updateProperty);
                     } else if (Context.isObjectReference(value)) {
                         ((currentKey) => {
-                            this.set(currentKey, this.context.getNode(value));
+                            this.set(currentKey, this.getContext().getNode(value));
                             this.get(currentKey).on("change", () => {
                                 this.trigger("change");
                             });
@@ -94,14 +94,14 @@ module Lyra {
 
         public addSubViewModel(model: ContextNode, attachmentPoint: string) {
             if (_.contains(this.getAttachmentPoints(), attachmentPoint)) {
-                this._subViewModels[attachmentPoint].push(model);
+                this.subViewModels[attachmentPoint].push(model);
             } else {
-                throw new Error("Attachment point " + attachmentPoint + " doesn't exist on " + this.className + ".");
+                throw new Error("Attachment point " + attachmentPoint + " doesn't exist on " + this.getClassName() + ".");
             }
         }
 
-        public get subViewModels(): Object {
-            return this._subViewModels;
+        public getSubViewModels(): Object {
+            return this.subViewModels;
         }
 
         public getAttachmentPoints(): string[] {
