@@ -29,8 +29,8 @@ $(function() {
         "height": 300,
         "width": 400,
         "paddingRight": 50,
-        "paddingTop": 100,
-        "paddingBottom": 50
+        "paddingBottom": 50,
+        "paddingLeft": 50
       }
     ],
     "scales": [
@@ -38,7 +38,7 @@ $(function() {
         "name": "x",
         "type": "linear",
         "rangeBegin": 0,
-        "rangeEnd": "areas:area1.width",
+        "rangeEnd": "areas:area1.height",
         "domainBegin": 0,
         "domainEnd": 20
       },
@@ -67,12 +67,12 @@ $(function() {
         "area": "areas:area1",
         "properties": {
           "cx": {
-            "value": "x",
-            "scale": "x"
+            "value": "z",
+            "scale": "z"
           },
           "cy": {
-            "value": "y",
-            "scale": "y"
+            "value": "x",
+            "scale": "x"
           },
           "r": {
             "value": 5
@@ -116,10 +116,9 @@ $(function() {
       "name": "x",
       "area": "areas:area1",
       "scale": "scales:x",
-      "orient": "top",
-      "ticks": 20,
-      "location": "top",
-      "gridline": "lightgray"
+      "orient": "left",
+      "ticks": 10,
+      "location": "left"
       },
       {
       "name": "y",
@@ -127,8 +126,7 @@ $(function() {
       "scale": "scales:y",
       "orient": "right",
       "ticks": 10,
-      "location": "right",
-      "gridline": "#ffaaaa"
+      "location": "right"
       },
       {
       "name": "z",
@@ -145,7 +143,7 @@ $(function() {
         "type": "pan",
         "scale": "x",
         "axis": "x",
-        "direction": "e"
+        "direction": "n"
       },
       {
         "type": "pan",
