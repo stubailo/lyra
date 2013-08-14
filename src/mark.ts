@@ -113,7 +113,7 @@ module Lyra {
             this.on("change", render);
         }
 
-        public static createView(mark: Mark, element: D3.Selection, viewContext: Context) {
+        public static createView(mark: Mark, element: D3.Selection, viewContext: Context): MarkView {
             switch (mark.type) {
                 case Mark.CIRCLE_TYPE:
                     return new CircleMarkView(mark, element, viewContext);
