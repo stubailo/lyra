@@ -81,7 +81,7 @@ module Lyra {
         }
 
         public render() {
-            _.each(<ContextView[]> this.viewContext.nodes, function(view) {
+            _.each(<ContextView[]> this.viewContext.getNodes(), function(view) {
                 view.render();
             });
         }
