@@ -35,10 +35,6 @@ module Lyra {
             it("d3", function() {
                 assert.ok(d3);
             });
-
-            it("Q", function() {
-                assert.ok(Q);
-            });
         });
 
         describe("Context Node", function() {

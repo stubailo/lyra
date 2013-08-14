@@ -18,7 +18,6 @@
 /// <reference path="../typings/underscore.d.ts" />
 /// <reference path="../typings/backbone.d.ts" />
 /// <reference path="../typings/d3.d.ts" />
-/// <reference path="../typings/Q.d.ts" />
 /// <reference path="../typings/jquery-mousewheel.d.ts" />
 
 /// <reference path="contextNode.ts" />
