@@ -10,7 +10,7 @@ module.exports = function(grunt) {
         dest: 'lyra.js',
         options: {
           module: 'amd', //or commonjs
-          target: "ES5",
+          target: "ES3",
           comments: true,
           declaration: false
         }
@@ -20,7 +20,7 @@ module.exports = function(grunt) {
         dest: 'test/js/tests.js',
         options: {
           module: 'amd', //or commonjs
-          target: "ES5",
+          target: "ES3",
           comments: true,
           declaration: false
         }
