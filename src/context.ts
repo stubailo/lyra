@@ -16,11 +16,11 @@ module Lyra {
         private _nodes: Object;
 
         public get(key: string): any {
-            return this.nodes[key];
+            return this._nodes[key];
         }
 
         public set(key: string, value: any): void {
-            this.nodes[key] = value;
+            this._nodes[key] = value;
         }
 
         constructor() {
@@ -104,14 +104,14 @@ module Lyra {
             node.on("change:" + property, listener);
         }
 
-        /* Get all the ContextNodes in the context */
+        /* Get a list of all the ContextNodes in the context */
         public get nodes(): Object {
             return _.values(this._nodes);
         }
 
         /* Get all ContextNodes of a certain className */
         public getNodesOfClass(className: string): ContextNode[] {
-            return _.filter(_.values(this.nodes), (node) => {
+            return _.filter(this.nodes, (node) => {
                 return node.className === className;
             });
         }

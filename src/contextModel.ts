@@ -43,8 +43,6 @@ module Lyra {
             // Parse the properties of this node from the specification
             this.parseProperties(spec);
 
-            console.log(this);
-
             // Additional initialization
             this.load();
         }
