@@ -63,7 +63,7 @@ module Lyra {
 
         private buildSubviews() {
             _.each(this.model.getAttachmentPoints(), (attachmentPoint: string) => {
-                _.each(this.model.subViewModels[attachmentPoint], (subViewModel: ContextModel) => {
+                _.each(this.model.getSubViewModels()[attachmentPoint], (subViewModel: ContextModel) => {
                     var subViewGroup: D3.Selection;
 
                     if(attachmentPoint === Area.ATTACH_INSIDE) {
