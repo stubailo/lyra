@@ -169,7 +169,7 @@ $(function() {
   }
 
   el = $("#container").get(0);
-  lyra = new Lyra.LyraView(spec, el);
+  lyra = new Lyra.createChart(spec, el);
 /*
   setInterval(function() {
     lyra.model.context.getNode("areas", "area1").set({
