@@ -2,11 +2,14 @@ TODO
 
 All
 
-Comment everything
+Styling options?
+  - Outside of Lyra, simple CSS
 Fix all of the if spec[key] shit
   - Add addInteraction functionality to main.ts
 
 **** (Luxury)
+Add Tests
+Comment everything
 Refactor out all of the rendering junk
 Maybe make a function that tests the spec for completeness
 
@@ -55,16 +58,16 @@ Scale
 Axis
 
 // Axis rendering is totally jacked up
-Styling options?
-Events and stuff are janky
+// Events and stuff are janky
 
 Mark
 
-Fix mark parsing
-Fix mark events, this is the main issue right now
 Create mark API, look at jchart or something
 Consistent styling?
 Maybe specifying scales and stuff should use the same syntax as everywhere else
+****
+Fix mark parsing
+Fix mark events, this is the main issue right now # Determine which marks are clicked or dragged on
 
 Interaction
 

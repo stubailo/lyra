@@ -27,8 +27,8 @@ module Lyra {
 
             // Parse all of the models
             for (var className in spec) {
-                if (LyraView.getModel(className) !== undefined) {
-                    ContextModel.parseAll(spec[className], this.context, LyraView.getModel(className));
+                if (Lyra.getModel(className) !== undefined) {
+                    ContextModel.parseAll(spec[className], this.context, Lyra.getModel(className));
                 }
             }
         }
@@ -38,40 +38,8 @@ module Lyra {
         }
     }
 
-    // Entry point into library
+    // View class, should not be exposed as API eventually
     export class LyraView {
-
-        /**
-        Static variables and methods to register plugins
-        */
-        private static _classNameToView: Object = {};
-        private static _classNameToModel: Object = {};
-        // Method for adding new types of model nodes
-        public static addModel(specKey: string, classReference): void {
-            classReference.className = specKey;
-            LyraView._classNameToModel[specKey] = classReference;
-        }
-
-        public static addView(specKey: string, classReference): void {
-            classReference.className = specKey;
-            LyraView._classNameToView[specKey] = classReference;
-        }
-
-        public static getModel(specKey: string) {
-            return LyraView._classNameToModel[specKey];
-        }
-
-        public static getView(specKey: string) {
-            return LyraView._classNameToView[specKey];
-        }
-
-        public static createViewForModel(model: ContextModel, element: D3.Selection, viewContext: Context) {
-            return new (LyraView.getView(model.className))(model, element, viewContext);
-        }
-
-        ///////////////////////////////
-
-
         // Necessary properties
         private _model: LyraModel;
         private _viewContext: Context;
@@ -113,13 +81,9 @@ module Lyra {
         }
 
         public render() {
-            for (var specKey in LyraView._classNameToView) {
-                if (LyraView._classNameToView.hasOwnProperty(specKey)) {
-                    _.each(<ContextView[]> this._viewContext.getNodesOfClass(specKey), function(view) {
-                        view.render();
-                    });
-                }
-            }
+            _.each(<ContextView[]> this._viewContext.nodes, function(view) {
+                view.render();
+            });
         }
 
         private generateViews() {
@@ -128,7 +92,6 @@ module Lyra {
             // Creates the view for area
             _.each(this.model.context.getNodesOfClass(Area.className), (area: Area) => {
                 new AreaView(area, this._svg, this._viewContext);
-
             });
 
             _.each(this.model.context.getNodesOfClass(Mark.className), (mark: Mark) => {
@@ -165,15 +128,54 @@ module Lyra {
         }
     }
 
-    LyraView.addView("areas", AreaView);
-    LyraView.addView("marks", MarkView);
-    LyraView.addView("axes", AxisView);
+    /**
+     * Variables and methods to add plugins.
+     *
+     * The variables are hidden in the module, but the methods are exported
+     * to attach plugins.
+     */
+    var _classNameToView: Object = {};
+    var _classNameToModel: Object = {};
 
-    LyraView.addModel("data", DataSet);
-    LyraView.addModel("scales", Scale);
-    LyraView.addModel("marks", Mark);
-    LyraView.addModel("axes", Axis);
-    LyraView.addModel("areas", Area);
+    // Method for adding new types of model nodes
+    export function addModel(specKey: string, classReference): void {
+        classReference.className = specKey;
+        _classNameToModel[specKey] = classReference;
+    }
+
+    export function addView(specKey: string, classReference): void {
+        classReference.className = specKey;
+        _classNameToView[specKey] = classReference;
+    }
+
+    export function getModel(specKey: string) {
+        return _classNameToModel[specKey];
+    }
+
+    export function getView(specKey: string) {
+        return _classNameToView[specKey];
+    }
+
+    // Entry point into library
+    export function createChart(spec: any, element: HTMLElement): Object {
+        var chart = {};
+        chart.lyraView = new LyraView(spec, element);
+        return chart;
+    }
+
+    export function createViewForModel(model: ContextNode, element: D3.Selection, viewContext: Context) {
+        return new (Lyra.getView(model.className))(model, element, viewContext);
+    }
+
+    Lyra.addView("areas", AreaView);
+    Lyra.addView("marks", MarkView);
+    Lyra.addView("axes", AxisView);
+
+    Lyra.addModel("data", DataSet);
+    Lyra.addModel("scales", Scale);
+    Lyra.addModel("marks", Mark);
+    Lyra.addModel("axes", Axis);
+    Lyra.addModel("areas", Area);
 }
 
 
