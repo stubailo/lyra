@@ -57,5 +57,9 @@ module Lyra {
         public render(): void {
             // no-op
         }
+
+        public load(): void {
+            // no-op
+        }
     }
 }

@@ -69,7 +69,7 @@ module Lyra {
                 if (properties.hasOwnProperty(key)) {
                     var value = properties[key];
 
-                    if (ContextModel.isPropertyReference(value)) {
+                    if (Context.isPropertyReference(value)) {
                         var propertyFunction = this.context.getPropertyFunction(value);
                         var updateProperty = ((currentKey) => {
                             return () => {
@@ -78,7 +78,7 @@ module Lyra {
                         })(key);
                         updateProperty();
                         this.context.getNode(value).on("change", updateProperty);
-                    } else if (ContextModel.isObjectReference(value)) {
+                    } else if (Context.isObjectReference(value)) {
                         ((currentKey) => {
                             this.set(currentKey, this.context.getNode(value));
                             this.get(currentKey).on("change", () => {
@@ -92,23 +92,7 @@ module Lyra {
             }
         }
 
-        /* Private method to check if a property string is a property reference.
-         *
-         * This method checks if the string is of the form: <className>:<name>.<property>
-         */
-        private static isPropertyReference(obj: string) {
-            var propertyRegex = /^[A-Za-z_\-0-9]+:[A-Za-z_\-0-9]+\.[A-Za-z_\-0-9]+$/;
-            return propertyRegex.test(obj);
-        }
 
-        /* Private method to check if a property string is an object reference.
-         *
-         * This method checks if the string is of the form: <className>:<name>
-         */
-        private static isObjectReference(obj: string) {
-            var objectRegex = /^[A-Za-z_\-0-9]+:[A-Za-z_\-0-9]+$/;
-            return objectRegex.test(obj);
-        }
 
         public addSubViewModel(model: ContextNode, attachmentPoint: string) {
             if (_.contains(this.getAttachmentPoints(), attachmentPoint)) {

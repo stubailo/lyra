@@ -127,16 +127,36 @@ module Lyra {
             return argument.split(/\./)[1];
         }
 
+        /* Method to check if a property string is a property reference.
+         *
+         * This method checks if the string is of the form: <className>:<name>.<property>
+         */
+        public static isPropertyReference(obj: string) {
+            var propertyRegex = /^[A-Za-z_\-0-9]+:[A-Za-z_\-0-9]+\.[A-Za-z_\-0-9]+$/;
+            return propertyRegex.test(obj);
+        }
+
+        /* Method to check if a property string is an object reference.
+         *
+         * This method checks if the string is of the form: <className>:<name>
+         */
+        public static isObjectReference(obj: string) {
+            var objectRegex = /^[A-Za-z_\-0-9]+:[A-Za-z_\-0-9]+$/;
+            return objectRegex.test(obj);
+        }
+
         /* Private method to check if a given argument follows the appropriate formatting detailed above.
          */
         private static checkArgument(argument: string, checkProperty?: boolean): void {
-            var argRegex = /^[A-Za-z_\-0-9]+:[A-Za-z_\-0-9]+/;
-            var propRegex = /(\.[A-Za-z_\-0-9]+)?$/;
-            if (checkProperty) {
-                propRegex = /(\.[A-Za-z_\-0-9]+)$/;
+            var correct: boolean;
+
+            if(checkProperty) {
+                correct = Context.isPropertyReference(argument);
+            } else {
+                correct = Context.isPropertyReference(argument) || Context.isObjectReference(argument);
             }
-            argRegex = new RegExp(argRegex.source + propRegex.source);
-            if (!argRegex.test(argument)) {
+
+            if (!correct) {
                 throw new Error("Context: '" + argument + "' is not a properly formatted argument or path.");
             }
         }
