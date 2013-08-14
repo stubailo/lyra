@@ -6,6 +6,7 @@
     "typescript": "~0.9.1",
     "grunt-tslint": "~0.1.1",
     "grunt-typescript": "~0.2.2",
-    "grunt-mocha": "~0.4.1"
+    "grunt-mocha": "~0.4.1",
+    "grunt-contrib-less": "~0.7.0"
   }
 }
