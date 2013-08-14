@@ -104,6 +104,11 @@ module Lyra {
             node.on("change:" + property, listener);
         }
 
+        /* Get all the ContextNodes in the context */
+        public get nodes(): Object {
+            return this.nodes;
+        }
+
         /* Get all ContextNodes of a certain className */
         public getNodesOfClass(className: string): ContextNode[] {
             return _.filter(_.values(this.nodes), (node) => {
