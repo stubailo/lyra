@@ -44,9 +44,10 @@ $(function() {
         "name": "area1",
         "height": 300,
         "width": 400,
-        "paddingRight": 50,
         "paddingBottom": 50,
-        "paddingLeft": 50
+        "paddingLeft": 100,
+        "paddingTop": 50,
+        "paddingRight": 100
       }
     ],
     "scales": [
@@ -55,8 +56,8 @@ $(function() {
         "type": "linear",
         "rangeBegin": 0,
         "rangeEnd": "areas:area1.height",
-        "domainBegin": 0,
-        "domainEnd": 20
+        "domainBegin": 20,
+        "domainEnd": 0
       },
       {
         "name": "y",
@@ -109,7 +110,7 @@ $(function() {
             "scale": "z"
           },
           "y": {
-            "value": "x",
+            "value": "y",
             "scale": "y"
           },
           "interpolate": {
@@ -134,6 +135,7 @@ $(function() {
       "scale": "scales:x",
       "orient": "left",
       "ticks": 10,
+      "axisWidth": 30,
       "location": "left"
       },
       {
@@ -142,6 +144,7 @@ $(function() {
       "scale": "scales:y",
       "orient": "right",
       "ticks": 10,
+      "axisWidth": 30,
       "location": "right"
       },
       {
@@ -151,7 +154,30 @@ $(function() {
       "orient": "bottom",
       "ticks": 5,
       "location": "bottom",
-      "gridline": "#aaaaff"
+      "gridline": "#aaaaff",
+      "axisWidth": 30
+      }
+    ],
+    "labels": [
+      {
+        "name": "title",
+        "area": "areas:area1",
+        "text": "Iceland GDP vs Sesame Street Viewers",
+        "location": "top"
+      },
+      {
+        "name": "labelY",
+        "area": "areas:area1",
+        "text": "GDP of Iceland (Thousands of Dollars)",
+        "location": "left",
+        "size": 12
+      },
+      {
+        "name": "labelY2",
+        "area": "areas:area1",
+        "text": "Viewers (in hundreds)",
+        "location": "right",
+        "size": 12
       }
     ],
     "interactions": [
@@ -178,30 +204,31 @@ $(function() {
         "axis": "z",
         "scale": "z",
         "zoomFactor": 0.05
+      },
+      {
+        "type": "zoom",
+        "axis": "x",
+        "scale": "x",
+        "zoomFactor": 0.05
+      },
+      {
+        "type": "zoom",
+        "axis": "y",
+        "scale": "y",
+        "zoomFactor": 0.05
       }
     ]
   }
 
   el = $("#container").get(0);
   lyra = new Lyra.createChart(spec, el);
-/*
+
   setInterval(function() {
-    lyra.model.context.getNode("areas", "area1").set({
+    lyra.view.getModel().getContext().getNode("areas", "area1").set({
       "width": 400 + 200 * Math.sin((new Date()).getTime() / 1000),
       "height": 300 + 150 * Math.sin((new Date()).getTime() / 900)
     });
-
-    lyra.model.context.getNode("axes", "x").set({
-      "ticks": Math.floor(20 + 10 * Math.sin((new Date()).getTime() / 1000))
-    });
   }, 10);
 
-  setInterval(function() {
-    var fill = '#'+Math.floor(Math.random()*16777215).toString(16);
-    lyra._viewContext.getNode("marks", "symbol").set({
-      "fill": function() {return fill}
-    });
-  }, 1000);
-*/
 
 });
