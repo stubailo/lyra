@@ -35,6 +35,7 @@ module Lyra {
          */
         constructor(name: string, context: Context, className: string) {
             super();
+            Backbone.Model.apply(this, []);
 
             // Setup instance variables
             this.name = name;

@@ -30,6 +30,7 @@
 /// <reference path="axis.ts" />
 /// <reference path="interaction.ts" />
 /// <reference path="area.ts" />
+/// <reference path="label.ts" />
 
 module Lyra {
     // Model class, should not be exposed as API eventually
@@ -76,6 +77,7 @@ module Lyra {
 
             // Generate all the views for this model
             this.generateViews();
+            this.setUpLayout();
             this.render();
 
             // Parse interactions
@@ -123,7 +125,7 @@ module Lyra {
                     curY = maxY;
                     maxY = 0;
                 }
-                areaView.getElement().attr("x", curX).attr("y", curY);
+                areaView.getElement().attr("transform", "translate(" + curX + ", " + curY + ")");
                 curX += areaWidth;
                 if (areaHeight > maxY) {
                     maxY = areaHeight;
@@ -184,12 +186,14 @@ module Lyra {
     Lyra.addView("areas", AreaView);
     Lyra.addView("marks", MarkView);
     Lyra.addView("axes", AxisView);
+    Lyra.addView("labels", LabelView);
 
     Lyra.addModel("data", DataSet);
     Lyra.addModel("scales", Scale);
     Lyra.addModel("marks", Mark);
     Lyra.addModel("axes", Axis);
     Lyra.addModel("areas", Area);
+    Lyra.addModel("labels", Label);
 }
 
 

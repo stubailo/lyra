@@ -150,7 +150,7 @@ module Lyra {
                             break;
                         case "right":
                             currentDistances.right += subView.calculatedWidth();
-                            x = currentDistances.right + this.get("paddingLeft") - subView.calculatedWidth();
+                            x = currentDistances.right + this.get("paddingLeft") - subView.calculatedWidth() + this.get("width");
                             y = this.get("paddingTop");
                             break;
                         case "top":
@@ -161,7 +161,7 @@ module Lyra {
                         case "bottom":
                             currentDistances.bottom += subView.calculatedHeight();
                             x = this.get("paddingLeft");
-                            y = this.get("paddingTop") + currentDistances.bottom - subView.calculatedHeight();
+                            y = this.get("paddingTop") + currentDistances.bottom - subView.calculatedHeight() + this.get("height");
                             break;
                         case "inside":
                             // 0, 0 is fine

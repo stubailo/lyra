@@ -102,8 +102,8 @@ module Lyra {
             switch (this.getModel().get("location")) {
                 case "bottom":
                     transformFunction = (axisSvg, areaHeight, areaWidth) => {
-                        axisSvg.attr("transform", "translate(" + this.xOffset + "," + (this.yOffset + areaHeight) + ")");
-                        rectSvg.attr("x", this.xOffset).attr("y", (this.yOffset + areaHeight))
+                        axisSvg.attr("transform", "translate(" + this.xOffset + "," + (this.yOffset) + ")");
+                        rectSvg.attr("x", this.xOffset).attr("y", (this.yOffset))
                             .attr("height", this.getModel().get(Axis.AXIS_WIDTH)).attr("width", areaWidth);
                     };
                     break;
@@ -123,8 +123,8 @@ module Lyra {
                     break;
                 case "right":
                     transformFunction = (axisSvg, areaHeight, areaWidth) => {
-                        axisSvg.attr("transform", "translate(" + (this.xOffset + areaWidth) + "," + this.yOffset + ")");
-                        rectSvg.attr("x", (this.xOffset + areaWidth)).attr("y", this.yOffset)
+                        axisSvg.attr("transform", "translate(" + (this.xOffset) + "," + this.yOffset + ")");
+                        rectSvg.attr("x", (this.xOffset)).attr("y", this.yOffset)
                             .attr("height", areaHeight).attr("width", this.getModel().get(Axis.AXIS_WIDTH));
                     };
                     break;
@@ -152,7 +152,8 @@ module Lyra {
                     gridSelection.enter()
                         .append("path")
                         .attr("class", this.getModel().getName())
-                        .attr("stroke", this.getModel().get("gridline"));
+                        .attr("stroke", this.getModel().get("gridline"))
+                        .attr("stroke-width", 0.5);
 
                     gridFunction(gridSelection, d3Scale, areaHeight, areaWidth);
 
@@ -174,7 +175,7 @@ module Lyra {
             if (this.get("orient") === "left" || this.get("orient") === "right") {
                 return this.get(Axis.AXIS_WIDTH);
             } else {
-                throw new Error("Axis got asked about its undetermined length.");
+                throw new Error("Axis " + this.getName() + " got asked about its undetermined length.");
             }
         }
 
@@ -182,7 +183,7 @@ module Lyra {
             if (this.get("orient") === "top" || this.get("orient") === "bottom") {
                 return this.get(Axis.AXIS_WIDTH);
             } else {
-                throw new Error("Axis got asked about its undetermined length.");
+                throw new Error("Axis " + this.getName() + " got asked about its undetermined length.");
             }
         }
     }
