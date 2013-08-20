@@ -62,16 +62,23 @@ module.exports = function(grunt) {
           "lyra.css": "less/lyra.less"
         }
       }
-    }
+    },
 
+    open: {
+      example: {
+        path: 'index.html',
+        app: 'Google Chrome'
+      }
+    }
   });
 
   grunt.loadNpmTasks('grunt-typescript');
   grunt.loadNpmTasks('grunt-tslint');
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-mocha');
+  grunt.loadNpmTasks('grunt-open');
 
   grunt.registerTask("default", ["tslint", "typescript", "less"]);
   grunt.registerTask("test", ["default", "mocha"]);
-
+  grunt.registerTask("example", ["default", "open:example"]);
 };
