@@ -36,7 +36,6 @@ module Lyra {
         private axis;
         private xOffset: number;
         private yOffset: number;
-        private renderHelper;
         private bbox;
 
         private axisSvg: D3.Selection;
@@ -72,12 +71,52 @@ module Lyra {
             }
         }
 
-        public load() {
-            this.xOffset = 0;
-            this.yOffset = 0;
+        private renderAxis() {
+            var scale = <Scale> this.getModel().get("scale");
+            var d3Scale = scale.getScaleRepresentation();
+            var axis = d3.svg.axis()
+                .scale(d3Scale)
+                .orient(this.getModel().get("orient"))
+                .ticks(this.getModel().get("ticks"));
+            this.axisSvg.call(axis);
+        }
 
-            this.buildViews();
+        private renderGrid() {
+            var gridFunction;
+            if (this.getModel().get("location") === "bottom" || this.getModel().get("location") === "top") {
+                gridFunction = (selection, curScale, height: number, width: number) => {
+                    selection.attr("d", (d) => {
+                        return "M " + curScale(d) + " 0 L" + curScale(d) + " " + height;
+                    });
+                };
+            } else {
+                gridFunction = (selection, curScale, height: number, width: number) => {
+                    selection.attr("d", (d) => {
+                        return "M 0 " + curScale(d) + " L" + width + " " + curScale(d);
+                    });
+                };
+            }
+            var scale = <Scale> this.getModel().get("scale");
+            var d3Scale = scale.getScaleRepresentation();
+            var area: Area = <Area> this.getModel().get("area");
+            var areaHeight = area.get("height");
+            var areaWidth = area.get("width");
 
+            var gridSelection = this.gridSvg.selectAll("path." + this.getModel().getName())
+                .data(d3Scale.ticks(this.getModel().get("ticks")));
+
+            gridSelection.enter()
+                .append("path")
+                .attr("class", this.getModel().getName())
+                .attr("stroke", this.getModel().get("gridline"))
+                .attr("stroke-width", 0.5);
+
+            gridFunction(gridSelection, d3Scale, areaHeight, areaWidth);
+
+            gridSelection.exit().remove();
+        }
+
+        private updateLayout() {
             var transformFunction;
             switch (this.getModel().get("location")) {
                 case "bottom":
@@ -112,75 +151,49 @@ module Lyra {
                 default:
             }
 
-            var gridFunction;
-            if (this.getModel().get("location") === "bottom" || this.getModel().get("location") === "top") {
-                gridFunction = (selection, curScale, height: number, width: number) => {
-                    selection.attr("d", (d) => {
-                        return "M " + curScale(d) + " 0 L" + curScale(d) + " " + height;
-                    });
-                };
-            } else {
-                gridFunction = (selection, curScale, height: number, width: number) => {
-                    selection.attr("d", (d) => {
-                        return "M 0 " + curScale(d) + " L" + width + " " + curScale(d);
-                    });
-                };
+            // Layout junk
+
+            var area: Area = <Area> this.getModel().get("area");
+            var areaHeight = area.get("height");
+            var areaWidth = area.get("width");
+            this.bbox = this.axisSvg.node().getBBox();
+            this.bbox.width = Math.ceil(this.bbox.width/5)*5;
+            this.bbox.height = Math.ceil(this.bbox.height/5)*5;
+            this.set({
+                "ContextViewWidth": this.bbox.width,
+                "ContextViewHeight": this.bbox.height
+            });
+
+            if (this.getModel().get("orient") === "left") {
+                this.xOffset = this.bbox.width;
             }
+            if (this.getModel().get("orient") === "top") {
+                this.yOffset = this.bbox.width;
+            }
+            transformFunction(this.axisSvg, areaHeight, areaWidth);
+        }
 
-            this.renderHelper = () => {
-                var scale = <Scale> this.getModel().get("scale");
-                var d3Scale = scale.getScaleRepresentation();
+        public load() {
+            this.xOffset = 0;
+            this.yOffset = 0;
 
-                var area: Area = <Area> this.getModel().get("area");
-                var areaHeight = area.get("height");
-                var areaWidth = area.get("width");
-
-                // Render the actual axis
-                var axis = d3.svg.axis()
-                    .scale(d3Scale)
-                    .orient(this.getModel().get("orient"))
-                    .ticks(this.getModel().get("ticks"));
-
-                this.axisSvg.call(axis);
-
-                // Render the grid
-                if (this.gridSvg) {
-                    var gridSelection = this.gridSvg.selectAll("path." + this.getModel().getName())
-                        .data(d3Scale.ticks(this.getModel().get("ticks")));
-
-                    gridSelection.enter()
-                        .append("path")
-                        .attr("class", this.getModel().getName())
-                        .attr("stroke", this.getModel().get("gridline"))
-                        .attr("stroke-width", 0.5);
-
-                    gridFunction(gridSelection, d3Scale, areaHeight, areaWidth);
-
-                    gridSelection.exit().remove();
-                }
-                this.bbox = this.axisSvg.node().getBBox();
-                this.bbox.width = Math.ceil(this.bbox.width/5)*5;
-                this.bbox.height = Math.ceil(this.bbox.height/5)*5;
-                this.set({
-                    "ContextViewWidth": this.bbox.width,
-                    "ContextViewHeight": this.bbox.height
-                });
-                if (this.getModel().get("orient") === "left") {
-                    this.xOffset = this.bbox.width;
-                }
-                if (this.getModel().get("orient") === "top") {
-                    this.yOffset = this.bbox.width;
-                }
-                transformFunction(this.axisSvg, areaHeight, areaWidth);
-
-                this.trigger(AxisView.EVENT_RENDER);
-            };
+            this.buildViews();
+            this.render();
 
             this.getModel().on("change", () => {this.render()});
         }
 
         public render() {
-            this.renderHelper();
+            this.renderAxis();
+
+            // Render the grid
+            if (this.gridSvg) {
+                this.renderGrid();
+            }
+
+            this.updateLayout();
+
+            this.trigger(AxisView.EVENT_RENDER);
         }
 
         public calculatedWidth(): number {
