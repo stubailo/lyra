@@ -41,7 +41,8 @@ $(function() {
     ],
     "areas": [
       {
-        "name": "area1"
+        "name": "area1",
+        "totalHeight": 500
       }
     ],
     "scales": [
