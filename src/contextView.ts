@@ -25,10 +25,10 @@ module Lyra {
         public static LAYOUT_CHANGE = "ContextViewLayoutChange";
 
         private model: ContextModel;
-        private element: D3.Selection;
+        private element: Element;
         private subViews: Object;
 
-        constructor(model: ContextModel, element: D3.Selection, viewContext: Context) {
+        constructor(model: ContextModel, element: Element, viewContext: Context) {
             this.model = model;
             this.element = element;
 
@@ -53,8 +53,12 @@ module Lyra {
             return this.model;
         }
 
-        public getElement(): D3.Selection {
+        public getElement(): Element {
             return this.element;
+        }
+
+        public getSelection(): D3.Selection {
+            return this.element.getSelection();
         }
 
         public getSubViews(): Object {

@@ -128,7 +128,7 @@ module Lyra {
             this.on("change", render);
         }
 
-        public static createView(mark: Mark, element: D3.Selection, viewContext: Context): MarkView {
+        public static createView(mark: Mark, element: Element, viewContext: Context): MarkView {
             switch (mark.getType()) {
                 case Mark.CIRCLE_TYPE:
                     return new CircleMarkView(mark, element, viewContext);
@@ -147,7 +147,7 @@ module Lyra {
         }
 
         public getMarkSelection(): D3.Selection {
-            return this.getElement().selectAll((<Mark> this.getModel()).getType() + "." + this.getModel().getName());
+            return this.getSelection().selectAll((<Mark> this.getModel()).getType() + "." + this.getModel().getName());
         }
     }
 

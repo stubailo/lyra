@@ -1,13 +1,14 @@
 module Lyra {
-    export class Element {
-        private element: D3.Selection;
+    export class Element extends Backbone.Model {
+        private selection: D3.Selection;
 
-        constructor(element: D3.Selection) {
-            this.element = element;
+        constructor(selection: D3.Selection) {
+            super();
+            this.selection = selection;
         }
 
-        public getElement(): D3.Selection {
-            return this.element;
+        public getSelection(): D3.Selection {
+            return this.selection;
         }
     }
 }

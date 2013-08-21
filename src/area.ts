@@ -48,7 +48,7 @@ module Lyra {
         private graphSelection: D3.Selection;
         private background: D3.Selection;
 
-        public static createView(area: Area, element: D3.Selection, viewContext: Context): AreaView {
+        public static createView(area: Area, element: Element, viewContext: Context): AreaView {
             return new AreaView(area, element, viewContext);
         }
 
@@ -75,7 +75,7 @@ module Lyra {
         }
 
         public buildViews() {
-            this.totalSelection = this.getElement().append("svg").attr("class", Area.className).attr("name", this.getModel().getName());
+            this.totalSelection = this.getSelection().append("svg").attr("class", Area.className).attr("name", this.getModel().getName());
             this.graphSelection = this.totalSelection.append("svg").attr("class", "graph");
             this.background = this.graphSelection.append("rect");
         }
@@ -91,7 +91,9 @@ module Lyra {
                         subViewGroup = this.totalSelection.append("g");
                     }
 
-                    this.addSubView(Lyra.createViewForModel(subViewModel, subViewGroup, this.getContext()), attachmentPoint);
+                    var element = new Element(subViewGroup);
+
+                    this.addSubView(Lyra.createViewForModel(subViewModel, element, this.getContext()), attachmentPoint);
                 });
             });
         }
@@ -121,7 +123,7 @@ module Lyra {
             _.each(this.getModel().getAttachmentPoints(), (attachmentPoint: string) => {
                 _.each(this.getSubViews()[attachmentPoint], (subView: ContextView) => {
                     subView.render();
-                    var subViewGroup: D3.Selection = subView.getElement();
+                    var subViewGroup: D3.Selection = subView.getSelection();
 
                     var x: number = 0;
                     var y: number = 0;
@@ -210,7 +212,7 @@ module Lyra {
 
             _.each(this.getModel().getAttachmentPoints(), (attachmentPoint: string) => {
                 _.each(this.getSubViews()[attachmentPoint], (subView: ContextView) => {
-                    var subViewGroup: D3.Selection = subView.getElement();
+                    var subViewGroup: D3.Selection = subView.getSelection();
 
                     var x: number = 0;
                     var y: number = 0;

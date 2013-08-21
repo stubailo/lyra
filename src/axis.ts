@@ -44,13 +44,13 @@ module Lyra {
 
         public static EVENT_RENDER: string = "render";
 
-        public static createView(axis: Axis, element: D3.Selection, viewContext: Context): AxisView {
+        public static createView(axis: Axis, element: Element, viewContext: Context): AxisView {
             return new AxisView(axis, element, viewContext);
         }
 
         private buildViews() {
 
-            var totalSvg = this.getElement()
+            var totalSvg = this.getSelection()
                 .append("g");
 
             this.backgroundSvg = totalSvg

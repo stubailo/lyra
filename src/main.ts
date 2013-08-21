@@ -110,7 +110,8 @@ module Lyra {
             // Creates the view for area
             _.each(this.model.getContext().getNodesOfClass(Area.className), (area: Area) => {
                 var areaGroup = this.svg.append("g");
-                Lyra.createViewForModel(area, areaGroup, this.viewContext);
+                var element = new Element(areaGroup);
+                Lyra.createViewForModel(area, element, this.viewContext);
             });
         }
 
@@ -126,7 +127,7 @@ module Lyra {
                     curY = maxY;
                     maxY = 0;
                 }
-                areaView.getElement().attr("transform", "translate(" + curX + ", " + curY + ")");
+                areaView.getSelection().attr("transform", "translate(" + curX + ", " + curY + ")");
                 curX += areaWidth;
                 if (areaHeight > maxY) {
                     maxY = areaHeight;
@@ -180,7 +181,7 @@ module Lyra {
         return chart;
     }
 
-    export function createViewForModel(model: ContextNode, element: D3.Selection, viewContext: Context) {
+    export function createViewForModel(model: ContextNode, element: Element, viewContext: Context) {
         return new (Lyra.getView(model.getClassName())).createView(model, element, viewContext);
     }
 

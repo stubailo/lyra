@@ -95,7 +95,7 @@ module Lyra {
                 this.element = areaView.getGraphArea();
             } else if (spec[PanInteraction.AXIS_KEY]) {
                 var axisView: AxisView = <AxisView> this.getViewContext().getNode(Axis.className, spec[PanInteraction.AXIS_KEY]);
-                this.element = axisView.getElement();
+                this.element = axisView.getSelection();
             } else {
                 throw new Error("No " + PanInteraction.AXIS_KEY + " or " + PanInteraction.AREA_KEY + " specified in PanInteraction.");
             }
@@ -177,7 +177,7 @@ module Lyra {
                 this.element = areaView.getGraphArea();
             } else if (spec[ZoomInteraction.AXIS_KEY]) {
                 var axisView: AxisView = <AxisView> this.getViewContext().getNode(Axis.className, spec[ZoomInteraction.AXIS_KEY]);
-                this.element = axisView.getElement();
+                this.element = axisView.getSelection();
             } else {
                 throw new Error("No " + ZoomInteraction.AXIS_KEY + " or " + ZoomInteraction.AREA_KEY + " specified in PanInteraction.");
             }

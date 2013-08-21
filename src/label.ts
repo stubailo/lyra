@@ -41,18 +41,18 @@ module Lyra {
     export class LabelView extends ContextView {
         public static EVENT_RENDER: string = "render";
 
-        public static createView(label: Label, element: D3.Selection, viewContext: Context): LabelView {
+        public static createView(label: Label, element: Element, viewContext: Context): LabelView {
             return new LabelView(label, element, viewContext);
         }
 
         public load() {
-            this.getElement().append("text");
+            this.getSelection().append("text");
 
             this.getModel().on("change", $.proxy(this.render, this));
         }
 
         public render() {
-            var textElement: D3.Selection = this.getElement().select("text");
+            var textElement: D3.Selection = this.getSelection().select("text");
 
             textElement.text(this.get(Label.TEXT_KEY))
                 .attr("style", "font-family: sans-serif; font-size: " + this.get("size"))
