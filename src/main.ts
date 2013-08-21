@@ -98,8 +98,8 @@ module Lyra {
         }
 
         public render() {
-            _.each(<ContextView[]> this.viewContext.getNodes(), function(view) {
-                view.render();
+            _.each(<AreaView[]> this.viewContext.getNodesOfClass(Area.className), (areaView) => {
+                areaView.render();
             });
         }
 

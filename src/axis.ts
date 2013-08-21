@@ -18,21 +18,12 @@ module Lyra {
     export class Axis extends ContextModel {
         public static className: string;
 
-        /*
-         * Each property is a function of one item that specifies that property of an SVG element.
-         * So for example a circle would have one function for "cx", one for "cy", etc.
-         */
-        public static AXIS_WIDTH: string = "axisWidth";
-        public static AXIS_PADDING: string = "axisPadding";
-
         public static parse(spec: any, context: Context) {
             return new Axis(spec, context, Axis.className);
         }
 
         public defaults() {
             return _(super.defaults()).extend({
-                "axisPadding": 2,
-                "axisWidth": 45
             });
         }
 
@@ -46,6 +37,8 @@ module Lyra {
         private xOffset: number;
         private yOffset: number;
         private renderHelper;
+        private axisSvg;
+        private bbox;
 
         public static EVENT_RENDER: string = "render";
 
@@ -57,12 +50,7 @@ module Lyra {
             this.axis = d3.svg.axis();
             this.xOffset = 0;
             this.yOffset = 0;
-            if (this.getModel().get("orient") === "left") {
-                this.xOffset += this.getModel().get(Axis.AXIS_WIDTH);
-            }
-            if (this.getModel().get("orient") === "top") {
-                this.yOffset += this.getModel().get(Axis.AXIS_WIDTH);
-            }
+
 
             var totalSvg = this.getElement()
                 .append("g");
@@ -71,7 +59,7 @@ module Lyra {
                 .append("svg:rect")
                 .attr("fill-opacity", 0);
 
-            var axisSvg = totalSvg.append("g")
+            this.axisSvg = totalSvg.append("g")
                 .attr("class", Axis.className)
                 .attr("name", this.getModel().getName());
 
@@ -104,29 +92,30 @@ module Lyra {
                     transformFunction = (axisSvg, areaHeight, areaWidth) => {
                         axisSvg.attr("transform", "translate(" + this.xOffset + "," + (this.yOffset) + ")");
                         rectSvg.attr("x", this.xOffset).attr("y", (this.yOffset))
-                            .attr("height", this.getModel().get(Axis.AXIS_WIDTH)).attr("width", areaWidth);
+                            .attr("height", this.bbox.width).attr("width", areaWidth);
                     };
                     break;
                 case "top":
                     transformFunction = (axisSvg, areaHeight, areaWidth) => {
                         axisSvg.attr("transform", "translate(" + this.xOffset + "," + this.yOffset + ")");
-                        rectSvg.attr("x", this.xOffset).attr("y", this.yOffset - this.getModel().get(Axis.AXIS_WIDTH))
-                            .attr("height", this.getModel().get(Axis.AXIS_WIDTH)).attr("width", areaWidth);
+                        rectSvg.attr("x", this.xOffset).attr("y", this.yOffset - this.bbox.width)
+                            .attr("height", this.bbox.width).attr("width", areaWidth);
                     };
                     break;
                 case "left":
                     transformFunction = (axisSvg, areaHeight, areaWidth) => {
                         axisSvg.attr("transform", "translate(" + this.xOffset + "," + this.yOffset + ")");
-                        rectSvg.attr("x", this.xOffset - this.getModel().get(Axis.AXIS_WIDTH)).attr("y", this.yOffset)
-                            .attr("height", areaHeight).attr("width", this.getModel().get(Axis.AXIS_WIDTH));
+                        rectSvg.attr("x", this.xOffset - this.bbox.width).attr("y", this.yOffset)
+                            .attr("height", areaHeight).attr("width", this.bbox.width);
                     };
                     break;
                 case "right":
                     transformFunction = (axisSvg, areaHeight, areaWidth) => {
                         axisSvg.attr("transform", "translate(" + (this.xOffset) + "," + this.yOffset + ")");
                         rectSvg.attr("x", (this.xOffset)).attr("y", this.yOffset)
-                            .attr("height", areaHeight).attr("width", this.getModel().get(Axis.AXIS_WIDTH));
+                            .attr("height", areaHeight).attr("width", this.bbox.width);
                     };
+
                     break;
                 default:
             }
@@ -143,7 +132,7 @@ module Lyra {
                     .orient(this.getModel().get("orient"))
                     .ticks(this.getModel().get("ticks"));
 
-                axisSvg.call(this.axis);
+                this.axisSvg.call(this.axis);
 
                 if (gridSvg) {
                     var gridSelection = gridSvg.selectAll("path." + this.getModel().getName())
@@ -159,12 +148,25 @@ module Lyra {
 
                     gridSelection.exit().remove();
                 }
+                this.bbox = this.axisSvg.node().getBBox();
+                this.bbox.width = Math.ceil(this.bbox.width/5)*5;
+                this.bbox.height = Math.ceil(this.bbox.height/5)*5;
+                this.set({
+                    "ContextViewWidth": this.bbox.width,
+                    "ContextViewHeight": this.bbox.height
+                });
+                if (this.getModel().get("orient") === "left") {
+                    this.xOffset = this.bbox.width;
+                }
+                if (this.getModel().get("orient") === "top") {
+                    this.yOffset = this.bbox.width;
+                }
+                transformFunction(this.axisSvg, areaHeight, areaWidth);
 
-                transformFunction(axisSvg, areaHeight, areaWidth);
                 this.trigger(AxisView.EVENT_RENDER);
             };
 
-            this.getModel().on("change", $.proxy(this.render, this));
+            this.getModel().on("change", () => {this.render()});
         }
 
         public render() {
@@ -173,7 +175,7 @@ module Lyra {
 
         public calculatedWidth(): number {
             if (this.get("orient") === "left" || this.get("orient") === "right") {
-                return this.get(Axis.AXIS_WIDTH);
+                return this.bbox.width;
             } else {
                 throw new Error("Axis " + this.getName() + " got asked about its undetermined length.");
             }
@@ -181,7 +183,7 @@ module Lyra {
 
         public calculatedHeight(): number {
             if (this.get("orient") === "top" || this.get("orient") === "bottom") {
-                return this.get(Axis.AXIS_WIDTH);
+                return this.bbox.width;
             } else {
                 throw new Error("Axis " + this.getName() + " got asked about its undetermined length.");
             }

@@ -26,12 +26,8 @@ module Lyra {
 
         public defaults() {
             return _(super.defaults()).extend({
-                "height": 300,
-                "width": 400,
-                "paddingTop": 10,
-                "paddingRight": 10,
-                "paddingBottom": 10,
-                "paddingLeft": 10
+                "totalHeight": 300,
+                "totalWidth": 400
             });
         }
 
@@ -40,7 +36,8 @@ module Lyra {
         }
 
         public load() {
-            // Nothing to do!
+            this.set("height", this.get("totalHeight"));
+            this.set("width", this.get("totalWidth"));
         }
     }
 
@@ -62,16 +59,19 @@ module Lyra {
         public load() {
             this.buildViews();
             this.buildSubviews();
+            this.calculateLayout();
 
-            this.getModel().on("change", $.proxy(this.render, this));
+            this.getModel().on("change:totalWidth change:totalHeight", $.proxy(this.updateDimensions, this));
+            this.getModel().on("change:height change:width change:paddingLeft change:paddingRight change:paddingTop change:paddingBottom", $.proxy(this.render, this));
+            this.on(ContextView.LAYOUT_CHANGE, $.proxy(this.calculateLayout, this));
         }
 
         public calculatedWidth(): number {
-            return this.get("paddingLeft") + this.get("width") + this.get("paddingRight");
+            return this.get("totalWidth");
         }
 
         public calculatedHeight(): number {
-            return this.get("paddingTop") + this.get("height") + this.get("paddingBottom");
+            return this.get("totalHeight");
         }
 
         public buildViews() {
@@ -94,25 +94,98 @@ module Lyra {
                     this.addSubView(Lyra.createViewForModel(subViewModel, subViewGroup, this.getContext()), attachmentPoint);
                 });
             });
+        }
 
+        private updateDimensions() {
+            this.getModel().set({
+                "width": this.getModel().get("totalWidth") - this.get("paddingLeft") - this.get("paddingRight"),
+                "height": this.getModel().get("totalHeight") - this.get("paddingTop") - this.get("paddingBottom")
+            });
+        }
+
+        public calculateLayout() {
+            var padding: {
+                left: number;
+                right: number;
+                top: number;
+                bottom: number
+            };
+
+            padding = {
+                left: 0,
+                right: 0,
+                top: 0,
+                bottom: 0
+            };
+
+            _.each(this.getModel().getAttachmentPoints(), (attachmentPoint: string) => {
+                _.each(this.getSubViews()[attachmentPoint], (subView: ContextView) => {
+                    subView.render();
+                    var subViewGroup: D3.Selection = subView.getElement();
+
+                    var x: number = 0;
+                    var y: number = 0;
+
+                    switch (attachmentPoint) {
+                        case "left":
+                            padding.left += subView.calculatedWidth();
+                            break;
+                        case "right":
+                            padding.right += subView.calculatedWidth();
+                            break;
+                        case "top":
+                            padding.top += subView.calculatedHeight();
+                            break;
+                        case "bottom":
+                            padding.bottom += subView.calculatedHeight();
+                            break;
+                        case "inside":
+                            // 0, 0 is fine
+                            break;
+                    }
+                });
+            });
+
+            this.getModel().set({
+                "paddingLeft": padding.left,
+                "paddingRight": padding.right,
+                "paddingTop": padding.top,
+                "paddingBottom": padding.bottom,
+                "width": this.getModel().get("totalWidth") - padding.left - padding.right,
+                "height": this.getModel().get("totalHeight") - padding.top - padding.bottom
+            });
         }
 
         public render() {
-            this.graphSelection
-                .attr("x", this.get("paddingLeft"))
-                .attr("y", this.get("paddingTop"))
-                .attr("width", this.get("width"))
-                .attr("height", this.get("height"));
+            var padding: {
+                left: number;
+                right: number;
+                top: number;
+                bottom: number
+            };
+
+            padding = {
+                left: this.get("paddingLeft"),
+                right: this.get("paddingRight"),
+                top: this.get("paddingTop"),
+                bottom: this.get("paddingBottom")
+            };
 
             for (var property in this.getModel().attributes) {
                 if (property === "height") {
-                    this.totalSelection.attr(property, this.get("height") + this.get("paddingTop") + this.get("paddingBottom"));
+                    this.totalSelection.attr(property, this.getModel().get("height") + padding.top + padding.bottom);
                 } else if (property === "width") {
-                    this.totalSelection.attr(property, this.get("width") + this.get("paddingLeft") + this.get("paddingRight"));
+                    this.totalSelection.attr(property, this.getModel().get("width") + padding.left + padding.right);
                 } else {
                     this.totalSelection.attr(property, this.get(property));
                 }
             }
+
+            this.graphSelection
+                .attr("x", padding.left)
+                .attr("y", padding.top)
+                .attr("width", this.get("width"))
+                .attr("height", this.get("height"));
 
             this.background
                 .attr("x", 0)
@@ -145,23 +218,23 @@ module Lyra {
                     switch (attachmentPoint) {
                         case "left":
                             currentDistances.left += subView.calculatedWidth();
-                            x = this.get("paddingLeft") - currentDistances.left;
-                            y = this.get("paddingTop");
+                            x = padding.left - currentDistances.left;
+                            y = padding.top;
                             break;
                         case "right":
                             currentDistances.right += subView.calculatedWidth();
-                            x = currentDistances.right + this.get("paddingLeft") - subView.calculatedWidth() + this.get("width");
-                            y = this.get("paddingTop");
+                            x = currentDistances.right + padding.left - subView.calculatedWidth() + this.get("width");
+                            y = padding.top;
                             break;
                         case "top":
                             currentDistances.top += subView.calculatedHeight();
-                            x = this.get("paddingLeft");
-                            y = this.get("paddingTop") - currentDistances.top;
+                            x = padding.left;
+                            y = padding.top - currentDistances.top;
                             break;
                         case "bottom":
                             currentDistances.bottom += subView.calculatedHeight();
-                            x = this.get("paddingLeft");
-                            y = this.get("paddingTop") + currentDistances.bottom - subView.calculatedHeight() + this.get("height");
+                            x = padding.left;
+                            y = padding.top + currentDistances.bottom - subView.calculatedHeight() + this.get("height");
                             break;
                         case "inside":
                             // 0, 0 is fine
