@@ -42,12 +42,7 @@ $(function() {
     "areas": [
       {
         "name": "area1",
-        "height": 300,
-        "width": 400,
-        "paddingBottom": 50,
-        "paddingLeft": 100,
-        "paddingTop": 50,
-        "paddingRight": 100
+        "totalHeight": 500
       }
     ],
     "scales": [
@@ -222,13 +217,13 @@ $(function() {
 
   el = $("#container").get(0);
   lyra = new Lyra.createChart(spec, el);
-
+/*
   setInterval(function() {
     lyra.view.getModel().getContext().getNode("areas", "area1").set({
-      "width": 400 + 200 * Math.sin((new Date()).getTime() / 1000),
-      "height": 300 + 150 * Math.sin((new Date()).getTime() / 900)
+      "totalWidth": 400 + 200 * Math.sin((new Date()).getTime() / 1000),
+      "totalHeight": 300 + 150 * Math.sin((new Date()).getTime() / 900)
     });
   }, 10);
-
+*/
 
 });

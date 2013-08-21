@@ -17,11 +17,14 @@
 module Lyra {
     // Only one view per model please
     export class ContextView extends ContextNode {
-        private model: ContextModel;
-        private element: D3.Selection;
-        private subViews: Object;
 
-        constructor(model: ContextModel, element: D3.Selection, viewContext: Context) {
+        public static LAYOUT_CHANGE = "ContextViewLayoutChange";
+
+        private model: ContextModel;
+        private element: Element;
+        private subViews: {[attachmentPoint: string]: Element[]};
+
+        constructor(model: ContextModel, element: Element, viewContext: Context) {
             this.model = model;
             this.element = element;
 
@@ -46,28 +49,27 @@ module Lyra {
             return this.model;
         }
 
-        public getElement(): D3.Selection {
+        public getElement(): Element {
             return this.element;
+        }
+
+        public getSelection(): D3.Selection {
+            return this.element.getSelection();
         }
 
         public getSubViews(): Object {
             return _.clone(this.subViews);
         }
 
-        public addSubView(view: ContextView, attachmentPoint: string) {
+        public addSubView(element: Element, attachmentPoint: string) {
             if (_.contains(this.model.getAttachmentPoints(), attachmentPoint)) {
-                this.subViews[attachmentPoint].push(view);
+                this.subViews[attachmentPoint].push(element);
+                element.on("change:requestedWidth change:requestedHeight", () => {
+                    this.trigger(ContextView.LAYOUT_CHANGE);
+                });
             } else {
                 throw new Error("Attachment point " + attachmentPoint + " doesn't exist on " + this.getPluginName() + ".");
             }
-        }
-
-        public calculatedWidth(): number {
-            throw new Error("View for " + this.getPluginName() + " did not specify its width.");
-        }
-
-        public calculatedHeight(): number {
-            throw new Error("View for " + this.getPluginName() + " did not specify its height.");
         }
 
         public render(): void {

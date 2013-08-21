@@ -31,6 +31,7 @@
 /// <reference path="interaction.ts" />
 /// <reference path="area.ts" />
 /// <reference path="label.ts" />
+/// <reference path="element.ts" />
 
 module Lyra {
     // Model class, should not be exposed as API eventually
@@ -96,8 +97,8 @@ module Lyra {
         }
 
         public render() {
-            _.each(<ContextView[]> this.viewContext.getNodes(), function(view) {
-                view.render();
+            _.each(<AreaView[]> this.viewContext.getNodesOfClass(Area.pluginName), (areaView) => {
+                areaView.render();
             });
         }
 
@@ -107,7 +108,8 @@ module Lyra {
             // Creates the view for area
             _.each(this.model.getContext().getNodesOfClass(Area.pluginName), (area: Area) => {
                 var areaGroup = this.svg.append("g");
-                Lyra.createViewForModel(area, areaGroup, this.viewContext);
+                var element = new Element(areaGroup);
+                Lyra.createViewForModel(area, element, this.viewContext);
             });
         }
 
@@ -116,14 +118,14 @@ module Lyra {
             var curX = 0, curY = 0, maxY = 0, yBound = 0, xBound = 0;
 
             _.each(<AreaView[]> this.viewContext.getNodesOfClass(Area.pluginName), (areaView) => {
-                var areaWidth = areaView.calculatedWidth();
-                var areaHeight = areaView.calculatedHeight();
+                var areaWidth = areaView.get("totalWidth");
+                var areaHeight = areaView.get("totalHeight");
                 if ((curX + areaWidth) >= windowWidth) {
                     curX = 0;
                     curY = maxY;
                     maxY = 0;
                 }
-                areaView.getElement().attr("transform", "translate(" + curX + ", " + curY + ")");
+                areaView.getSelection().attr("transform", "translate(" + curX + ", " + curY + ")");
                 curX += areaWidth;
                 if (areaHeight > maxY) {
                     maxY = areaHeight;
@@ -169,7 +171,7 @@ module Lyra {
         return pluginNameToView[pluginName];
     }
 
-    export function createViewForModel(model: ContextNode, element: D3.Selection, viewContext: Context) {
+    export function createViewForModel(model: ContextNode, element: Element, viewContext: Context) {
         return new (Lyra.getView(model.getPluginName())).createView(model, element, viewContext);
     }
 
