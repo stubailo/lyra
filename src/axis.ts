@@ -152,7 +152,6 @@ module Lyra {
             }
 
             // Layout junk
-
             var area: Area = <Area> this.getModel().get("area");
             var areaHeight = area.get("height");
             var areaWidth = area.get("width");

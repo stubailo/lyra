@@ -31,6 +31,7 @@
 /// <reference path="interaction.ts" />
 /// <reference path="area.ts" />
 /// <reference path="label.ts" />
+/// <reference path="element.ts" />
 
 module Lyra {
     // Model class, should not be exposed as API eventually
