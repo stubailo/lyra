@@ -19,9 +19,13 @@ module Lyra {
         public static className: string;
 
         public static ATTACH_INSIDE: string = "inside";
+        public static ATTACH_TOP: string = "top";
+        public static ATTACH_RIGHT: string = "right";
+        public static ATTACH_BOTTOM: string = "bottom";
+        public static ATTACH_LEFT: string = "left";
 
         public getAttachmentPoints(): string[] {
-            return ["top", "right", "bottom", "left", Area.ATTACH_INSIDE];
+            return [Area.ATTACH_TOP, Area.ATTACH_RIGHT, Area.ATTACH_BOTTOM, Area.ATTACH_LEFT, Area.ATTACH_INSIDE];
         }
 
         public defaults() {
@@ -84,6 +88,7 @@ module Lyra {
             _.each(this.getModel().getAttachmentPoints(), (attachmentPoint: string) => {
                 _.each(this.getModel().getSubViewModels()[attachmentPoint], (subViewModel: ContextModel) => {
                     var subViewGroup: D3.Selection;
+                    var element: Element;
 
                     if(attachmentPoint === Area.ATTACH_INSIDE) {
                         subViewGroup = this.graphSelection.append("g");
@@ -91,7 +96,34 @@ module Lyra {
                         subViewGroup = this.totalSelection.append("g");
                     }
 
-                    var element = new Element(subViewGroup);
+                    element = new Element(subViewGroup);
+
+                    switch(attachmentPoint) {
+                        case Area.ATTACH_INSIDE:
+                            this.getModel().on("change:height change:width", () => {
+                                element.set({
+                                    width: this.get("width"),
+                                    height: this.get("height")
+                                });
+                            });
+                            break;
+                        case Area.ATTACH_LEFT:
+                        case Area.ATTACH_RIGHT:
+                            this.getModel().on("change:height", () => {
+                                element.set({
+                                    height: this.get("height")
+                                });
+                            });
+                            break;
+                        case Area.ATTACH_TOP:
+                        case Area.ATTACH_BOTTOM:
+                            this.getModel().on("change:width", () => {
+                                element.set({
+                                    width: this.get("width")
+                                });
+                            });
+                            break;
+                    }
 
                     this.addSubView(Lyra.createViewForModel(subViewModel, element, this.getContext()), attachmentPoint);
                 });

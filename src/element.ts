@@ -5,6 +5,7 @@ module Lyra {
         constructor(selection: D3.Selection) {
             super();
             this.selection = selection;
+            this.on("change", () => {console.log("change");});
         }
 
         public getSelection(): D3.Selection {

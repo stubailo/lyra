@@ -17,10 +17,6 @@
 module Lyra {
     // Only one view per model please
     export class ContextView extends ContextNode {
-        public static WIDTH_KEY = "ContextViewWidth";
-        public static HEIGHT_KEY = "ContextViewHeight";
-        public static WIDTH_CHANGE = "change:ContextViewWidth";
-        public static HEIGHT_CHANGE = "change:ContextViewHeight";
 
         public static LAYOUT_CHANGE = "ContextViewLayoutChange";
 
@@ -68,8 +64,7 @@ module Lyra {
         public addSubView(view: ContextView, attachmentPoint: string) {
             if (_.contains(this.model.getAttachmentPoints(), attachmentPoint)) {
                 this.subViews[attachmentPoint].push(view);
-                console.log(view);
-                view.on(ContextView.WIDTH_CHANGE + " " + ContextView.HEIGHT_CHANGE, () => {
+                view.getElement().on("change:requestedWidth change:requestedHeight", () => {
                     this.trigger(ContextView.LAYOUT_CHANGE);
                 });
             } else {

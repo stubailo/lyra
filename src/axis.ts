@@ -40,7 +40,7 @@ module Lyra {
 
         private axisSvg: D3.Selection;
         private backgroundSvg: D3.Selection;
-        private gridSvg: D3.Selection;
+        //private gridSvg: D3.Selection;
 
         public static EVENT_RENDER: string = "render";
 
@@ -49,7 +49,6 @@ module Lyra {
         }
 
         private buildViews() {
-
             var totalSvg = this.getSelection()
                 .append("g");
 
@@ -60,15 +59,6 @@ module Lyra {
             this.axisSvg = totalSvg.append("g")
                 .attr("class", Axis.className)
                 .attr("name", this.getModel().getName());
-
-            // TODO refactor out gridlines as separate thing
-            if (this.getModel().get("gridline")) {
-                var areaView: AreaView = <AreaView> this.getContext().getNode(Area.className, this.getModel().get("area").getName());
-
-                this.gridSvg = areaView.getGraphArea()
-                    .append("g")
-                    .attr("class", "grid");
-            }
         }
 
         private renderAxis() {
@@ -82,6 +72,9 @@ module Lyra {
         }
 
         private renderGrid() {
+            // removed to be put back when it can be a separate view
+
+            /*
             var gridFunction;
             if (this.getModel().get("location") === "bottom" || this.getModel().get("location") === "top") {
                 gridFunction = (selection, curScale, height: number, width: number) => {
@@ -114,37 +107,38 @@ module Lyra {
             gridFunction(gridSelection, d3Scale, areaHeight, areaWidth);
 
             gridSelection.exit().remove();
+            */
         }
 
         private updateLayout() {
             var transformFunction;
             switch (this.getModel().get("location")) {
                 case "bottom":
-                    transformFunction = (axisSvg, areaHeight, areaWidth) => {
-                        axisSvg.attr("transform", "translate(" + this.xOffset + "," + (this.yOffset) + ")");
+                    transformFunction = () => {
+                        this.axisSvg.attr("transform", "translate(" + this.xOffset + "," + (this.yOffset) + ")");
                         this.backgroundSvg.attr("x", this.xOffset).attr("y", (this.yOffset))
-                            .attr("height", this.bbox.width).attr("width", areaWidth);
+                            .attr("height", this.bbox.width).attr("width", this.getElement().get("width"));
                     };
                     break;
                 case "top":
-                    transformFunction = (axisSvg, areaHeight, areaWidth) => {
-                        axisSvg.attr("transform", "translate(" + this.xOffset + "," + this.yOffset + ")");
+                    transformFunction = () => {
+                        this.axisSvg.attr("transform", "translate(" + this.xOffset + "," + this.yOffset + ")");
                         this.backgroundSvg.attr("x", this.xOffset).attr("y", this.yOffset - this.bbox.width)
-                            .attr("height", this.bbox.width).attr("width", areaWidth);
+                            .attr("height", this.bbox.width).attr("width", this.getElement().get("width"));
                     };
                     break;
                 case "left":
-                    transformFunction = (axisSvg, areaHeight, areaWidth) => {
-                        axisSvg.attr("transform", "translate(" + this.xOffset + "," + this.yOffset + ")");
+                    transformFunction = () => {
+                        this.axisSvg.attr("transform", "translate(" + this.xOffset + "," + this.yOffset + ")");
                         this.backgroundSvg.attr("x", this.xOffset - this.bbox.width).attr("y", this.yOffset)
-                            .attr("height", areaHeight).attr("width", this.bbox.width);
+                            .attr("height", this.getElement().get("height")).attr("width", this.bbox.width);
                     };
                     break;
                 case "right":
-                    transformFunction = (axisSvg, areaHeight, areaWidth) => {
-                        axisSvg.attr("transform", "translate(" + (this.xOffset) + "," + this.yOffset + ")");
+                    transformFunction = () => {
+                        this.axisSvg.attr("transform", "translate(" + (this.xOffset) + "," + this.yOffset + ")");
                         this.backgroundSvg.attr("x", (this.xOffset)).attr("y", this.yOffset)
-                            .attr("height", areaHeight).attr("width", this.bbox.width);
+                            .attr("height", this.getElement().get("height")).attr("width", this.bbox.width);
                     };
 
                     break;
@@ -152,15 +146,13 @@ module Lyra {
             }
 
             // Layout junk
-            var area: Area = <Area> this.getModel().get("area");
-            var areaHeight = area.get("height");
-            var areaWidth = area.get("width");
             this.bbox = this.axisSvg.node().getBBox();
             this.bbox.width = Math.ceil(this.bbox.width/5)*5;
             this.bbox.height = Math.ceil(this.bbox.height/5)*5;
-            this.set({
-                "ContextViewWidth": this.bbox.width,
-                "ContextViewHeight": this.bbox.height
+
+            this.getElement().set({
+                "requestedWidth": this.bbox.width,
+                "requestedHeight": this.bbox.height
             });
 
             if (this.getModel().get("orient") === "left") {
@@ -169,7 +161,7 @@ module Lyra {
             if (this.getModel().get("orient") === "top") {
                 this.yOffset = this.bbox.width;
             }
-            transformFunction(this.axisSvg, areaHeight, areaWidth);
+            transformFunction();
         }
 
         public load() {
@@ -184,11 +176,6 @@ module Lyra {
 
         public render() {
             this.renderAxis();
-
-            // Render the grid
-            if (this.gridSvg) {
-                this.renderGrid();
-            }
 
             this.updateLayout();
 
