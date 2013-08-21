@@ -16,7 +16,7 @@
 
 module Lyra {
     export class Axis extends ContextModel {
-        public static className: string;
+        public static pluginName: string;
 
         /*
          * Each property is a function of one item that specifies that property of an SVG element.
@@ -26,7 +26,7 @@ module Lyra {
         public static AXIS_PADDING: string = "axisPadding";
 
         public static parse(spec: any, context: Context) {
-            return new Axis(spec, context, Axis.className);
+            return new Axis(spec, context, Axis.pluginName);
         }
 
         public defaults() {
@@ -72,11 +72,11 @@ module Lyra {
                 .attr("fill-opacity", 0);
 
             var axisSvg = totalSvg.append("g")
-                .attr("class", Axis.className)
+                .attr("class", Axis.pluginName)
                 .attr("name", this.getModel().getName());
 
             if (this.getModel().get("gridline")) {
-                var areaView: AreaView = <AreaView> this.getContext().getNode(Area.className, this.getModel().get("area").getName());
+                var areaView: AreaView = <AreaView> this.getContext().getNode(Area.pluginName, this.getModel().get("area").getName());
 
                 var gridSvg = areaView.getGraphArea()
                     .append("g")

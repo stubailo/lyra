@@ -42,9 +42,9 @@ module Lyra {
             this.context = new Context();
 
             // Parse all of the models
-            for (var className in spec) {
-                if (Lyra.getModel(className) !== undefined) {
-                    ContextModel.parseAll(spec[className], this.context, Lyra.getModel(className));
+            for (var pluginName in spec) {
+                if (Lyra.getModel(pluginName) !== undefined) {
+                    ContextModel.parseAll(spec[pluginName], this.context, Lyra.getModel(pluginName));
                 }
             }
         }
@@ -105,7 +105,7 @@ module Lyra {
             this.svg = d3.select(this.element).append("svg:svg");
 
             // Creates the view for area
-            _.each(this.model.getContext().getNodesOfClass(Area.className), (area: Area) => {
+            _.each(this.model.getContext().getNodesOfClass(Area.pluginName), (area: Area) => {
                 var areaGroup = this.svg.append("g");
                 Lyra.createViewForModel(area, areaGroup, this.viewContext);
             });
@@ -115,7 +115,7 @@ module Lyra {
             var windowWidth: number = $(window).width();
             var curX = 0, curY = 0, maxY = 0, yBound = 0, xBound = 0;
 
-            _.each(<AreaView[]> this.viewContext.getNodesOfClass(Area.className), (areaView) => {
+            _.each(<AreaView[]> this.viewContext.getNodesOfClass(Area.pluginName), (areaView) => {
                 var areaWidth = areaView.calculatedWidth();
                 var areaHeight = areaView.calculatedHeight();
                 if ((curX + areaWidth) >= windowWidth) {
@@ -145,32 +145,32 @@ module Lyra {
      * The variables are hidden in the module, but the methods are exported
      * to attach plugins.
      */
-    var classNameToView: Object = {};
-    var classNameToModel: Object = {};
+    var pluginNameToView: Object = {};
+    var pluginNameToModel: Object = {};
 
     var CONTAINER_CLASS: string = "lyra-chart";
 
     // Method for adding new types of model nodes
     export function addModel(specKey: string, classReference): void {
-        classReference.className = specKey;
-        classNameToModel[specKey] = classReference;
+        classReference.pluginName = specKey;
+        pluginNameToModel[specKey] = classReference;
     }
 
     export function addView(specKey: string, classReference): void {
-        classReference.className = specKey;
-        classNameToView[specKey] = classReference;
+        classReference.pluginName = specKey;
+        pluginNameToView[specKey] = classReference;
     }
 
     export function getModel(specKey: string) {
-        return classNameToModel[specKey];
+        return pluginNameToModel[specKey];
     }
 
     export function getView(specKey: string) {
-        return classNameToView[specKey];
+        return pluginNameToView[specKey];
     }
 
     export function createViewForModel(model: ContextNode, element: D3.Selection, viewContext: Context) {
-        return new (Lyra.getView(model.getClassName())).createView(model, element, viewContext);
+        return new (Lyra.getView(model.getPluginName())).createView(model, element, viewContext);
     }
 
     // Entry point into library

@@ -30,7 +30,7 @@ module Lyra {
                 this.subViews[attachmentPoint] = [];
             });
 
-            super(model.getName(), viewContext, model.getClassName());
+            super(model.getName(), viewContext, model.getPluginName());
 
             this.load();
         }
@@ -58,16 +58,16 @@ module Lyra {
             if (_.contains(this.model.getAttachmentPoints(), attachmentPoint)) {
                 this.subViews[attachmentPoint].push(view);
             } else {
-                throw new Error("Attachment point " + attachmentPoint + " doesn't exist on " + this.getClassName() + ".");
+                throw new Error("Attachment point " + attachmentPoint + " doesn't exist on " + this.getPluginName() + ".");
             }
         }
 
         public calculatedWidth(): number {
-            throw new Error("View for " + this.getClassName() + " did not specify its width.");
+            throw new Error("View for " + this.getPluginName() + " did not specify its width.");
         }
 
         public calculatedHeight(): number {
-            throw new Error("View for " + this.getClassName() + " did not specify its height.");
+            throw new Error("View for " + this.getPluginName() + " did not specify its height.");
         }
 
         public render(): void {

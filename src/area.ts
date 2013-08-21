@@ -16,7 +16,7 @@
 
 module Lyra {
     export class Area extends ContextModel {
-        public static className: string;
+        public static pluginName: string;
 
         public static ATTACH_INSIDE: string = "inside";
 
@@ -36,7 +36,7 @@ module Lyra {
         }
 
         public static parse(spec: any, context: Context) {
-            return new Area(spec, context, Area.className);
+            return new Area(spec, context, Area.pluginName);
         }
 
         public load() {
@@ -75,7 +75,7 @@ module Lyra {
         }
 
         public buildViews() {
-            this.totalSelection = this.getElement().append("svg").attr("class", Area.className).attr("name", this.getModel().getName());
+            this.totalSelection = this.getElement().append("svg").attr("class", Area.pluginName).attr("name", this.getModel().getName());
             this.graphSelection = this.totalSelection.append("svg").attr("class", "graph");
             this.background = this.graphSelection.append("rect");
         }
