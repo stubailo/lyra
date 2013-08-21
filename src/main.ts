@@ -151,22 +151,22 @@ module Lyra {
     var CONTAINER_CLASS: string = "lyra-chart";
 
     // Method for adding new types of model nodes
-    export function addModel(specKey: string, classReference): void {
-        classReference.pluginName = specKey;
-        pluginNameToModel[specKey] = classReference;
+    export function addModel(pluginName: string, classReference): void {
+        classReference.pluginName = pluginName;
+        pluginNameToModel[pluginName] = classReference;
     }
 
-    export function addView(specKey: string, classReference): void {
-        classReference.pluginName = specKey;
-        pluginNameToView[specKey] = classReference;
+    export function addView(pluginName: string, classReference): void {
+        classReference.pluginName = pluginName;
+        pluginNameToView[pluginName] = classReference;
     }
 
-    export function getModel(specKey: string) {
-        return pluginNameToModel[specKey];
+    export function getModel(pluginName: string) {
+        return pluginNameToModel[pluginName];
     }
 
-    export function getView(specKey: string) {
-        return pluginNameToView[specKey];
+    export function getView(pluginName: string) {
+        return pluginNameToView[pluginName];
     }
 
     export function createViewForModel(model: ContextNode, element: D3.Selection, viewContext: Context) {
