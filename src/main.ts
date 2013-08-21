@@ -116,13 +116,13 @@ module Lyra {
         }
 
         private setUpLayout() {
-            var window_width: number = $(window).width();
+            var windowWidth: number = $(window).width();
             var curX = 0, curY = 0, maxY = 0, yBound = 0, xBound = 0;
 
             _.each(<AreaView[]> this.viewContext.getNodesOfClass(Area.className), (areaView) => {
                 var areaWidth = areaView.calculatedWidth();
                 var areaHeight = areaView.calculatedHeight();
-                if ((curX + areaWidth) >= window_width) {
+                if ((curX + areaWidth) >= windowWidth) {
                     curX = 0;
                     curY = maxY;
                     maxY = 0;
