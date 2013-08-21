@@ -67,12 +67,10 @@ module Lyra {
         private element: HTMLElement;
         private svg: D3.Selection;
 
-        constructor(spec: any, element: HTMLElement) {
+        constructor(spec: any, element: HTMLElement, model: LyraModel) {
             // Initialize
             this.viewContext = new Context();
-            this.model = new LyraModel(spec);
-
-            // Initialize DOM
+            this.model = model;
             this.element = element;
 
             // Generate all the views for this model
@@ -171,16 +169,17 @@ module Lyra {
         return classNameToView[specKey];
     }
 
+    export function createViewForModel(model: ContextNode, element: D3.Selection, viewContext: Context) {
+        return new (Lyra.getView(model.getClassName())).createView(model, element, viewContext);
+    }
+
     // Entry point into library
     export function createChart(spec: any, element: HTMLElement): Object {
         var chart: any = {};
         $(element).addClass(CONTAINER_CLASS);
-        chart.view = new LyraView(spec, element);
+        chart.model = new LyraModel(spec);
+        chart.view = new LyraView(spec, element, chart.model);
         return chart;
-    }
-
-    export function createViewForModel(model: ContextNode, element: D3.Selection, viewContext: Context) {
-        return new (Lyra.getView(model.getClassName())).createView(model, element, viewContext);
     }
 
     Lyra.addView("areas", AreaView);
