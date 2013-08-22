@@ -33,9 +33,9 @@ module Lyra {
          * This method should not be overriden. Instead, override the load method to perform additional
          * operations before the contextNode is rendered.
          */
-        constructor(name: string, context: Context, pluginName: string) {
+        constructor(name: string, pluginName: string, context: Context) {
             super();
-            Backbone.Model.apply(this, []);
+            Backbone.Model.apply(this, []); // Backbone.defaults don't work otherwise
 
             // Setup instance variables
             this.name = name;

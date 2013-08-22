@@ -33,7 +33,7 @@ module Lyra {
                 this.subViews[attachmentPoint] = [];
             });
 
-            super(model.getName(), viewContext, model.getPluginName());
+            super(model.getName(), model.getPluginName(), viewContext);
 
             this.load();
         }
