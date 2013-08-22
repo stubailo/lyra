@@ -144,7 +144,7 @@ module Lyra {
             };
 
             this.startDrag = () => {
-                this.startPosition = [d3.event.x, d3.event.y];
+                this.startPosition = [d3.event.clientX, d3.event.clientY];
                 this.currentPosition = _.clone(this.startPosition);
                 this.dragging = true;
                 $(window).on("mousemove", this.drag);

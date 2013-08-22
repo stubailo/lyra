@@ -137,7 +137,8 @@ module Lyra {
                     xBound = curX;
                 }
             });
-            return [xBound, yBound];
+
+            this.svg.attr("width", xBound).attr("height", yBound);
         }
     }
 

@@ -137,11 +137,11 @@ module Lyra {
         }
 
         public pan(pixels) {
-            var dx = this.inverse(pixels) - this.inverse(0);
+            var dx = this.inverse(pixels).getTime() - this.inverse(0).getTime();
 
             this.set({
-                domainBegin: new Date(this.get("domainBegin") - dx),
-                domainEnd: new Date(this.get("domainEnd") - dx)
+                domainBegin: new Date(this.get("domainBegin").getTime() - dx),
+                domainEnd: new Date(this.get("domainEnd").getTime() - dx)
             });
         }
 
