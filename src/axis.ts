@@ -40,7 +40,7 @@ module Lyra {
 
         private axisSvg: D3.Selection;
         private backgroundSvg: D3.Selection;
-        //private gridSvg: D3.Selection;
+        private gridSvg: D3.Selection;
 
         public static EVENT_RENDER: string = "render";
 
@@ -49,6 +49,7 @@ module Lyra {
         }
 
         private buildViews() {
+
             var totalSvg = this.getSelection()
                 .append("g");
 
@@ -59,6 +60,14 @@ module Lyra {
             this.axisSvg = totalSvg.append("g")
                 .attr("class", Axis.className)
                 .attr("name", this.getModel().getName());
+
+            if (this.getModel().get("gridline")) {
+                var areaView: AreaView = <AreaView> this.getContext().getNode(Area.className, this.getModel().get("area").getName());
+
+                this.gridSvg = areaView.getElementForAttachmentPoint(Area.ATTACH_INSIDE).getSelection()
+                    .append("g")
+                    .attr("class", "grid");
+            }
         }
 
         private renderAxis() {
@@ -72,9 +81,6 @@ module Lyra {
         }
 
         private renderGrid() {
-            // removed to be put back when it can be a separate view
-
-            /*
             var gridFunction;
             if (this.getModel().get("location") === "bottom" || this.getModel().get("location") === "top") {
                 gridFunction = (selection, curScale, height: number, width: number) => {
@@ -107,7 +113,6 @@ module Lyra {
             gridFunction(gridSelection, d3Scale, areaHeight, areaWidth);
 
             gridSelection.exit().remove();
-            */
         }
 
         private updateLayout() {
@@ -176,26 +181,13 @@ module Lyra {
 
         public render() {
             this.renderAxis();
+            if(this.gridSvg) {
+                this.renderGrid();
+            }
 
             this.updateLayout();
 
             this.trigger(AxisView.EVENT_RENDER);
-        }
-
-        public calculatedWidth(): number {
-            if (this.get("orient") === "left" || this.get("orient") === "right") {
-                return this.bbox.width;
-            } else {
-                throw new Error("Axis " + this.getName() + " got asked about its undetermined length.");
-            }
-        }
-
-        public calculatedHeight(): number {
-            if (this.get("orient") === "top" || this.get("orient") === "bottom") {
-                return this.bbox.height;
-            } else {
-                throw new Error("Axis " + this.getName() + " got asked about its undetermined length.");
-            }
         }
     }
 }

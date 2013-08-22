@@ -48,6 +48,12 @@ module Lyra {
         public load() {
             this.getSelection().append("text");
 
+            if(this.get("location") === "top" || this.get("location") === "bottom") {
+                this.getElement().set("requestedHeight", Label.TEXT_HEIGHT);
+            } else {
+                this.getElement().set("requestedWidth", Label.TEXT_HEIGHT);
+            }
+
             this.getModel().on("change", $.proxy(this.render, this));
         }
 
@@ -61,28 +67,16 @@ module Lyra {
             var bbox = textElement[0][0].getBBox();
 
             if(this.get("location") === "top" || this.get("location") === "bottom") {
-                textElement.attr("x", this.get("area").get("width")/2);
+                textElement.attr("x", this.getElement().get("width")/2);
                 textElement.attr("y", Label.TEXT_HEIGHT/2);
+
+                this.getElement().set("requestedHeight", Label.TEXT_HEIGHT);
             } else {
-                textElement.attr("x", -this.get("area").get("height")/2);
+                textElement.attr("x", -this.getElement().get("height")/2);
                 textElement.attr("y", Label.TEXT_HEIGHT/2);
                 textElement.attr("transform", "rotate(-90)");
-            }
-        }
 
-        public calculatedWidth(): number {
-            if (this.get("location") === "left" || this.get("location") === "right") {
-                return Label.TEXT_HEIGHT;
-            } else {
-                throw new Error("Label got asked about its undetermined length.");
-            }
-        }
-
-        public calculatedHeight(): number {
-            if (this.get("location") === "top" || this.get("location") === "bottom") {
-                return Label.TEXT_HEIGHT;
-            } else {
-                throw new Error("Label got asked about its undetermined length.");
+                this.getElement().set("requestedWidth", Label.TEXT_HEIGHT);
             }
         }
     }

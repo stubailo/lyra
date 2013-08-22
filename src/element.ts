@@ -5,7 +5,10 @@ module Lyra {
         constructor(selection: D3.Selection) {
             super();
             this.selection = selection;
-            this.on("change", () => {console.log("change");});
+            this.set({
+                "requestedHeight": 0,
+                "requestedWidth": 0
+            });
         }
 
         public getSelection(): D3.Selection {

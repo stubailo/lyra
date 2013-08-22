@@ -22,7 +22,7 @@ module Lyra {
 
         private model: ContextModel;
         private element: Element;
-        private subViews: Object;
+        private subViews: {[attachmentPoint: string]: Element[]};
 
         constructor(model: ContextModel, element: Element, viewContext: Context) {
             this.model = model;
@@ -61,23 +61,15 @@ module Lyra {
             return _.clone(this.subViews);
         }
 
-        public addSubView(view: ContextView, attachmentPoint: string) {
+        public addSubView(element: Element, attachmentPoint: string) {
             if (_.contains(this.model.getAttachmentPoints(), attachmentPoint)) {
-                this.subViews[attachmentPoint].push(view);
-                view.getElement().on("change:requestedWidth change:requestedHeight", () => {
+                this.subViews[attachmentPoint].push(element);
+                element.on("change:requestedWidth change:requestedHeight", () => {
                     this.trigger(ContextView.LAYOUT_CHANGE);
                 });
             } else {
                 throw new Error("Attachment point " + attachmentPoint + " doesn't exist on " + this.getClassName() + ".");
             }
-        }
-
-        public calculatedWidth(): number {
-            throw new Error("View for " + this.getClassName() + " did not specify its width.");
-        }
-
-        public calculatedHeight(): number {
-            throw new Error("View for " + this.getClassName() + " did not specify its height.");
         }
 
         public render(): void {

@@ -84,48 +84,54 @@ module Lyra {
             this.background = this.graphSelection.append("rect");
         }
 
+        public getElementForAttachmentPoint(attachmentPoint: string): Element {
+            var subViewGroup: D3.Selection;
+
+            if(attachmentPoint === Area.ATTACH_INSIDE) {
+                subViewGroup = this.graphSelection.append("g");
+            } else {
+                subViewGroup = this.totalSelection.append("g");
+            }
+
+            var element: Element = new Element(subViewGroup);
+
+            switch(attachmentPoint) {
+                case Area.ATTACH_INSIDE:
+                    this.getModel().on("change:height change:width", () => {
+                        element.set({
+                            width: this.get("width"),
+                            height: this.get("height")
+                        });
+                    });
+                    break;
+                case Area.ATTACH_LEFT:
+                case Area.ATTACH_RIGHT:
+                    this.getModel().on("change:height", () => {
+                        element.set({
+                            height: this.get("height")
+                        });
+                    });
+                    break;
+                case Area.ATTACH_TOP:
+                case Area.ATTACH_BOTTOM:
+                    this.getModel().on("change:width", () => {
+                        element.set({
+                            width: this.get("width")
+                        });
+                    });
+                    break;
+            }
+
+            return element;
+        }
+
         private buildSubviews() {
             _.each(this.getModel().getAttachmentPoints(), (attachmentPoint: string) => {
                 _.each(this.getModel().getSubViewModels()[attachmentPoint], (subViewModel: ContextModel) => {
-                    var subViewGroup: D3.Selection;
-                    var element: Element;
+                    var element: Element = this.getElementForAttachmentPoint(attachmentPoint);
 
-                    if(attachmentPoint === Area.ATTACH_INSIDE) {
-                        subViewGroup = this.graphSelection.append("g");
-                    } else {
-                        subViewGroup = this.totalSelection.append("g");
-                    }
-
-                    element = new Element(subViewGroup);
-
-                    switch(attachmentPoint) {
-                        case Area.ATTACH_INSIDE:
-                            this.getModel().on("change:height change:width", () => {
-                                element.set({
-                                    width: this.get("width"),
-                                    height: this.get("height")
-                                });
-                            });
-                            break;
-                        case Area.ATTACH_LEFT:
-                        case Area.ATTACH_RIGHT:
-                            this.getModel().on("change:height", () => {
-                                element.set({
-                                    height: this.get("height")
-                                });
-                            });
-                            break;
-                        case Area.ATTACH_TOP:
-                        case Area.ATTACH_BOTTOM:
-                            this.getModel().on("change:width", () => {
-                                element.set({
-                                    width: this.get("width")
-                                });
-                            });
-                            break;
-                    }
-
-                    this.addSubView(Lyra.createViewForModel(subViewModel, element, this.getContext()), attachmentPoint);
+                    Lyra.createViewForModel(subViewModel, element, this.getContext());
+                    this.addSubView(element, attachmentPoint);
                 });
             });
         }
@@ -138,6 +144,8 @@ module Lyra {
         }
 
         public calculateLayout() {
+            console.log("recalculating layout");
+
             var padding: {
                 left: number;
                 right: number;
@@ -153,25 +161,22 @@ module Lyra {
             };
 
             _.each(this.getModel().getAttachmentPoints(), (attachmentPoint: string) => {
-                _.each(this.getSubViews()[attachmentPoint], (subView: ContextView) => {
-                    subView.render();
-                    var subViewGroup: D3.Selection = subView.getSelection();
-
+                _.each(this.getSubViews()[attachmentPoint], (element: Element) => {
                     var x: number = 0;
                     var y: number = 0;
 
                     switch (attachmentPoint) {
                         case "left":
-                            padding.left += subView.calculatedWidth();
+                            padding.left += element.get("requestedWidth");
                             break;
                         case "right":
-                            padding.right += subView.calculatedWidth();
+                            padding.right += element.get("requestedWidth");
                             break;
                         case "top":
-                            padding.top += subView.calculatedHeight();
+                            padding.top += element.get("requestedHeight");
                             break;
                         case "bottom":
-                            padding.bottom += subView.calculatedHeight();
+                            padding.bottom += element.get("requestedHeight");
                             break;
                         case "inside":
                             // 0, 0 is fine
@@ -191,6 +196,7 @@ module Lyra {
         }
 
         public render() {
+            console.log("rerendering");
             var padding: {
                 left: number;
                 right: number;
@@ -243,39 +249,37 @@ module Lyra {
             };
 
             _.each(this.getModel().getAttachmentPoints(), (attachmentPoint: string) => {
-                _.each(this.getSubViews()[attachmentPoint], (subView: ContextView) => {
-                    var subViewGroup: D3.Selection = subView.getSelection();
-
+                _.each(this.getSubViews()[attachmentPoint], (element: Element) => {
                     var x: number = 0;
                     var y: number = 0;
 
                     switch (attachmentPoint) {
                         case "left":
-                            currentDistances.left += subView.calculatedWidth();
+                            currentDistances.left += element.get("requestedWidth");
                             x = padding.left - currentDistances.left;
                             y = padding.top;
                             break;
                         case "right":
-                            currentDistances.right += subView.calculatedWidth();
-                            x = currentDistances.right + padding.left - subView.calculatedWidth() + this.get("width");
+                            currentDistances.right += element.get("requestedWidth");
+                            x = currentDistances.right + padding.left - element.get("requestedWidth") + this.get("width");
                             y = padding.top;
                             break;
                         case "top":
-                            currentDistances.top += subView.calculatedHeight();
+                            currentDistances.top += element.get("requestedHeight");
                             x = padding.left;
                             y = padding.top - currentDistances.top;
                             break;
                         case "bottom":
-                            currentDistances.bottom += subView.calculatedHeight();
+                            currentDistances.bottom += element.get("requestedHeight");
                             x = padding.left;
-                            y = padding.top + currentDistances.bottom - subView.calculatedHeight() + this.get("height");
+                            y = padding.top + currentDistances.bottom - element.get("requestedHeight") + this.get("height");
                             break;
                         case "inside":
                             // 0, 0 is fine
                             break;
                     }
 
-                    subViewGroup.attr("transform", "translate(" + x + ", " + y + ")");
+                    element.getSelection().attr("transform", "translate(" + x + ", " + y + ")");
                 });
             });
 
