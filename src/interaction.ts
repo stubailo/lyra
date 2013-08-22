@@ -25,6 +25,7 @@ module Lyra {
 
         public static TYPE_PAN: string = "pan";
         public static TYPE_ZOOM: string = "zoom";
+        public static TYPE_AUTO_ZOOM: string = "autoZoom";
 
         private modelContext: Context;
         private viewContext: Context;
@@ -49,6 +50,8 @@ module Lyra {
                     return new PanInteraction(spec, modelContext, viewContext, i);
                 case Interaction.TYPE_ZOOM:
                     return new ZoomInteraction(spec, modelContext, viewContext, i);
+                case Interaction.TYPE_AUTO_ZOOM:
+                    return new AutoZoomInteraction(spec, modelContext, viewContext, i);
                 default:
                     throw new Error("Unsupported interaction type: " + spec[Interaction.SPEC_TYPE_KEY]);
             }
@@ -204,6 +207,112 @@ module Lyra {
         private onZoom(e, delta, deltaX, deltaY) {
             this.scale.zoom(1 + ((deltaY < 0) ? 1 : -1) * this.zoomFactor);
             return false;
+        }
+    }
+
+    class AutoZoomInteraction extends Interaction {
+        private static DOMAIN_SCALE_KEY: string = "domainScale";
+        private static RANGE_SCALE_KEY: string = "rangeScale";
+        private static DOMAIN_KEY: string = "domainKey";
+        private static RANGE_KEY: string = "rangeKey";
+        private static DATA_SET_KEY: string = "dataSet";
+        private static PADDING_KEY: string = "padding";
+
+        private domainScale: Scale;
+        private rangeScale: Scale;
+        private domainKey: string;
+        private rangeKey: string;
+        private dataSet: DataSet;
+        private padding: number;
+
+        constructor(spec: Object, modelContext: Context, viewContext: Context, id: number) {
+            super(modelContext, viewContext, id);
+
+            if (spec[AutoZoomInteraction.DOMAIN_SCALE_KEY]) {
+                this.domainScale = this.getModelContext().getNode(Scale.pluginName, spec[AutoZoomInteraction.DOMAIN_SCALE_KEY]);
+            } else {
+                throw new Error("No domain scale specified for AutoZoomInteraction");
+            }
+
+            if (spec[AutoZoomInteraction.RANGE_SCALE_KEY]) {
+                this.rangeScale = this.getModelContext().getNode(Scale.pluginName, spec[AutoZoomInteraction.RANGE_SCALE_KEY]);
+            } else {
+                throw new Error("No range scale specified for AutoZoomInteraction");
+            }
+
+            if (spec[AutoZoomInteraction.DOMAIN_KEY]) {
+                this.domainKey = spec[AutoZoomInteraction.DOMAIN_KEY];
+            } else {
+                throw new Error("No domain key specified for AutoZoomInteraction");
+            }
+
+            if (spec[AutoZoomInteraction.RANGE_KEY]) {
+                this.rangeKey = spec[AutoZoomInteraction.RANGE_KEY];
+            } else {
+                throw new Error("No range key specified for AutoZoomInteraction");
+            }
+
+            if (spec[AutoZoomInteraction.DATA_SET_KEY]) {
+                this.dataSet = this.getModelContext().getNode(DataSet.pluginName, spec[AutoZoomInteraction.DATA_SET_KEY]);
+            } else {
+                throw new Error("No dataset specified for AutoZoomInteraction");
+            }
+
+            if (spec[AutoZoomInteraction.PADDING_KEY]) {
+                this.padding = spec[AutoZoomInteraction.PADDING_KEY];
+            } else {
+                this.padding = 0.05;
+            }
+
+            this.addEvents();
+        }
+
+        private addEvents() {
+            this.domainScale.on("change:domainBegin change:domainEnd", $.proxy(this.onDomainScaleChange, this));
+        }
+
+        private onDomainScaleChange() {
+            var domainInverted: boolean = this.rangeScale.get("domainBegin") > this.rangeScale.get("domainEnd");
+
+            var domain = [this.domainScale.get("domainBegin"), this.domainScale.get("domainEnd")];
+            var items = this.dataSet.getItems();
+
+            if(items.length == 0) {
+                return;
+            }
+
+            var currentMax = items[0][this.rangeKey];
+            var currentMin = items[1][this.domainKey];
+
+            _.each(this.dataSet.getItems(), (item) => {
+                if(domain[0] < item[this.domainKey] && item[this.domainKey] < domain[1]) {
+                    var val = item[this.rangeKey];
+
+                    if(val < currentMin) {
+                        currentMin = val;
+                    }
+
+                    if(val > currentMax) {
+                        currentMax = val;
+                    }
+                }
+            });
+
+            var distance = currentMax - currentMin;
+            currentMax += distance * this.padding;
+            currentMin -= distance * this.padding;
+
+            if(!domainInverted) {
+                this.rangeScale.set({
+                    "domainBegin": currentMin,
+                    "domainEnd": currentMax
+                });
+            } else {
+                this.rangeScale.set({
+                    "domainBegin": currentMax,
+                    "domainEnd": currentMin
+                });
+            }
         }
     }
 }

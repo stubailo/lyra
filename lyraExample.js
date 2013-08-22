@@ -42,7 +42,8 @@ $(function() {
     "areas": [
       {
         "name": "area1",
-        "totalHeight": 500
+        "totalHeight": 500,
+        "totalWidth": 700
       }
     ],
     "scales": [
@@ -72,6 +73,34 @@ $(function() {
       }
     ],
     "marks": [
+      {
+        "name": "symbol3",
+        "type": "line",
+        "source": "data:table",
+        "area": "areas:area1",
+        "properties": {
+          "x": {
+            "value": "z",
+            "scale": "z"
+          },
+          "y": {
+            "value": "x",
+            "scale": "x"
+          },
+          "interpolate": {
+            "value" : "linear"
+          },
+          "stroke-width" : {
+            "value" : 3
+          },
+          "stroke" : {
+            "value" : "red"
+          },
+          "fill" : {
+            "value" : "none"
+          }
+        }
+      },
       {
         "name": "symbol",
         "type": "circle",
@@ -151,6 +180,16 @@ $(function() {
       "location": "bottom",
       "gridline": "#aaaaff",
       "axisWidth": 30
+      },
+      {
+      "name": "z2",
+      "area": "areas:area1",
+      "scale": "scales:z",
+      "orient": "top",
+      "ticks": 5,
+      "location": "top",
+      "gridline": "#aaaaff",
+      "axisWidth": 30
       }
     ],
     "labels": [
@@ -178,39 +217,31 @@ $(function() {
     "interactions": [
       {
         "type": "pan",
-        "scale": "x",
-        "axis": "x",
-        "direction": "n"
-      },
-      {
-        "type": "pan",
-        "scale": "y",
-        "axis": "y",
-        "direction": "n"
-      },
-      {
-        "type": "pan",
         "scale": "z",
-        "axis": "z",
+        "area": "area1",
         "direction": "e"
       },
       {
         "type": "zoom",
-        "axis": "z",
+        "area": "area1",
         "scale": "z",
         "zoomFactor": 0.05
       },
       {
-        "type": "zoom",
-        "axis": "x",
-        "scale": "x",
-        "zoomFactor": 0.05
+        "type": "autoZoom",
+        "domainScale": "z",
+        "rangeScale": "x",
+        "domainKey": "z",
+        "rangeKey": "x",
+        "dataSet": "table"
       },
       {
-        "type": "zoom",
-        "axis": "y",
-        "scale": "y",
-        "zoomFactor": 0.05
+        "type": "autoZoom",
+        "domainScale": "z",
+        "rangeScale": "y",
+        "domainKey": "z",
+        "rangeKey": "y",
+        "dataSet": "table"
       }
     ]
   }
