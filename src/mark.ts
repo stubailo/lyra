@@ -164,8 +164,6 @@ module Lyra {
                     return this.get(key)(item);
                 });
             });
-
-            this.trigger(MarkView.EVENT_RENDER);
         }
     }
 
@@ -203,8 +201,6 @@ module Lyra {
             line.interpolate("linear");
 
             this.getMarkSelection().attr("d", line);
-
-            this.trigger(MarkView.EVENT_RENDER);
         }
     }
 
@@ -232,8 +228,6 @@ module Lyra {
                     return this.get(key)(item);
                 });
             });
-
-            this.trigger(MarkView.EVENT_RENDER);
         }
     }
 }

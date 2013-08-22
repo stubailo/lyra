@@ -169,10 +169,7 @@ module Lyra {
 
         public render() {
             this.renderAxis();
-
             this.updateLayout();
-
-            this.trigger(AxisView.EVENT_RENDER);
         }
     }
 }
