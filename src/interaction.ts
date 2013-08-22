@@ -264,14 +264,15 @@ module Lyra {
                 this.padding = 0.05;
             }
 
+            this.doAutoZoom();
             this.addEvents();
         }
 
         private addEvents() {
-            this.domainScale.on("change:domainBegin change:domainEnd", $.proxy(this.onDomainScaleChange, this));
+            this.domainScale.on("change:domainBegin change:domainEnd", $.proxy(this.doAutoZoom, this));
         }
 
-        private onDomainScaleChange() {
+        private doAutoZoom() {
             var domainInverted: boolean = this.rangeScale.get("domainBegin") > this.rangeScale.get("domainEnd");
 
             var domain = [this.domainScale.get("domainBegin"), this.domainScale.get("domainEnd")];
