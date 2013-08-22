@@ -144,8 +144,6 @@ module Lyra {
         }
 
         public calculateLayout() {
-            console.log("recalculating layout");
-
             var padding: {
                 left: number;
                 right: number;
@@ -196,7 +194,6 @@ module Lyra {
         }
 
         public render() {
-            console.log("rerendering");
             var padding: {
                 left: number;
                 right: number;

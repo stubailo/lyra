@@ -32,69 +32,23 @@ module Lyra {
         }
     }
 
-    export class AxisView extends ContextView {
-        private axis;
-        private xOffset: number;
-        private yOffset: number;
-        private bbox;
-
-        private axisSvg: D3.Selection;
-        private backgroundSvg: D3.Selection;
+    class GridView extends ContextView {
         private gridSvg: D3.Selection;
 
-        public static EVENT_RENDER: string = "render";
+        public load () {
+            this.buildViews();
 
-        public static createView(axis: Axis, element: Element, viewContext: Context): AxisView {
-            return new AxisView(axis, element, viewContext);
+            this.getModel().on("change", () => {this.render()});
+            this.getElement().on("change", () => {this.render()});
         }
 
         private buildViews() {
-
-            var totalSvg = this.getSelection()
-                .append("g");
-
-            this.backgroundSvg = totalSvg
-                .append("svg:rect")
-                .attr("fill-opacity", 0);
-
-            this.axisSvg = totalSvg.append("g")
-                .attr("class", Axis.className)
-                .attr("name", this.getModel().getName());
-
-            if (this.getModel().get("gridline")) {
-                var areaView: AreaView = <AreaView> this.getContext().getNode(Area.className, this.getModel().get("area").getName());
-
-                this.gridSvg = areaView.getElementForAttachmentPoint(Area.ATTACH_INSIDE).getSelection()
-                    .append("g")
-                    .attr("class", "grid");
-            }
+            this.gridSvg = this.getSelection()
+                .append("g")
+                .attr("class", "grid");
         }
 
-        private renderAxis() {
-            var scale = <Scale> this.getModel().get("scale");
-            var d3Scale = scale.getScaleRepresentation();
-            var axis = d3.svg.axis()
-                .scale(d3Scale)
-                .orient(this.getModel().get("orient"))
-                .ticks(this.getModel().get("ticks"));
-            this.axisSvg.call(axis);
-        }
-
-        private renderGrid() {
-            var gridFunction;
-            if (this.getModel().get("location") === "bottom" || this.getModel().get("location") === "top") {
-                gridFunction = (selection, curScale, height: number, width: number) => {
-                    selection.attr("d", (d) => {
-                        return "M " + curScale(d) + " 0 L" + curScale(d) + " " + height;
-                    });
-                };
-            } else {
-                gridFunction = (selection, curScale, height: number, width: number) => {
-                    selection.attr("d", (d) => {
-                        return "M 0 " + curScale(d) + " L" + width + " " + curScale(d);
-                    });
-                };
-            }
+        public render() {
             var scale = <Scale> this.getModel().get("scale");
             var d3Scale = scale.getScaleRepresentation();
             var area: Area = <Area> this.getModel().get("area");
@@ -110,63 +64,98 @@ module Lyra {
                 .attr("stroke", this.getModel().get("gridline"))
                 .attr("stroke-width", 0.5);
 
-            gridFunction(gridSelection, d3Scale, areaHeight, areaWidth);
+            if (this.getModel().get("location") === "bottom" || this.getModel().get("location") === "top") {
+                gridSelection.attr("d", (d) => {
+                    return "M " + d3Scale(d) + " 0 L" + d3Scale(d) + " " + this.getElement().get("height");
+                });
+
+            } else {
+                gridSelection.attr("d", (d) => {
+                    return "M 0 " + d3Scale(d) + " L" + this.getElement().get("width") + " " + d3Scale(d);
+                });
+            }
 
             gridSelection.exit().remove();
         }
+    }
+
+    export class AxisView extends ContextView {
+        private axis;
+        private xOffset: number;
+        private yOffset: number;
+        private bbox;
+
+        private axisSvg: D3.Selection;
+        private backgroundSvg: D3.Selection;
+
+        public static EVENT_RENDER: string = "render";
+
+        public static createView(axis: Axis, element: Element, viewContext: Context): AxisView {
+            return new AxisView(axis, element, viewContext);
+        }
+
+        private buildViews() {
+
+            var totalSvg = this.getSelection()
+                .append("g");
+
+            this.backgroundSvg = totalSvg
+                .append("svg:rect")
+                .attr("fill-opacity", 0)
+                .attr("x", 0)
+                .attr("y", 0);
+
+            this.axisSvg = totalSvg.append("g")
+                .attr("class", Axis.className)
+                .attr("name", this.getModel().getName());
+
+            var areaView: AreaView = <AreaView> this.getContext().getNode(Area.className, this.getModel().get("area").getName());
+            var gridView = new GridView(this.getModel(), areaView.getElementForAttachmentPoint(Area.ATTACH_INSIDE), new Context());
+        }
+
+        private renderAxis() {
+            var scale = <Scale> this.getModel().get("scale");
+            var d3Scale = scale.getScaleRepresentation();
+            var axis = d3.svg.axis()
+                .scale(d3Scale)
+                .orient(this.getModel().get("orient"))
+                .ticks(this.getModel().get("ticks"));
+            this.axisSvg.call(axis);
+        }
 
         private updateLayout() {
-            var transformFunction;
-            switch (this.getModel().get("location")) {
-                case "bottom":
-                    transformFunction = () => {
-                        this.axisSvg.attr("transform", "translate(" + this.xOffset + "," + (this.yOffset) + ")");
-                        this.backgroundSvg.attr("x", this.xOffset).attr("y", (this.yOffset))
-                            .attr("height", this.bbox.width).attr("width", this.getElement().get("width"));
-                    };
-                    break;
-                case "top":
-                    transformFunction = () => {
-                        this.axisSvg.attr("transform", "translate(" + this.xOffset + "," + this.yOffset + ")");
-                        this.backgroundSvg.attr("x", this.xOffset).attr("y", this.yOffset - this.bbox.width)
-                            .attr("height", this.bbox.width).attr("width", this.getElement().get("width"));
-                    };
-                    break;
-                case "left":
-                    transformFunction = () => {
-                        this.axisSvg.attr("transform", "translate(" + this.xOffset + "," + this.yOffset + ")");
-                        this.backgroundSvg.attr("x", this.xOffset - this.bbox.width).attr("y", this.yOffset)
-                            .attr("height", this.getElement().get("height")).attr("width", this.bbox.width);
-                    };
-                    break;
-                case "right":
-                    transformFunction = () => {
-                        this.axisSvg.attr("transform", "translate(" + (this.xOffset) + "," + this.yOffset + ")");
-                        this.backgroundSvg.attr("x", (this.xOffset)).attr("y", this.yOffset)
-                            .attr("height", this.getElement().get("height")).attr("width", this.bbox.width);
-                    };
-
-                    break;
-                default:
-            }
-
             // Layout junk
             this.bbox = this.axisSvg.node().getBBox();
-            this.bbox.width = Math.ceil(this.bbox.width/5)*5;
-            this.bbox.height = Math.ceil(this.bbox.height/5)*5;
 
-            this.getElement().set({
-                "requestedWidth": this.bbox.width,
-                "requestedHeight": this.bbox.height
-            });
+            // Round it so that every little pixel change doesn't trigger a re-layout
+            this.bbox.roundedWidth = Math.ceil(this.bbox.width/5)*5;
+            this.bbox.roundedHeight = Math.ceil(this.bbox.height/5)*5;
 
-            if (this.getModel().get("orient") === "left") {
-                this.xOffset = this.bbox.width;
+            switch(this.getModel().get("orient")) {
+                case "top":
+                    this.yOffset = this.bbox.roundedHeight;
+                    // no break because we want the statement below to run
+                case "bottom":
+                    this.getElement().set("requestedHeight", this.bbox.roundedHeight);
+                    this.backgroundSvg
+                        .attr("height", this.bbox.roundedHeight)
+                        .attr("width", this.bbox.width)
+                        .attr("x", this.bbox.x + this.xOffset);
+                    break;
+                case "left":
+                    this.xOffset = this.bbox.roundedWidth;
+                    // no break because we want the statement below to run
+                case "right":
+                    this.getElement().set("requestedWidth", this.bbox.roundedWidth);
+                    this.backgroundSvg
+                        .attr("height", this.bbox.height)
+                        .attr("width", this.bbox.roundedWidth)
+                        .attr("y", this.bbox.y + this.yOffset);
+                    break;
             }
-            if (this.getModel().get("orient") === "top") {
-                this.yOffset = this.bbox.width;
-            }
-            transformFunction();
+
+            this.axisSvg.attr("transform", "translate(" + this.xOffset + "," + this.yOffset + ")");
+
         }
 
         public load() {
@@ -181,9 +170,6 @@ module Lyra {
 
         public render() {
             this.renderAxis();
-            if(this.gridSvg) {
-                this.renderGrid();
-            }
 
             this.updateLayout();
 
