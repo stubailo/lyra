@@ -49,7 +49,7 @@ module Lyra {
          * operations before the contextNode is rendered.
          */
         constructor(spec: any, context: Context, pluginName: string) {
-            super(spec[ContextModel.SPEC_NAME_KEY], context, pluginName);
+            super(spec[ContextModel.SPEC_NAME_KEY], pluginName, context);
 
             this.subViewModels = {};
             _.each(this.getAttachmentPoints(), (attachmentPoint) => {
