@@ -22,7 +22,7 @@ module Lyra {
 
         public static TEXT_KEY = "text";
 
-        public static parse(spec: any, context: Context) {
+        public static createModel(spec: any, context: Context) {
             return new Label(spec, context, Label.pluginName);
         }
 

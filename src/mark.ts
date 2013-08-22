@@ -31,7 +31,7 @@ module Lyra {
         private type: string;
         private markProperties;
 
-        public static parse(spec: any, context: Context) {
+        public static createModel(spec: any, context: Context) {
             return new Mark(spec, context, Mark.pluginName);
         }
 
@@ -66,7 +66,7 @@ module Lyra {
             if (spec[Mark.SCALE_KEY]) {
                 scale = this.getContext().getNode(Scale.pluginName, spec[Mark.SCALE_KEY]);
             } else {
-                scale = Scale.parse({
+                scale = Scale.createModel({
                     type: "identity"
                 }, new Context());
             }

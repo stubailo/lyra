@@ -45,7 +45,7 @@ module Lyra {
             // Parse all of the models
             for (var pluginName in spec) {
                 if (Lyra.getModel(pluginName) !== undefined) {
-                    ContextModel.parseAll(spec[pluginName], this.context, Lyra.getModel(pluginName));
+                    ContextModel.createModels(spec[pluginName], this.context, Lyra.getModel(pluginName));
                 }
             }
         }

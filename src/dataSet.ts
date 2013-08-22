@@ -25,7 +25,7 @@ module Lyra {
         public static pluginName: string = "data";
         public static EVENT_CHANGE: string = "change";
 
-        public static parse(spec: any, context: Context) {
+        public static createModel(spec: any, context: Context) {
             if (spec[DataSet.SPEC_TYPE_KEY]) {
                 switch (spec[DataSet.SPEC_TYPE_KEY]) {
                     case "bar":

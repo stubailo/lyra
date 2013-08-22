@@ -22,7 +22,7 @@ module Lyra {
 
         public static EVENT_CHANGE: string = "change";
 
-        public static parse(spec: any, context: Context): Scale {
+        public static createModel(spec: any, context: Context): Scale {
             switch (spec[Scale.TYPE_KEY]) {
                 case "linear":
                     return new LinearScale(spec, context, Scale.pluginName);
