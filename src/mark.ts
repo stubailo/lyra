@@ -120,8 +120,6 @@ module Lyra {
     }
 
     export class MarkView extends ContextView {
-        public static EVENT_RENDER: string = "render";
-
         public load() {
             var render = $.proxy(this.render, this);
             this.getModel().on("change", render);

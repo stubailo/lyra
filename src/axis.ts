@@ -88,8 +88,6 @@ module Lyra {
         private axisSvg: D3.Selection;
         private backgroundSvg: D3.Selection;
 
-        public static EVENT_RENDER: string = "render";
-
         public static createView(axis: Axis, element: Element, viewContext: Context): AxisView {
             return new AxisView(axis, element, viewContext);
         }
@@ -106,7 +104,7 @@ module Lyra {
                 .attr("y", 0);
 
             this.axisSvg = totalSvg.append("g")
-                .attr("class", Axis.className)
+                .attr("class", Axis.pluginName)
                 .attr("name", this.getModel().getName());
 
             var areaView: AreaView = <AreaView> this.getContext().getNode(Area.pluginName, this.getModel().get("area").getName());

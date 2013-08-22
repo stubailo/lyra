@@ -97,7 +97,7 @@ module Lyra {
         }
 
         public render() {
-            _.each(<AreaView[]> this.viewContext.getNodesOfClass(Area.className), (areaView) => {
+            _.each(<AreaView[]> this.viewContext.getNodesOfClass(Area.pluginName), (areaView) => {
                 areaView.render();
             });
         }
@@ -118,8 +118,8 @@ module Lyra {
             var curX = 0, curY = 0, maxY = 0, yBound = 0, xBound = 0;
 
             _.each(<AreaView[]> this.viewContext.getNodesOfClass(Area.pluginName), (areaView) => {
-                var areaWidth = areaView.calculatedWidth();
-                var areaHeight = areaView.calculatedHeight();
+                var areaWidth = areaView.get("totalWidth");
+                var areaHeight = areaView.get("totalHeight");
                 if ((curX + areaWidth) >= windowWidth) {
                     curX = 0;
                     curY = maxY;

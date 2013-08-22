@@ -46,8 +46,6 @@ module Lyra {
     }
 
     export class AreaView extends ContextView {
-        public static EVENT_RENDER: string = "render";
-
         private totalSelection: D3.Selection;
         private graphSelection: D3.Selection;
         private background: D3.Selection;
@@ -68,14 +66,6 @@ module Lyra {
             this.getModel().on("change:totalWidth change:totalHeight", $.proxy(this.updateDimensions, this));
             this.getModel().on("change:height change:width change:paddingLeft change:paddingRight change:paddingTop change:paddingBottom", $.proxy(this.render, this));
             this.on(ContextView.LAYOUT_CHANGE, $.proxy(this.calculateLayout, this));
-        }
-
-        public calculatedWidth(): number {
-            return this.get("totalWidth");
-        }
-
-        public calculatedHeight(): number {
-            return this.get("totalHeight");
         }
 
         public buildViews() {
@@ -279,8 +269,6 @@ module Lyra {
                     element.getSelection().attr("transform", "translate(" + x + ", " + y + ")");
                 });
             });
-
-            this.trigger(AreaView.EVENT_RENDER);
         }
     }
 }
