@@ -36,7 +36,7 @@ module Lyra {
          * @param classType A class (should be extending ContextNode) that will be created
          * @return An array of ContextNodes of type classtype
          */
-        public static createModels(specList: any[], context: Context, classType: any): any[] {
+        public static createModels(classType: any, specList: any[], context: Context): any[] {
             return _.map(specList, function(spec) {
                 return classType.createModel(spec, context);
             });
