@@ -120,15 +120,13 @@ module Lyra {
     }
 
     export class MarkView extends ContextView {
-        public static EVENT_RENDER: string = "render";
-
         public load() {
             var render = $.proxy(this.render, this);
             this.getModel().on("change", render);
             this.on("change", render);
         }
 
-        public static createView(mark: Mark, element: D3.Selection, viewContext: Context): MarkView {
+        public static createView(mark: Mark, element: Element, viewContext: Context): MarkView {
             switch (mark.getType()) {
                 case Mark.CIRCLE_TYPE:
                     return new CircleMarkView(mark, element, viewContext);
@@ -147,7 +145,7 @@ module Lyra {
         }
 
         public getMarkSelection(): D3.Selection {
-            return this.getElement().selectAll((<Mark> this.getModel()).getType() + "." + this.getModel().getName());
+            return this.getSelection().selectAll((<Mark> this.getModel()).getType() + "." + this.getModel().getName());
         }
     }
 
@@ -166,8 +164,6 @@ module Lyra {
                     return this.get(key)(item);
                 });
             });
-
-            this.trigger(MarkView.EVENT_RENDER);
         }
     }
 
@@ -205,8 +201,6 @@ module Lyra {
             line.interpolate("linear");
 
             this.getMarkSelection().attr("d", line);
-
-            this.trigger(MarkView.EVENT_RENDER);
         }
     }
 
@@ -234,8 +228,6 @@ module Lyra {
                     return this.get(key)(item);
                 });
             });
-
-            this.trigger(MarkView.EVENT_RENDER);
         }
     }
 }

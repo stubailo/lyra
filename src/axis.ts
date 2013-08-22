@@ -18,21 +18,12 @@ module Lyra {
     export class Axis extends ContextModel {
         public static pluginName: string;
 
-        /*
-         * Each property is a function of one item that specifies that property of an SVG element.
-         * So for example a circle would have one function for "cx", one for "cy", etc.
-         */
-        public static AXIS_WIDTH: string = "axisWidth";
-        public static AXIS_PADDING: string = "axisPadding";
-
         public static parse(spec: any, context: Context) {
             return new Axis(spec, context, Axis.pluginName);
         }
 
         public defaults() {
             return _(super.defaults()).extend({
-                "axisPadding": 2,
-                "axisWidth": 45
             });
         }
 
@@ -41,150 +32,144 @@ module Lyra {
         }
     }
 
+    class GridView extends ContextView {
+        private gridSvg: D3.Selection;
+
+        public load () {
+            this.buildViews();
+
+            this.getModel().on("change", () => {this.render()});
+            this.getElement().on("change", () => {this.render()});
+        }
+
+        private buildViews() {
+            this.gridSvg = this.getSelection()
+                .append("g")
+                .attr("class", "grid");
+        }
+
+        public render() {
+            var scale = <Scale> this.getModel().get("scale");
+            var d3Scale = scale.getScaleRepresentation();
+            var area: Area = <Area> this.getModel().get("area");
+            var areaHeight = area.get("height");
+            var areaWidth = area.get("width");
+
+            var gridSelection = this.gridSvg.selectAll("path." + this.getModel().getName())
+                .data(d3Scale.ticks(this.getModel().get("ticks")));
+
+            gridSelection.enter()
+                .append("path")
+                .attr("class", this.getModel().getName())
+                .attr("stroke", this.getModel().get("gridline"))
+                .attr("stroke-width", 0.5);
+
+            if (this.getModel().get("location") === "bottom" || this.getModel().get("location") === "top") {
+                gridSelection.attr("d", (d) => {
+                    return "M " + d3Scale(d) + " 0 L" + d3Scale(d) + " " + this.getElement().get("height");
+                });
+
+            } else {
+                gridSelection.attr("d", (d) => {
+                    return "M 0 " + d3Scale(d) + " L" + this.getElement().get("width") + " " + d3Scale(d);
+                });
+            }
+
+            gridSelection.exit().remove();
+        }
+    }
+
     export class AxisView extends ContextView {
         private axis;
         private xOffset: number;
         private yOffset: number;
-        private renderHelper;
+        private bbox;
 
-        public static EVENT_RENDER: string = "render";
+        private axisSvg: D3.Selection;
+        private backgroundSvg: D3.Selection;
 
-        public static createView(axis: Axis, element: D3.Selection, viewContext: Context): AxisView {
+        public static createView(axis: Axis, element: Element, viewContext: Context): AxisView {
             return new AxisView(axis, element, viewContext);
         }
 
-        public load() {
-            this.axis = d3.svg.axis();
-            this.xOffset = 0;
-            this.yOffset = 0;
-            if (this.getModel().get("orient") === "left") {
-                this.xOffset += this.getModel().get(Axis.AXIS_WIDTH);
-            }
-            if (this.getModel().get("orient") === "top") {
-                this.yOffset += this.getModel().get(Axis.AXIS_WIDTH);
-            }
+        private buildViews() {
 
-            var totalSvg = this.getElement()
+            var totalSvg = this.getSelection()
                 .append("g");
 
-            var rectSvg = totalSvg
+            this.backgroundSvg = totalSvg
                 .append("svg:rect")
-                .attr("fill-opacity", 0);
+                .attr("fill-opacity", 0)
+                .attr("x", 0)
+                .attr("y", 0);
 
-            var axisSvg = totalSvg.append("g")
+            this.axisSvg = totalSvg.append("g")
                 .attr("class", Axis.pluginName)
                 .attr("name", this.getModel().getName());
 
-            if (this.getModel().get("gridline")) {
-                var areaView: AreaView = <AreaView> this.getContext().getNode(Area.pluginName, this.getModel().get("area").getName());
+            var areaView: AreaView = <AreaView> this.getContext().getNode(Area.pluginName, this.getModel().get("area").getName());
+            var gridView = new GridView(this.getModel(), areaView.getElementForAttachmentPoint(Area.ATTACH_INSIDE), new Context());
+        }
 
-                var gridSvg = areaView.getGraphArea()
-                    .append("g")
-                    .attr("class", "grid");
-            }
 
-            var gridFunction;
-            if (this.getModel().get("location") === "bottom" || this.getModel().get("location") === "top") {
-                gridFunction = (selection, curScale, height: number, width: number) => {
-                    selection.attr("d", (d) => {
-                        return "M " + curScale(d) + " 0 L" + curScale(d) + " " + height;
-                    });
-                };
-            } else {
-                gridFunction = (selection, curScale, height: number, width: number) => {
-                    selection.attr("d", (d) => {
-                        return "M 0 " + curScale(d) + " L" + width + " " + curScale(d);
-                    });
-                };
-            }
+        private renderAxis() {
+            var scale = <Scale> this.getModel().get("scale");
+            var d3Scale = scale.getScaleRepresentation();
+            var axis = d3.svg.axis()
+                .scale(d3Scale)
+                .orient(this.getModel().get("orient"))
+                .ticks(this.getModel().get("ticks"));
+            this.axisSvg.call(axis);
+        }
 
-            var transformFunction;
-            switch (this.getModel().get("location")) {
-                case "bottom":
-                    transformFunction = (axisSvg, areaHeight, areaWidth) => {
-                        axisSvg.attr("transform", "translate(" + this.xOffset + "," + (this.yOffset) + ")");
-                        rectSvg.attr("x", this.xOffset).attr("y", (this.yOffset))
-                            .attr("height", this.getModel().get(Axis.AXIS_WIDTH)).attr("width", areaWidth);
-                    };
-                    break;
+        private updateLayout() {
+            // Layout junk
+            this.bbox = this.axisSvg.node().getBBox();
+
+            // Round it so that every little pixel change doesn't trigger a re-layout
+            this.bbox.roundedWidth = Math.ceil(this.bbox.width/5)*5;
+            this.bbox.roundedHeight = Math.ceil(this.bbox.height/5)*5;
+
+            switch(this.getModel().get("orient")) {
                 case "top":
-                    transformFunction = (axisSvg, areaHeight, areaWidth) => {
-                        axisSvg.attr("transform", "translate(" + this.xOffset + "," + this.yOffset + ")");
-                        rectSvg.attr("x", this.xOffset).attr("y", this.yOffset - this.getModel().get(Axis.AXIS_WIDTH))
-                            .attr("height", this.getModel().get(Axis.AXIS_WIDTH)).attr("width", areaWidth);
-                    };
+                    this.yOffset = this.bbox.roundedHeight;
+                    // no break because we want the statement below to run
+                case "bottom":
+                    this.getElement().set("requestedHeight", this.bbox.roundedHeight);
+                    this.backgroundSvg
+                        .attr("height", this.bbox.roundedHeight)
+                        .attr("width", this.bbox.width)
+                        .attr("x", this.bbox.x + this.xOffset);
                     break;
                 case "left":
-                    transformFunction = (axisSvg, areaHeight, areaWidth) => {
-                        axisSvg.attr("transform", "translate(" + this.xOffset + "," + this.yOffset + ")");
-                        rectSvg.attr("x", this.xOffset - this.getModel().get(Axis.AXIS_WIDTH)).attr("y", this.yOffset)
-                            .attr("height", areaHeight).attr("width", this.getModel().get(Axis.AXIS_WIDTH));
-                    };
-                    break;
+                    this.xOffset = this.bbox.roundedWidth;
+                    // no break because we want the statement below to run
                 case "right":
-                    transformFunction = (axisSvg, areaHeight, areaWidth) => {
-                        axisSvg.attr("transform", "translate(" + (this.xOffset) + "," + this.yOffset + ")");
-                        rectSvg.attr("x", (this.xOffset)).attr("y", this.yOffset)
-                            .attr("height", areaHeight).attr("width", this.getModel().get(Axis.AXIS_WIDTH));
-                    };
+                    this.getElement().set("requestedWidth", this.bbox.roundedWidth);
+                    this.backgroundSvg
+                        .attr("height", this.bbox.height)
+                        .attr("width", this.bbox.roundedWidth)
+                        .attr("y", this.bbox.y + this.yOffset);
                     break;
-                default:
             }
 
-            this.renderHelper = () => {
-                var scale = <Scale> this.getModel().get("scale");
-                var d3Scale = scale.getScaleRepresentation();
+            this.axisSvg.attr("transform", "translate(" + this.xOffset + "," + this.yOffset + ")");
 
-                var area: Area = <Area> this.getModel().get("area");
-                var areaHeight = area.get("height");
-                var areaWidth = area.get("width");
-                this.axis
-                    .scale(d3Scale)
-                    .orient(this.getModel().get("orient"))
-                    .ticks(this.getModel().get("ticks"));
+        }
 
-                axisSvg.call(this.axis);
+        public load() {
+            this.xOffset = 0;
+            this.yOffset = 0;
 
-                if (gridSvg) {
-                    var gridSelection = gridSvg.selectAll("path." + this.getModel().getName())
-                        .data(d3Scale.ticks(this.getModel().get("ticks")));
+            this.buildViews();
+            this.render();
 
-                    gridSelection.enter()
-                        .append("path")
-                        .attr("class", this.getModel().getName())
-                        .attr("stroke", this.getModel().get("gridline"))
-                        .attr("stroke-width", 0.5);
-
-                    gridFunction(gridSelection, d3Scale, areaHeight, areaWidth);
-
-                    gridSelection.exit().remove();
-                }
-
-                transformFunction(axisSvg, areaHeight, areaWidth);
-                this.trigger(AxisView.EVENT_RENDER);
-            };
-
-            this.getModel().on("change", $.proxy(this.render, this));
+            this.getModel().on("change", () => {this.render()});
         }
 
         public render() {
-            this.renderHelper();
-        }
-
-        public calculatedWidth(): number {
-            if (this.get("orient") === "left" || this.get("orient") === "right") {
-                return this.get(Axis.AXIS_WIDTH);
-            } else {
-                throw new Error("Axis " + this.getName() + " got asked about its undetermined length.");
-            }
-        }
-
-        public calculatedHeight(): number {
-            if (this.get("orient") === "top" || this.get("orient") === "bottom") {
-                return this.get(Axis.AXIS_WIDTH);
-            } else {
-                throw new Error("Axis " + this.getName() + " got asked about its undetermined length.");
-            }
+            this.renderAxis();
+            this.updateLayout();
         }
     }
 }
