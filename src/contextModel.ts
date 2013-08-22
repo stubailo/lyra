@@ -48,8 +48,8 @@ module Lyra {
          * This method should not be overriden. Instead, override the load method to perform additional
          * operations before the contextNode is rendered.
          */
-        constructor(spec: any, context: Context, className: string) {
-            super(spec[ContextModel.SPEC_NAME_KEY], context, className);
+        constructor(spec: any, context: Context, pluginName: string) {
+            super(spec[ContextModel.SPEC_NAME_KEY], context, pluginName);
 
             this.subViewModels = {};
             _.each(this.getAttachmentPoints(), (attachmentPoint) => {
@@ -112,7 +112,7 @@ module Lyra {
             if (_.contains(this.getAttachmentPoints(), attachmentPoint)) {
                 this.subViewModels[attachmentPoint].push(model);
             } else {
-                throw new Error("Attachment point " + attachmentPoint + " doesn't exist on " + this.getClassName() + ".");
+                throw new Error("Attachment point " + attachmentPoint + " doesn't exist on " + this.getPluginName() + ".");
             }
         }
 

@@ -16,10 +16,10 @@
 
 module Lyra {
     export class Axis extends ContextModel {
-        public static className: string;
+        public static pluginName: string;
 
         public static parse(spec: any, context: Context) {
-            return new Axis(spec, context, Axis.className);
+            return new Axis(spec, context, Axis.pluginName);
         }
 
         public defaults() {
@@ -109,9 +109,10 @@ module Lyra {
                 .attr("class", Axis.className)
                 .attr("name", this.getModel().getName());
 
-            var areaView: AreaView = <AreaView> this.getContext().getNode(Area.className, this.getModel().get("area").getName());
+            var areaView: AreaView = <AreaView> this.getContext().getNode(Area.pluginName, this.getModel().get("area").getName());
             var gridView = new GridView(this.getModel(), areaView.getElementForAttachmentPoint(Area.ATTACH_INSIDE), new Context());
         }
+
 
         private renderAxis() {
             var scale = <Scale> this.getModel().get("scale");

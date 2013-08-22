@@ -25,7 +25,7 @@ module Lyra {
         // Private references to the context, and name
         private context: Context;
         private name: string;
-        private className: string;
+        private pluginName: string;
 
         /* Creates a ContextNode, setting up the name, context, and properties from the specification
          * passed to it.
@@ -33,17 +33,17 @@ module Lyra {
          * This method should not be overriden. Instead, override the load method to perform additional
          * operations before the contextNode is rendered.
          */
-        constructor(name: string, context: Context, className: string) {
+        constructor(name: string, context: Context, pluginName: string) {
             super();
             Backbone.Model.apply(this, []);
 
             // Setup instance variables
             this.name = name;
             this.context = context;
-            this.className = className;
+            this.pluginName = pluginName;
 
             // Save this ContextNode in the context
-            this.context.set(className + ":" + this.name, this);
+            this.context.set(pluginName + ":" + this.name, this);
         }
 
         public getName(): string {
@@ -54,8 +54,8 @@ module Lyra {
             return this.context;
         }
 
-        public getClassName(): string {
-            return this.className;
+        public getPluginName(): string {
+            return this.pluginName;
         }
     }
 }

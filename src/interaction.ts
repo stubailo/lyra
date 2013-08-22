@@ -91,17 +91,17 @@ module Lyra {
             super(modelContext, viewContext, id);
 
             if (spec[PanInteraction.AREA_KEY]) {
-                var areaView: AreaView = <AreaView> this.getViewContext().getNode(Area.className, spec[PanInteraction.AREA_KEY]);
+                var areaView: AreaView = <AreaView> this.getViewContext().getNode(Area.pluginName, spec[PanInteraction.AREA_KEY]);
                 this.element = areaView.getGraphArea();
             } else if (spec[PanInteraction.AXIS_KEY]) {
-                var axisView: AxisView = <AxisView> this.getViewContext().getNode(Axis.className, spec[PanInteraction.AXIS_KEY]);
+                var axisView: AxisView = <AxisView> this.getViewContext().getNode(Axis.pluginName, spec[PanInteraction.AXIS_KEY]);
                 this.element = axisView.getSelection();
             } else {
                 throw new Error("No " + PanInteraction.AXIS_KEY + " or " + PanInteraction.AREA_KEY + " specified in PanInteraction.");
             }
 
             if (spec[PanInteraction.SCALE_KEY]) {
-                this.scale = this.getModelContext().getNode(Scale.className, spec[PanInteraction.SCALE_KEY]);
+                this.scale = this.getModelContext().getNode(Scale.pluginName, spec[PanInteraction.SCALE_KEY]);
             } else {
                 throw new Error("No " + PanInteraction.SCALE_KEY + " specified in PanInteraction.");
             }
@@ -173,17 +173,17 @@ module Lyra {
             super(modelContext, viewContext, id);
 
             if (spec[ZoomInteraction.AREA_KEY]) {
-                var areaView: AreaView = <AreaView> this.getViewContext().getNode(Area.className, spec[ZoomInteraction.AREA_KEY]);
+                var areaView: AreaView = <AreaView> this.getViewContext().getNode(Area.pluginName, spec[ZoomInteraction.AREA_KEY]);
                 this.element = areaView.getGraphArea();
             } else if (spec[ZoomInteraction.AXIS_KEY]) {
-                var axisView: AxisView = <AxisView> this.getViewContext().getNode(Axis.className, spec[ZoomInteraction.AXIS_KEY]);
+                var axisView: AxisView = <AxisView> this.getViewContext().getNode(Axis.pluginName, spec[ZoomInteraction.AXIS_KEY]);
                 this.element = axisView.getSelection();
             } else {
                 throw new Error("No " + ZoomInteraction.AXIS_KEY + " or " + ZoomInteraction.AREA_KEY + " specified in PanInteraction.");
             }
 
             if (spec[ZoomInteraction.SCALE_KEY]) {
-                this.scale = this.getModelContext().getNode(Scale.className, spec[ZoomInteraction.SCALE_KEY]);
+                this.scale = this.getModelContext().getNode(Scale.pluginName, spec[ZoomInteraction.SCALE_KEY]);
             } else {
                 throw new Error("No scale specified for ZoomInteraction");
             }

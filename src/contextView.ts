@@ -33,7 +33,7 @@ module Lyra {
                 this.subViews[attachmentPoint] = [];
             });
 
-            super(model.getName(), viewContext, model.getClassName());
+            super(model.getName(), viewContext, model.getPluginName());
 
             this.load();
         }
@@ -68,7 +68,7 @@ module Lyra {
                     this.trigger(ContextView.LAYOUT_CHANGE);
                 });
             } else {
-                throw new Error("Attachment point " + attachmentPoint + " doesn't exist on " + this.getClassName() + ".");
+                throw new Error("Attachment point " + attachmentPoint + " doesn't exist on " + this.getPluginName() + ".");
             }
         }
 

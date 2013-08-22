@@ -23,7 +23,7 @@ module Lyra {
         public static CIRCLE_TYPE = "circle";
         public static RECTANGLE_TYPE = "rect";
 
-        public static className: string;
+        public static pluginName: string;
 
         /* Each property is a function of one item that specifies that property of an SVG element.
          * So for example a circle would have one function for "cx", one for "cy", etc.
@@ -32,7 +32,7 @@ module Lyra {
         private markProperties;
 
         public static parse(spec: any, context: Context) {
-            return new Mark(spec, context, Mark.className);
+            return new Mark(spec, context, Mark.pluginName);
         }
 
         public load() {
@@ -64,7 +64,7 @@ module Lyra {
 
             var scale;
             if (spec[Mark.SCALE_KEY]) {
-                scale = this.getContext().getNode(Scale.className, spec[Mark.SCALE_KEY]);
+                scale = this.getContext().getNode(Scale.pluginName, spec[Mark.SCALE_KEY]);
             } else {
                 scale = Scale.parse({
                     type: "identity"
