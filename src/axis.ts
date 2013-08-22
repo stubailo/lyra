@@ -18,7 +18,7 @@ module Lyra {
     export class Axis extends ContextModel {
         public static pluginName: string;
 
-        public static parse(spec: any, context: Context) {
+        public static createModel(spec: any, context: Context) {
             return new Axis(spec, context, Axis.pluginName);
         }
 

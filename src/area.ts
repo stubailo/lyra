@@ -35,7 +35,7 @@ module Lyra {
             });
         }
 
-        public static parse(spec: any, context: Context) {
+        public static createModel(spec: any, context: Context) {
             return new Area(spec, context, Area.pluginName);
         }
 
