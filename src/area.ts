@@ -16,8 +16,6 @@
 
 module Lyra {
     export class Area extends ContextModel {
-        public static pluginName: string;
-
         public static ATTACH_INSIDE: string = "inside";
         public static ATTACH_TOP: string = "top";
         public static ATTACH_RIGHT: string = "right";
@@ -33,10 +31,6 @@ module Lyra {
                 "totalHeight": 300,
                 "totalWidth": 400
             });
-        }
-
-        public static createModel(spec: any, context: Context) {
-            return new Area(spec, context, Area.pluginName);
         }
 
         public load() {

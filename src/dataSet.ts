@@ -22,20 +22,19 @@ module Lyra {
     export class DataSet extends ContextModel {
         private static SPEC_TYPE_KEY: string = "type";
 
-        public static pluginName: string = "data";
         public static EVENT_CHANGE: string = "change";
 
-        public static createModel(spec: any, context: Context) {
+        public static createModel(spec: any) {
             if (spec[DataSet.SPEC_TYPE_KEY]) {
                 switch (spec[DataSet.SPEC_TYPE_KEY]) {
                     case "bar":
-                        return new BarDataSetTransform(spec, context, DataSet.pluginName);
+                        return BarDataSetTransform;
                         break;
                     default:
                         throw new Error("Unsupported transform type: " + spec[DataSet.SPEC_TYPE_KEY]);
                 }
             } else {
-                return new DataSet(spec, context, DataSet.pluginName);
+                return DataSet;
             }
         }
 

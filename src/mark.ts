@@ -23,17 +23,11 @@ module Lyra {
         public static CIRCLE_TYPE = "circle";
         public static RECTANGLE_TYPE = "rect";
 
-        public static pluginName: string;
-
         /* Each property is a function of one item that specifies that property of an SVG element.
          * So for example a circle would have one function for "cx", one for "cy", etc.
          */
         private type: string;
         private markProperties;
-
-        public static createModel(spec: any, context: Context) {
-            return new Mark(spec, context, Mark.pluginName);
-        }
 
         public load() {
             var context = this.getContext();
@@ -66,9 +60,10 @@ module Lyra {
             if (spec[Mark.SCALE_KEY]) {
                 scale = this.getContext().getNode(Scale.pluginName, spec[Mark.SCALE_KEY]);
             } else {
-                scale = Scale.createModel({
-                    type: "identity"
-                }, new Context());
+                // HACKHACK PLEASE FIX
+                var fakeSpec = {type: "identity"};
+                var identityScaleClass = Scale.createModel(fakeSpec);
+                scale = new identityScaleClass(fakeSpec, new Context(), "");
             }
 
             // HACKHACK we need real event handling

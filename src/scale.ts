@@ -18,18 +18,16 @@ module Lyra {
     export class Scale extends ContextModel {
         private static TYPE_KEY: string = "type";
 
-        public static pluginName: string = "scales";
-
         public static EVENT_CHANGE: string = "change";
 
-        public static createModel(spec: any, context: Context): Scale {
+        public static createModel(spec: any): any {
             switch (spec[Scale.TYPE_KEY]) {
                 case "linear":
-                    return new LinearScale(spec, context, Scale.pluginName);
+                    return LinearScale;
                 case "time":
-                    return new TimeScale(spec, context, Scale.pluginName);
+                    return TimeScale;
                 case "identity":
-                    return new IdentityScale(spec, context, Scale.pluginName);
+                    return IdentityScale;
                 default:
                     throw new Error("Invalid Scale type: " + spec[Scale.TYPE_KEY]);
             }

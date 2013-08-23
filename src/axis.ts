@@ -16,12 +16,6 @@
 
 module Lyra {
     export class Axis extends ContextModel {
-        public static pluginName: string;
-
-        public static createModel(spec: any, context: Context) {
-            return new Axis(spec, context, Axis.pluginName);
-        }
-
         public defaults() {
             return _(super.defaults()).extend({
             });
