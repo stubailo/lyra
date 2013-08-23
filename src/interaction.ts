@@ -273,6 +273,7 @@ module Lyra {
         }
 
         private doAutoZoom() {
+            var _this = this;
             var domainInverted: boolean = this.rangeScale.get("domainBegin") > this.rangeScale.get("domainEnd");
 
             var domain = [this.domainScale.get("domainBegin"), this.domainScale.get("domainEnd")];
