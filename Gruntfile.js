@@ -52,7 +52,22 @@ module.exports = function(grunt) {
         configuration: grunt.file.readJSON(".tslintrc")
       },
       files: {
-        src: ['src/main.ts', 'src/tests.ts']
+        src: [
+          'src/area.ts',
+          'src/axis.ts',
+          'src/context.ts',
+          'src/contextModel.ts',
+          'src/contextNode.ts',
+          'src/contextView.ts',
+          'src/dataSet.ts',
+          'src/element.ts',
+          'src/interaction.ts',
+          'src/label.ts',
+          'src/main.ts',
+          'src/mark.ts',
+          'src/scale.ts',
+          'test/js/tests.ts',
+        ]
       }
     },
 
@@ -78,7 +93,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-open');
 
-  grunt.registerTask("default", ["tslint", "typescript", "less"]);
+  grunt.registerTask("default", ["typescript", "less", "tslint"]);
   grunt.registerTask("test", ["default", "mocha"]);
   grunt.registerTask("example", ["default", "open:example"]);
 };

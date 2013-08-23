@@ -119,8 +119,6 @@ module Lyra {
             }
         }
 
-
-
         public addSubViewModel(model: ContextNode, attachmentPoint: string) {
             if (_.contains(this.getAttachmentPoints(), attachmentPoint)) {
                 this.subViewModels[attachmentPoint].push(model);

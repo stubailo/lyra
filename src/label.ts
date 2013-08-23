@@ -42,7 +42,7 @@ module Lyra {
         public load() {
             this.getSelection().append("text");
 
-            if(this.get("location") === "top" || this.get("location") === "bottom") {
+            if (this.get("location") === "top" || this.get("location") === "bottom") {
                 this.getElement().set("requestedHeight", Label.TEXT_HEIGHT);
             } else {
                 this.getElement().set("requestedWidth", Label.TEXT_HEIGHT);
@@ -60,14 +60,14 @@ module Lyra {
 
             var bbox = textElement[0][0].getBBox();
 
-            if(this.get("location") === "top" || this.get("location") === "bottom") {
-                textElement.attr("x", this.getElement().get("width")/2);
-                textElement.attr("y", Label.TEXT_HEIGHT/2);
+            if (this.get("location") === "top" || this.get("location") === "bottom") {
+                textElement.attr("x", this.getElement().get("width") / 2);
+                textElement.attr("y", Label.TEXT_HEIGHT / 2);
 
                 this.getElement().set("requestedHeight", Label.TEXT_HEIGHT);
             } else {
-                textElement.attr("x", -this.getElement().get("height")/2);
-                textElement.attr("y", Label.TEXT_HEIGHT/2);
+                textElement.attr("x", -this.getElement().get("height") / 2);
+                textElement.attr("y", Label.TEXT_HEIGHT / 2);
                 textElement.attr("transform", "rotate(-90)");
 
                 this.getElement().set("requestedWidth", Label.TEXT_HEIGHT);

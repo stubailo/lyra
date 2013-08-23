@@ -32,8 +32,13 @@ module Lyra {
         public load () {
             this.buildViews();
 
-            this.getModel().on("change", () => {this.render()});
-            this.getElement().on("change", () => {this.render()});
+            this.getModel().on("change", () => {
+                this.render();
+            });
+
+            this.getElement().on("change", () => {
+                this.render();
+            });
         }
 
         private buildViews() {
@@ -120,10 +125,10 @@ module Lyra {
             this.bbox = this.axisSvg.node().getBBox();
 
             // Round it so that every little pixel change doesn't trigger a re-layout
-            this.bbox.roundedWidth = Math.ceil(this.bbox.width/5)*5;
-            this.bbox.roundedHeight = Math.ceil(this.bbox.height/5)*5;
+            this.bbox.roundedWidth = Math.ceil(this.bbox.width / 5) * 5;
+            this.bbox.roundedHeight = Math.ceil(this.bbox.height / 5) * 5;
 
-            switch(this.getModel().get("orient")) {
+            switch (this.getModel().get("orient")) {
                 case "top":
                     this.yOffset = this.bbox.roundedHeight;
                     // no break because we want the statement below to run
@@ -157,7 +162,9 @@ module Lyra {
             this.buildViews();
             this.render();
 
-            this.getModel().on("change", () => {this.render()});
+            this.getModel().on("change", () => {
+                this.render();
+            });
         }
 
         public render() {

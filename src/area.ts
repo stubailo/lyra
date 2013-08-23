@@ -58,7 +58,11 @@ module Lyra {
             this.calculateLayout();
 
             this.getModel().on("change:totalWidth change:totalHeight", $.proxy(this.updateDimensions, this));
-            this.getModel().on("change:height change:width change:paddingLeft change:paddingRight change:paddingTop change:paddingBottom", $.proxy(this.render, this));
+            this.getModel().on("change:height change:width\
+                change:paddingLeft change:paddingRight\
+                change:paddingTop change:paddingBottom",
+                $.proxy(this.render, this)
+            );
             this.on(ContextView.LAYOUT_CHANGE, $.proxy(this.calculateLayout, this));
         }
 
@@ -71,7 +75,7 @@ module Lyra {
         public getElementForAttachmentPoint(attachmentPoint: string): Element {
             var subViewGroup: D3.Selection;
 
-            if(attachmentPoint === Area.ATTACH_INSIDE) {
+            if (attachmentPoint === Area.ATTACH_INSIDE) {
                 subViewGroup = this.graphSelection.append("g");
             } else {
                 subViewGroup = this.totalSelection.append("g");
@@ -79,7 +83,7 @@ module Lyra {
 
             var element: Element = new Element(subViewGroup);
 
-            switch(attachmentPoint) {
+            switch (attachmentPoint) {
                 case Area.ATTACH_INSIDE:
                     this.getModel().on("change:height change:width", () => {
                         element.set({

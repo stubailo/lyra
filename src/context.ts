@@ -171,7 +171,7 @@ module Lyra {
         private static checkArgument(argument: string, checkProperty?: boolean): void {
             var correct: boolean;
 
-            if(checkProperty) {
+            if (checkProperty) {
                 correct = Context.isPropertyReference(argument);
             } else {
                 correct = Context.isPropertyReference(argument) || Context.isObjectReference(argument);

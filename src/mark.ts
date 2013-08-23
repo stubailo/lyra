@@ -61,14 +61,16 @@ module Lyra {
                 scale = this.getContext().getNode(Scale.pluginName, spec[Mark.SCALE_KEY]);
             } else {
                 // HACKHACK PLEASE FIX
-                var fakeSpec = {type: "identity"};
+                var fakeSpec = {
+                    type: "identity"
+                };
                 var identityScaleClass = Scale.chooseModelClass(fakeSpec);
                 scale = new identityScaleClass(fakeSpec, new Context(), "");
             }
 
             // HACKHACK we need real event handling
             scale.on("change", () => {
-                this.dataSetChanged();
+                this.trigger("change");
             });
 
             var valueFunc;
@@ -99,10 +101,6 @@ module Lyra {
                     this.parseProperty(key, properties[key]);
                 }
             }
-        }
-
-        private dataSetChanged(): void {
-            this.trigger("change");
         }
 
         public getType(): string {

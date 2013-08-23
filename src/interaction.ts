@@ -279,7 +279,7 @@ module Lyra {
             var domain = [this.domainScale.get("domainBegin"), this.domainScale.get("domainEnd")];
             var items = this.dataSet.getItems();
 
-            if(items.length == 0) {
+            if (items.length === 0) {
                 return;
             }
 
@@ -287,14 +287,14 @@ module Lyra {
             var currentMin = items[1][this.domainKey];
 
             _.each(this.dataSet.getItems(), (item) => {
-                if(domain[0] < item[this.domainKey] && item[this.domainKey] < domain[1]) {
+                if (domain[0] < item[this.domainKey] && item[this.domainKey] < domain[1]) {
                     var val = item[this.rangeKey];
 
-                    if(val < currentMin) {
+                    if (val < currentMin) {
                         currentMin = val;
                     }
 
-                    if(val > currentMax) {
+                    if (val > currentMax) {
                         currentMax = val;
                     }
                 }
@@ -304,7 +304,7 @@ module Lyra {
             currentMax += distance * this.padding;
             currentMin -= distance * this.padding;
 
-            if(!domainInverted) {
+            if (!domainInverted) {
                 this.rangeScale.set({
                     "domainBegin": currentMin,
                     "domainEnd": currentMax
