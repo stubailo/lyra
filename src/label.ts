@@ -16,15 +16,9 @@
 
 module Lyra {
     export class Label extends ContextModel {
-        public static pluginName: string;
-
         public static TEXT_HEIGHT = 30;
 
         public static TEXT_KEY = "text";
-
-        public static createModel(spec: any, context: Context) {
-            return new Label(spec, context, Label.pluginName);
-        }
 
         public defaults() {
             return _(super.defaults()).extend({

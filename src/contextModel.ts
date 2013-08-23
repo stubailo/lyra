@@ -22,24 +22,37 @@ module Lyra {
      */
     export class ContextModel extends ContextNode {
         private static SPEC_NAME_KEY: string = "name";
-
         private subViewModels: Object;
+
+        public static pluginName: string = "default";
 
         public defaults() {
             return {};
         }
 
-        /* Utility method that returns an array of ContextNodes of a certain type.
+        /* Utility method that returns an array of ContextModels of a certain type.
          *
-         * @param specList A list of specifications that will be passed to each new node
+         * @param specList A list of specifications that will be passed to each new model
          * @param context The universal context
-         * @param classType A class (should be extending ContextNode) that will be created
-         * @return An array of ContextNodes of type classtype
+         * @param pluginClass A class (should be extending ContextNode) that will be used to create the models
+         * @return An array of ContextModels
          */
-        public static createModels(classType: any, specList: any[], context: Context): any[] {
+        public static createModels(pluginClass: any, specList: any[], context: Context): any[] {
             return _.map(specList, function(spec) {
-                return classType.createModel(spec, context);
+                var modelClass = pluginClass.createModel(spec);
+
+                return new modelClass(spec, context, pluginClass.pluginName);
             });
+        }
+
+        /* The behavior of createModel is set to return this contextModel, but can be overriden
+         * to specify more complex behavior.
+         *
+         * Override this if the spec specifies certain properties that need to be saved ahead of time
+         * or if a different model is supposed to be used besides the default.
+         */
+        public static createModel(spec): any {
+            return this;
         }
 
         /* Creates a ContextNode, setting up the name, context, and properties from the specification
