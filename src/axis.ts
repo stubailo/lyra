@@ -16,6 +16,8 @@
 
 module Lyra {
     export class Axis extends ContextModel {
+        public static FONT_SIZE: number = 12;
+
         public defaults() {
             return _(super.defaults()).extend({
             });

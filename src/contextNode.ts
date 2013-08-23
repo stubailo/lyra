@@ -20,7 +20,7 @@ module Lyra {
      * ContextNode is a generalized class that represents a node in the
      * model or view context.
      */
-    export class ContextNode extends Backbone.Model {
+    export class ContextNode extends ListenableDictionary {
 
         // Private references to the context, and name
         private context: Context;
@@ -35,7 +35,6 @@ module Lyra {
          */
         constructor(name: string, pluginName: string, context: Context) {
             super();
-            Backbone.Model.apply(this, []); // Backbone.defaults don't work otherwise
 
             // Setup instance variables
             this.name = name;

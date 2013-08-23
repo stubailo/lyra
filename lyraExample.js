@@ -70,6 +70,14 @@ $(function() {
         "rangeEnd": "areas:area1.width",
         "domainBegin": new Date("July 1, 2013"),
         "domainEnd": new Date("July 31, 2013")
+      },
+      {
+        "name": "circleColor",
+        "type": "linear",
+        "domainBegin": 0,
+        "domainEnd": 20,
+        "rangeBegin": "#000000",
+        "rangeEnd": "#ff0000"
       }
     ],
     "marks": [
@@ -119,7 +127,8 @@ $(function() {
             "value": 5
           },
           "fill": {
-            "value": "red"
+            "value": "x",
+            "scale": "circleColor"
           }
         }
       },
