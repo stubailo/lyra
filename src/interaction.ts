@@ -283,8 +283,8 @@ module Lyra {
                 return;
             }
 
-            var currentMax = items[0][this.rangeKey];
-            var currentMin = items[0][this.rangeKey];
+            var currentMax: any;
+            var currentMin: any;
 
             // don't do anything if there aren't 2 points, then we'll just end up with a domain of size 0
             var numPointsOnScreen: number = 0;
@@ -295,12 +295,17 @@ module Lyra {
 
                     var val = item[this.rangeKey];
 
-                    if (val < currentMin) {
+                    if (numPointsOnScreen === 1) {
                         currentMin = val;
-                    }
-
-                    if (val > currentMax) {
                         currentMax = val;
+                    } else {
+                        if (val < currentMin) {
+                            currentMin = val;
+                        }
+
+                        if (val > currentMax) {
+                            currentMax = val;
+                        }
                     }
                 }
             });
