@@ -284,10 +284,15 @@ module Lyra {
             }
 
             var currentMax = items[0][this.rangeKey];
-            var currentMin = items[1][this.domainKey];
+            var currentMin = items[0][this.rangeKey];
+
+            // don't do anything if there aren't 2 points, then we'll just end up with a domain of size 0
+            var numPointsOnScreen: number = 0;
 
             _.each(this.dataSet.getItems(), (item) => {
                 if (domain[0] < item[this.domainKey] && item[this.domainKey] < domain[1]) {
+                    numPointsOnScreen++;
+
                     var val = item[this.rangeKey];
 
                     if (val < currentMin) {
@@ -300,20 +305,22 @@ module Lyra {
                 }
             });
 
-            var distance = currentMax - currentMin;
-            currentMax += distance * this.padding;
-            currentMin -= distance * this.padding;
+            if (numPointsOnScreen > 1) {
+                var distance = currentMax - currentMin;
+                currentMax += distance * this.padding;
+                currentMin -= distance * this.padding;
 
-            if (!domainInverted) {
-                this.rangeScale.set({
-                    "domainBegin": currentMin,
-                    "domainEnd": currentMax
-                });
-            } else {
-                this.rangeScale.set({
-                    "domainBegin": currentMax,
-                    "domainEnd": currentMin
-                });
+                if (!domainInverted) {
+                    this.rangeScale.set({
+                        "domainBegin": currentMin,
+                        "domainEnd": currentMax
+                    });
+                } else {
+                    this.rangeScale.set({
+                        "domainBegin": currentMax,
+                        "domainEnd": currentMin
+                    });
+                }
             }
         }
     }
