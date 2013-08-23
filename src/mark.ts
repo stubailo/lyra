@@ -62,7 +62,7 @@ module Lyra {
             } else {
                 // HACKHACK PLEASE FIX
                 var fakeSpec = {type: "identity"};
-                var identityScaleClass = Scale.createModel(fakeSpec);
+                var identityScaleClass = Scale.chooseModelClass(fakeSpec);
                 scale = new identityScaleClass(fakeSpec, new Context(), "");
             }
 
