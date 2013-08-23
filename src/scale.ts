@@ -20,7 +20,7 @@ module Lyra {
 
         public static EVENT_CHANGE: string = "change";
 
-        public static createModel(spec: any): any {
+        public static chooseModelClass(spec: any): any {
             switch (spec[Scale.TYPE_KEY]) {
                 case "linear":
                     return LinearScale;

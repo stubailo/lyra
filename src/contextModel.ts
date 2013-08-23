@@ -39,19 +39,19 @@ module Lyra {
          */
         public static createModels(pluginClass: any, specList: any[], context: Context): any[] {
             return _.map(specList, function(spec) {
-                var modelClass = pluginClass.createModel(spec);
+                var modelClass = pluginClass.chooseModelClass(spec);
 
                 return new modelClass(spec, context, pluginClass.pluginName);
             });
         }
 
-        /* The behavior of createModel is set to return this contextModel, but can be overriden
+        /* The behavior of chooseModelClass is set to return this contextModel class, but can be overriden
          * to specify more complex behavior.
          *
          * Override this if the spec specifies certain properties that need to be saved ahead of time
-         * or if a different model is supposed to be used besides the default.
+         * or if a different model class is supposed to be used besides the default.
          */
-        public static createModel(spec): any {
+        public static chooseModelClass(spec): any {
             return this;
         }
 

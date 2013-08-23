@@ -24,7 +24,7 @@ module Lyra {
 
         public static EVENT_CHANGE: string = "change";
 
-        public static createModel(spec: any) {
+        public static chooseModelClass(spec: any) {
             if (spec[DataSet.SPEC_TYPE_KEY]) {
                 switch (spec[DataSet.SPEC_TYPE_KEY]) {
                     case "bar":
