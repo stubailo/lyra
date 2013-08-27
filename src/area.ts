@@ -82,31 +82,41 @@ module Lyra {
             }
 
             var element: Element = new Element(subViewGroup);
+            var update: () => void;
 
             switch (attachmentPoint) {
                 case Area.ATTACH_INSIDE:
-                    this.getModel().on("change:height change:width", () => {
+                    update = () => {
                         element.set({
                             width: this.get("width"),
                             height: this.get("height")
                         });
-                    });
+                    };
+
+                    update();
+                    this.getModel().on("change:height change:width", update);
                     break;
                 case Area.ATTACH_LEFT:
                 case Area.ATTACH_RIGHT:
-                    this.getModel().on("change:height", () => {
+                    update = () => {
                         element.set({
                             height: this.get("height")
                         });
-                    });
+                    };
+
+                    update();
+                    this.getModel().on("change:height", update);
                     break;
                 case Area.ATTACH_TOP:
                 case Area.ATTACH_BOTTOM:
-                    this.getModel().on("change:width", () => {
+                    update = () => {
                         element.set({
                             width: this.get("width")
                         });
-                    });
+                    };
+
+                    update();
+                    this.getModel().on("change:width", update);
                     break;
             }
 
@@ -196,15 +206,8 @@ module Lyra {
                 bottom: this.get("paddingBottom")
             };
 
-            for (var property in this.getModel().attributes) {
-                if (property === "height") {
-                    this.totalSelection.attr(property, this.getModel().get("height") + padding.top + padding.bottom);
-                } else if (property === "width") {
-                    this.totalSelection.attr(property, this.getModel().get("width") + padding.left + padding.right);
-                } else {
-                    this.totalSelection.attr(property, this.get(property));
-                }
-            }
+            this.totalSelection.attr("height", this.getModel().get("totalHeight"));
+            this.totalSelection.attr("width", this.getModel().get("totalWidth"));
 
             this.graphSelection
                 .attr("x", padding.left)

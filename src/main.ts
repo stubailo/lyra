@@ -16,10 +16,10 @@
 
 /// <reference path="../typings/jquery.d.ts" />
 /// <reference path="../typings/underscore.d.ts" />
-/// <reference path="../typings/backbone.d.ts" />
 /// <reference path="../typings/d3.d.ts" />
 /// <reference path="../typings/jquery-mousewheel.d.ts" />
 
+/// <reference path="listenableDictionary.ts" />
 /// <reference path="contextNode.ts" />
 /// <reference path="contextModel.ts" />
 /// <reference path="contextView.ts" />

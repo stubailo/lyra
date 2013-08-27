@@ -15,15 +15,20 @@
  */
 
 module Lyra {
-    export class Element extends Backbone.Model {
+    export class Element extends ListenableDictionary {
         private selection: D3.Selection;
 
         constructor(selection: D3.Selection) {
             super();
             this.selection = selection;
-            this.set({
+        }
+
+        defaults() {
+            return _(super.defaults()).extend({
                 "requestedHeight": 0,
-                "requestedWidth": 0
+                "requestedWidth": 0,
+                "height": 1000,
+                "width": 1000
             });
         }
 

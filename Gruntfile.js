@@ -63,6 +63,7 @@ module.exports = function(grunt) {
           'src/element.ts',
           'src/interaction.ts',
           'src/label.ts',
+          'src/listenableDictionary.ts',
           'src/main.ts',
           'src/mark.ts',
           'src/scale.ts',
