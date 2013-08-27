@@ -49,6 +49,7 @@ module Lyra {
             }
 
             this.getModel().on("change", $.proxy(this.render, this));
+            this.getElement().on("change", $.proxy(this.render, this));
         }
 
         public render() {
