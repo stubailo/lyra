@@ -46,9 +46,9 @@ module Lyra {
             if (keysArrayOrString instanceof Array) {
                 keys = keysArrayOrString;
             } else if (typeof keysArrayOrString === "string") {
-                var eventSplitter = /\s+/;
-                if (eventSplitter.test(keysArrayOrString)) {
-                    keys = keysArrayOrString.split(eventSplitter);
+                var whiteSpace = /\s+/;
+                if (whiteSpace.test(keysArrayOrString)) {
+                    keys = keysArrayOrString.split(whiteSpace);
                 } else {
                     keys = [keysArrayOrString];
                 }
@@ -113,9 +113,9 @@ module Lyra {
             var keys;
 
             // potentially split first argument
-            var eventSplitter = /\s+/;
-            if (eventSplitter.test(key)) {
-                keys = key.split(eventSplitter);
+            var whiteSpace = /\s+/;
+            if (whiteSpace.test(key)) {
+                keys = key.split(whiteSpace);
             } else {
                 keys = [key];
             }
