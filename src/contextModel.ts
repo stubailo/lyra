@@ -91,7 +91,7 @@ module Lyra {
          * 2) Property References (e.g. Set the property "width" of the contextNode to be the width of another contextNode)
          * 3) If the property isn't either of the above it is set as-is
          */
-        public parseProperties(properties: any): void {
+        private parseProperties(properties: any): void {
             for (var key in properties) {
                 if (properties.hasOwnProperty(key)) {
                     var value = properties[key];
