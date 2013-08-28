@@ -36,6 +36,7 @@ module Lyra {
         public static EVENT_RENDER: string = "render";
 
         public static createView(label: Label, element: Element, viewContext: Context): LabelView {
+            // HACKHACK: This exists because we currently need an element to create a view so it has to be created somewhere...
             var areaView: AreaView = <AreaView> viewContext.getNode(Area.pluginName, label.get("area").getName());
             var element = areaView.getElementForAttachmentPoint(label.get("location"));
             return new LabelView(label, element, viewContext);

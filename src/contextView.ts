@@ -16,6 +16,8 @@
 
 module Lyra {
     // Only one view per model please
+    // HACKHACK: Why?
+    // HACKHACK: ContextView.createView needs to be somehow fixed
     export class ContextView extends ContextNode {
 
         public static LAYOUT_CHANGE = "ContextViewLayoutChange";

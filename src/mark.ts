@@ -118,6 +118,7 @@ module Lyra {
         }
 
         public static createView(mark: Mark, element: Element, viewContext: Context): MarkView {
+            // HACKHACK: This exists because we currently need an element to create a view so it has to be created somewhere...
             var areaView: AreaView = <AreaView> viewContext.getNode(Area.pluginName, mark.get("area").getName());
             var element = areaView.getElementForAttachmentPoint(AreaView.ATTACH_INSIDE);
             switch (mark.getType()) {

@@ -88,6 +88,7 @@ module Lyra {
         private backgroundSvg: D3.Selection;
 
         public static createView(axis: Axis, element: Element, viewContext: Context): AxisView {
+            // HACKHACK: This exists because we currently need an element to create a view so it has to be created somewhere...
             var areaView: AreaView = <AreaView> viewContext.getNode(Area.pluginName, axis.get("area").getName());
             var element = areaView.getElementForAttachmentPoint(axis.get("location"));
             return new AxisView(axis, element, viewContext);
