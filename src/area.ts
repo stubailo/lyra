@@ -66,7 +66,7 @@ module Lyra {
             this.on(ContextView.LAYOUT_CHANGE, $.proxy(this.calculateLayout, this));
         }
 
-        public buildViews() {
+        private buildViews() {
             this.totalSelection = this.getSelection().append("svg").attr("class", Area.pluginName).attr("name", this.getModel().getName());
             this.graphSelection = this.totalSelection.append("svg").attr("class", "graph");
             this.background = this.graphSelection.append("rect");
@@ -120,6 +120,7 @@ module Lyra {
                     break;
             }
 
+            this.registerAttachedElement(element, attachmentPoint);
             return element;
         }
 
@@ -129,7 +130,6 @@ module Lyra {
                     var element: Element = this.getElementForAttachmentPoint(attachmentPoint);
 
                     Lyra.createViewForModel(subViewModel, element, this.getContext());
-                    this.addSubView(element, attachmentPoint);
                 });
             });
         }
@@ -141,7 +141,7 @@ module Lyra {
             });
         }
 
-        public calculateLayout() {
+        private calculateLayout() {
             var padding: {
                 left: number;
                 right: number;
@@ -157,7 +157,7 @@ module Lyra {
             };
 
             _.each(this.getModel().getAttachmentPoints(), (attachmentPoint: string) => {
-                _.each(this.getSubViews()[attachmentPoint], (element: Element) => {
+                _.each(this.getAttachedElements()[attachmentPoint], (element: Element) => {
                     var x: number = 0;
                     var y: number = 0;
 
@@ -237,7 +237,7 @@ module Lyra {
             };
 
             _.each(this.getModel().getAttachmentPoints(), (attachmentPoint: string) => {
-                _.each(this.getSubViews()[attachmentPoint], (element: Element) => {
+                _.each(this.getAttachedElements()[attachmentPoint], (element: Element) => {
                     var x: number = 0;
                     var y: number = 0;
 

@@ -22,15 +22,15 @@ module Lyra {
 
         private model: ContextModel;
         private element: Element;
-        private subViews: {[attachmentPoint: string]: Element[]};
+        private attachedElements: {[attachmentPoint: string]: Element[]};
 
         constructor(model: ContextModel, element: Element, viewContext: Context) {
             this.model = model;
             this.element = element;
 
-            this.subViews = {};
+            this.attachedElements = {};
             _.each(this.model.getAttachmentPoints(), (attachmentPoint) => {
-                this.subViews[attachmentPoint] = [];
+                this.attachedElements[attachmentPoint] = [];
             });
 
             super(model.getName(), model.getPluginName(), viewContext);
@@ -57,13 +57,17 @@ module Lyra {
             return this.element.getSelection();
         }
 
-        public getSubViews(): Object {
-            return _.clone(this.subViews);
+        public getAttachedElements(): Object {
+            return _.clone(this.attachedElements);
         }
 
-        public addSubView(element: Element, attachmentPoint: string) {
+        public getElementForAttachmentPoint(attachmentPoint: string): Element {
+            throw new Error("This element doesn't have any attachment points.");
+        }
+
+        public registerAttachedElement(element: Element, attachmentPoint: string) {
             if (_.contains(this.model.getAttachmentPoints(), attachmentPoint)) {
-                this.subViews[attachmentPoint].push(element);
+                this.attachedElements[attachmentPoint].push(element);
                 element.on("change:requestedWidth change:requestedHeight", () => {
                     this.trigger(ContextView.LAYOUT_CHANGE);
                 });
