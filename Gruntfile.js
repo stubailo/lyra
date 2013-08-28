@@ -68,6 +68,9 @@ module.exports = function(grunt) {
           'src/mark.ts',
           'src/scale.ts',
           'test/js/tests.ts',
+          'test/js/plugins/contextNodeTests.ts',
+          'test/js/plugins/dataSetTests.ts',
+          'test/js/plugins/listenableDictionaryTests.ts',
         ]
       }
     },
@@ -94,7 +97,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-open');
 
-  grunt.registerTask("default", ["typescript", "less", "tslint"]);
-  grunt.registerTask("test", ["default", "mocha"]);
+  grunt.registerTask("default", ["typescript:base", "less", "tslint"]);
+  grunt.registerTask("test", ["typescript:test", "less", "mocha", "tslint"]);
   grunt.registerTask("example", ["default", "open:example"]);
 };
