@@ -44,8 +44,10 @@ module Lyra {
 
             // Parse all of the models
             for (var pluginName in spec) {
-                if (Lyra.getModel(pluginName) !== undefined) {
-                    ContextModel.createModels(Lyra.getModel(pluginName), spec[pluginName], this.context);
+                if (spec.hasOwnProperty(pluginName)) {
+                    if (Lyra.getModel(pluginName) !== undefined) {
+                        ContextModel.createModels(Lyra.getModel(pluginName), spec[pluginName], this.context);
+                    }
                 }
             }
         }
@@ -75,7 +77,7 @@ module Lyra {
             this.element = element;
 
             // Generate all the views for this model
-            this.generateViews();
+            this.generateViews(spec);
             this.setUpLayout();
             this.render();
 
@@ -102,15 +104,24 @@ module Lyra {
             });
         }
 
-        private generateViews() {
+        private generateViews(spec: any) {
             this.svg = d3.select(this.element).append("svg:svg");
 
             // Creates the view for area
-            _.each(this.model.getContext().getNodesOfClass(Area.pluginName), (area: Area) => {
-                var areaGroup = this.svg.append("g");
-                var element = new Element(areaGroup);
-                Lyra.createViewForModel(area, element, this.viewContext);
-            });
+            for (var pluginName in spec) {
+                if (spec.hasOwnProperty(pluginName) && Lyra.getView(pluginName) !== undefined) {
+                    _.each(this.model.getContext().getNodesOfClass(pluginName), (model: ContextModel) => {
+                        var element: Element = null;
+
+                        if (pluginName === "areas") {
+                            var areaGroup = this.svg.append("g");
+                            var element = new Element(areaGroup);
+                        }
+
+                        Lyra.createViewForModel(model, element, this.viewContext);
+                    });
+                }
+            }
         }
 
         private setUpLayout() {

@@ -22,7 +22,7 @@ module Lyra {
         }
 
         public load() {
-            this.get("area").addSubViewModel(this, this.get("location"));
+            // no-op
         }
     }
 
@@ -88,11 +88,12 @@ module Lyra {
         private backgroundSvg: D3.Selection;
 
         public static createView(axis: Axis, element: Element, viewContext: Context): AxisView {
+            var areaView: AreaView = <AreaView> viewContext.getNode(Area.pluginName, axis.get("area").getName());
+            var element = areaView.getElementForAttachmentPoint(axis.get("location"));
             return new AxisView(axis, element, viewContext);
         }
 
         private buildViews() {
-
             var totalSvg = this.getSelection()
                 .append("g");
 
@@ -107,7 +108,7 @@ module Lyra {
                 .attr("name", this.getModel().getName());
 
             var areaView: AreaView = <AreaView> this.getContext().getNode(Area.pluginName, this.getModel().get("area").getName());
-            var gridView = new GridView(this.getModel(), areaView.getElementForAttachmentPoint(Area.ATTACH_INSIDE), new Context());
+            var gridView = new GridView(this.getModel(), areaView.getElementForAttachmentPoint(AreaView.ATTACH_INSIDE), new Context());
         }
 
         private renderAxis() {

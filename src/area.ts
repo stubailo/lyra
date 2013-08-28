@@ -16,16 +16,6 @@
 
 module Lyra {
     export class Area extends ContextModel {
-        public static ATTACH_INSIDE: string = "inside";
-        public static ATTACH_TOP: string = "top";
-        public static ATTACH_RIGHT: string = "right";
-        public static ATTACH_BOTTOM: string = "bottom";
-        public static ATTACH_LEFT: string = "left";
-
-        public getAttachmentPoints(): string[] {
-            return [Area.ATTACH_TOP, Area.ATTACH_RIGHT, Area.ATTACH_BOTTOM, Area.ATTACH_LEFT, Area.ATTACH_INSIDE];
-        }
-
         public defaults() {
             return _(super.defaults()).extend({
                 "totalHeight": 300,
@@ -40,6 +30,16 @@ module Lyra {
     }
 
     export class AreaView extends ContextView {
+        public static ATTACH_INSIDE: string = "inside";
+        public static ATTACH_TOP: string = "top";
+        public static ATTACH_RIGHT: string = "right";
+        public static ATTACH_BOTTOM: string = "bottom";
+        public static ATTACH_LEFT: string = "left";
+
+        public getAttachmentPoints(): string[] {
+            return [AreaView.ATTACH_TOP, AreaView.ATTACH_RIGHT, AreaView.ATTACH_BOTTOM, AreaView.ATTACH_LEFT, AreaView.ATTACH_INSIDE];
+        }
+
         private totalSelection: D3.Selection;
         private graphSelection: D3.Selection;
         private background: D3.Selection;
@@ -54,7 +54,6 @@ module Lyra {
 
         public load() {
             this.buildViews();
-            this.buildSubviews();
             this.calculateLayout();
 
             this.getModel().on("change:totalWidth change:totalHeight", $.proxy(this.updateDimensions, this));
@@ -73,9 +72,13 @@ module Lyra {
         }
 
         public getElementForAttachmentPoint(attachmentPoint: string): Element {
+            if (!_.contains(this.getAttachmentPoints(), attachmentPoint)) {
+                throw new Error("No attachment point with name " + attachmentPoint + " exists on Area " + this.get("name"));
+            }
+
             var subViewGroup: D3.Selection;
 
-            if (attachmentPoint === Area.ATTACH_INSIDE) {
+            if (attachmentPoint === AreaView.ATTACH_INSIDE) {
                 subViewGroup = this.graphSelection.append("g");
             } else {
                 subViewGroup = this.totalSelection.append("g");
@@ -85,7 +88,7 @@ module Lyra {
             var update: () => void;
 
             switch (attachmentPoint) {
-                case Area.ATTACH_INSIDE:
+                case AreaView.ATTACH_INSIDE:
                     update = () => {
                         element.set({
                             width: this.get("width"),
@@ -96,8 +99,8 @@ module Lyra {
                     update();
                     this.getModel().on("change:height change:width", update);
                     break;
-                case Area.ATTACH_LEFT:
-                case Area.ATTACH_RIGHT:
+                case AreaView.ATTACH_LEFT:
+                case AreaView.ATTACH_RIGHT:
                     update = () => {
                         element.set({
                             height: this.get("height")
@@ -107,8 +110,8 @@ module Lyra {
                     update();
                     this.getModel().on("change:height", update);
                     break;
-                case Area.ATTACH_TOP:
-                case Area.ATTACH_BOTTOM:
+                case AreaView.ATTACH_TOP:
+                case AreaView.ATTACH_BOTTOM:
                     update = () => {
                         element.set({
                             width: this.get("width")
@@ -121,17 +124,8 @@ module Lyra {
             }
 
             this.registerAttachedElement(element, attachmentPoint);
+            this.trigger(ContextView.LAYOUT_CHANGE);
             return element;
-        }
-
-        private buildSubviews() {
-            _.each(this.getModel().getAttachmentPoints(), (attachmentPoint: string) => {
-                _.each(this.getModel().getSubViewModels()[attachmentPoint], (subViewModel: ContextModel) => {
-                    var element: Element = this.getElementForAttachmentPoint(attachmentPoint);
-
-                    Lyra.createViewForModel(subViewModel, element, this.getContext());
-                });
-            });
         }
 
         private updateDimensions() {
@@ -156,25 +150,25 @@ module Lyra {
                 bottom: 0
             };
 
-            _.each(this.getModel().getAttachmentPoints(), (attachmentPoint: string) => {
+            _.each(this.getAttachmentPoints(), (attachmentPoint: string) => {
                 _.each(this.getAttachedElements()[attachmentPoint], (element: Element) => {
                     var x: number = 0;
                     var y: number = 0;
 
                     switch (attachmentPoint) {
-                        case "left":
+                        case AreaView.ATTACH_LEFT:
                             padding.left += element.get("requestedWidth");
                             break;
-                        case "right":
+                        case AreaView.ATTACH_RIGHT:
                             padding.right += element.get("requestedWidth");
                             break;
-                        case "top":
+                        case AreaView.ATTACH_TOP:
                             padding.top += element.get("requestedHeight");
                             break;
-                        case "bottom":
+                        case AreaView.ATTACH_BOTTOM:
                             padding.bottom += element.get("requestedHeight");
                             break;
-                        case "inside":
+                        case AreaView.ATTACH_INSIDE:
                             // 0, 0 is fine
                             break;
                     }
@@ -236,33 +230,33 @@ module Lyra {
                 bottom: 0
             };
 
-            _.each(this.getModel().getAttachmentPoints(), (attachmentPoint: string) => {
+            _.each(this.getAttachmentPoints(), (attachmentPoint: string) => {
                 _.each(this.getAttachedElements()[attachmentPoint], (element: Element) => {
                     var x: number = 0;
                     var y: number = 0;
 
                     switch (attachmentPoint) {
-                        case "left":
+                        case AreaView.ATTACH_LEFT:
                             currentDistances.left += element.get("requestedWidth");
                             x = padding.left - currentDistances.left;
                             y = padding.top;
                             break;
-                        case "right":
+                        case AreaView.ATTACH_RIGHT:
                             currentDistances.right += element.get("requestedWidth");
                             x = currentDistances.right + padding.left - element.get("requestedWidth") + this.get("width");
                             y = padding.top;
                             break;
-                        case "top":
+                        case AreaView.ATTACH_TOP:
                             currentDistances.top += element.get("requestedHeight");
                             x = padding.left;
                             y = padding.top - currentDistances.top;
                             break;
-                        case "bottom":
+                        case AreaView.ATTACH_BOTTOM:
                             currentDistances.bottom += element.get("requestedHeight");
                             x = padding.left;
                             y = padding.top + currentDistances.bottom - element.get("requestedHeight") + this.get("height");
                             break;
-                        case "inside":
+                        case AreaView.ATTACH_INSIDE:
                             // 0, 0 is fine
                             break;
                     }

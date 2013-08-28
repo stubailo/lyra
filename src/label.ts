@@ -28,7 +28,7 @@ module Lyra {
         }
 
         public load() {
-            this.get("area").addSubViewModel(this, this.get("location"));
+            // no-op
         }
     }
 
@@ -36,6 +36,8 @@ module Lyra {
         public static EVENT_RENDER: string = "render";
 
         public static createView(label: Label, element: Element, viewContext: Context): LabelView {
+            var areaView: AreaView = <AreaView> viewContext.getNode(Area.pluginName, label.get("area").getName());
+            var element = areaView.getElementForAttachmentPoint(label.get("location"));
             return new LabelView(label, element, viewContext);
         }
 

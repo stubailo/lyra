@@ -29,7 +29,7 @@ module Lyra {
             this.element = element;
 
             this.attachedElements = {};
-            _.each(this.model.getAttachmentPoints(), (attachmentPoint) => {
+            _.each(this.getAttachmentPoints(), (attachmentPoint) => {
                 this.attachedElements[attachmentPoint] = [];
             });
 
@@ -61,12 +61,16 @@ module Lyra {
             return _.clone(this.attachedElements);
         }
 
+        public getAttachmentPoints(): string[] {
+            return [];
+        }
+
         public getElementForAttachmentPoint(attachmentPoint: string): Element {
             throw new Error("This element doesn't have any attachment points.");
         }
 
         public registerAttachedElement(element: Element, attachmentPoint: string) {
-            if (_.contains(this.model.getAttachmentPoints(), attachmentPoint)) {
+            if (_.contains(this.getAttachmentPoints(), attachmentPoint)) {
                 this.attachedElements[attachmentPoint].push(element);
                 element.on("change:requestedWidth change:requestedHeight", () => {
                     this.trigger(ContextView.LAYOUT_CHANGE);

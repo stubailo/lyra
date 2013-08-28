@@ -22,7 +22,6 @@ module Lyra {
      */
     export class ContextModel extends ContextNode {
         private static SPEC_NAME_KEY: string = "name";
-        private subViewModels: Object;
 
         public static pluginName: string = "default";
 
@@ -63,11 +62,6 @@ module Lyra {
          */
         constructor(spec: any, context: Context, pluginName: string) {
             super(spec[ContextModel.SPEC_NAME_KEY], pluginName, context);
-
-            this.subViewModels = {};
-            _.each(this.getAttachmentPoints(), (attachmentPoint) => {
-                this.subViewModels[attachmentPoint] = [];
-            });
 
             // Parse the properties of this node from the specification
             this.parseProperties(spec);
@@ -117,22 +111,6 @@ module Lyra {
                     }
                 }
             }
-        }
-
-        public addSubViewModel(model: ContextNode, attachmentPoint: string) {
-            if (_.contains(this.getAttachmentPoints(), attachmentPoint)) {
-                this.subViewModels[attachmentPoint].push(model);
-            } else {
-                throw new Error("Attachment point " + attachmentPoint + " doesn't exist on " + this.getPluginName() + ".");
-            }
-        }
-
-        public getSubViewModels(): Object {
-            return this.subViewModels;
-        }
-
-        public getAttachmentPoints(): string[] {
-            return [];
         }
     }
 }
