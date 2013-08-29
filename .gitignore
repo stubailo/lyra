@@ -5,6 +5,7 @@
 # COMPILED FILES #
 ##################
 lyra.js
+lyra.min.js
 test/js/tests.js
 lyra.css
 

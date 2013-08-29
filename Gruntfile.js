@@ -88,6 +88,14 @@ module.exports = function(grunt) {
         path: 'index.html',
         app: 'Google Chrome'
       }
+    },
+
+    uglify: {
+      main: {
+        files: {
+          'lyra.min.js': ['lyra.js']
+        }
+      }
     }
   });
 
@@ -96,8 +104,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-open');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
 
-  grunt.registerTask("default", ["typescript:base", "less", "tslint"]);
+  grunt.registerTask("default", ["typescript:base", "less", "tslint", "uglify"]);
   grunt.registerTask("test", ["typescript:test", "less", "mocha", "tslint"]);
   grunt.registerTask("example", ["default", "open:example"]);
 };
