@@ -154,6 +154,7 @@ module Lyra {
         }
     }
 
+    // Interface for an object that wraps a function in order to give it a unique ID
     interface WrappedHandler {
         func: () => void;
         id: number;
